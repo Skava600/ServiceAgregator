@@ -1,5 +1,5 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -13,7 +13,8 @@ namespace ServiceAggregator.Migrations
                 name: "Accounts",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Login = table.Column<string>(type: "text", nullable: false),
                     Password = table.Column<string>(type: "text", nullable: false),
                     Firstname = table.Column<string>(type: "text", nullable: false),
@@ -32,8 +33,9 @@ namespace ServiceAggregator.Migrations
                 name: "WorkSections",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    ServiceId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ServiceId = table.Column<int>(type: "integer", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     CategoryName = table.Column<string>(type: "text", nullable: false)
                 },
@@ -46,8 +48,9 @@ namespace ServiceAggregator.Migrations
                 name: "Customers",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    AccountId = table.Column<Guid>(type: "uuid", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    AccountId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -64,11 +67,12 @@ namespace ServiceAggregator.Migrations
                 name: "Doers",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     DoerName = table.Column<string>(type: "text", nullable: false),
                     DoerDescription = table.Column<string>(type: "text", nullable: false),
                     OrderCount = table.Column<int>(type: "integer", nullable: false),
-                    AccountId = table.Column<Guid>(type: "uuid", nullable: false)
+                    AccountId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -85,10 +89,11 @@ namespace ServiceAggregator.Migrations
                 name: "Orders",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Text = table.Column<string>(type: "text", nullable: false),
-                    CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
-                    WorkSectionId = table.Column<Guid>(type: "uuid", nullable: false)
+                    CustomerId = table.Column<int>(type: "integer", nullable: false),
+                    WorkSectionId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -111,8 +116,8 @@ namespace ServiceAggregator.Migrations
                 name: "DoerWorkSections",
                 columns: table => new
                 {
-                    DoerId = table.Column<Guid>(type: "uuid", nullable: false),
-                    WorkSectionId = table.Column<Guid>(type: "uuid", nullable: false)
+                    DoerId = table.Column<int>(type: "integer", nullable: false),
+                    WorkSectionId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -135,12 +140,13 @@ namespace ServiceAggregator.Migrations
                 name: "Reviews",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    AccountAuthorId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    AccountAuthorId = table.Column<int>(type: "integer", nullable: false),
                     Text = table.Column<string>(type: "text", nullable: false),
                     Grade = table.Column<byte>(type: "smallint", nullable: false),
-                    CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
-                    DoerId = table.Column<Guid>(type: "uuid", nullable: false)
+                    CustomerId = table.Column<int>(type: "integer", nullable: false),
+                    DoerId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {

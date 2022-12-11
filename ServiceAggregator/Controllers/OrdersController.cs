@@ -32,7 +32,7 @@ namespace ServiceAggregator.Controllers
         }
 
         // GET api/<ValuesController>/5
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public Order Get(int id)
         {
             throw new NotImplementedException();

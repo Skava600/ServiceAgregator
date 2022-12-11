@@ -9,14 +9,14 @@ namespace ServiceAggregator.Controllers
     [ApiController]
     public class BanController : ControllerBase
     {
-        [HttpGet]
+        /*[HttpGet("{id:int}")]
         [Authorize (Roles ="admin")]
         public async Task<IActionResult> Ban(int id)
         {
             throw new NotImplementedException();
         }
 
-        [HttpGet]
+        [HttpGet("{id:int}")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> UnBan(int id)
         {
@@ -28,7 +28,7 @@ namespace ServiceAggregator.Controllers
         public async Task<IActionResult> GetBanInfo()
         {
             throw new NotImplementedException();
-        }
+        }*/
 
 
     }

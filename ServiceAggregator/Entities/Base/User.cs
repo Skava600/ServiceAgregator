@@ -3,6 +3,6 @@
     public class User : BaseEntity
     {
         public Account Account { get; set; }
-        public Guid AccountId { get; set; }
+        public int AccountId { get; set; }
     }
 }

@@ -18,14 +18,14 @@ namespace ServiceAggregator.Controllers
         }
 
         // GET: api/<ValuesController>
-        [HttpGet]
+       /* [HttpGet("{id:int}")]
         public IEnumerable<Doer> GetPage(int page, int doersPerPage)
         {
             throw new NotImplementedException();
-        }
+        }*/
 
         // GET api/<ValuesController>/5
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public Doer Get(int id)
         {
             throw new NotImplementedException();
@@ -50,7 +50,7 @@ namespace ServiceAggregator.Controllers
         {
         }
 
-        [HttpPost]
+        [HttpPost("{id}")]
         public async Task<IActionResult> MarkOrderDone(int id)
         {
             throw new NotImplementedException();

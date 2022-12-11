@@ -4,10 +4,10 @@ namespace ServiceAggregator.Entities
 {
     public class DoerWorkSection
     {
-        public Guid DoerId { get; set; }
+        public int DoerId { get; set; }
         public Doer Doer { get; set; }
 
-        public Guid WorkSectionId { get; set; }
+        public int WorkSectionId { get; set; }
         public WorkSection WorkSection { get; set; }
     }
 }

@@ -27,8 +27,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 builder.Services.AddAuthorization();
 
 
-//builder.Services.AddDbContext<ApplicationDbContext>(options =>
-//options.UseNpgsql(builder.Configuration.GetConnectionString("DataAccessPostgreSqlProvider")));
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+options.UseNpgsql(builder.Configuration.GetConnectionString("DataAccessPostgreSqlProviderNeon")));
 // ConfigureServices method
 
 var openApiSecurityScheme = new OpenApiSecurityScheme
@@ -68,7 +68,7 @@ builder.Services.AddOptions();
 
 builder.Services.Configure<MyOptions>(myOptions =>
 {
-    myOptions.ConnectionString = builder.Configuration.GetConnectionString("DataAccessPostgreSqlProvider");
+    myOptions.ConnectionString = builder.Configuration.GetConnectionString("DataAccessPostgreSqlProviderNeon");
     myOptions.Issuer = builder.Configuration["Jwt:Issuer"];
     myOptions.Audience = builder.Configuration["Jwt:Audience"];
     myOptions.Subject = builder.Configuration["Jwt:Subject"];

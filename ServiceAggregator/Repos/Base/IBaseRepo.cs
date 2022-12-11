@@ -3,12 +3,11 @@ using ServiceAggregator.Entities.Base;
 
 namespace TrialBalanceWebApp.Repos.Base
 {
-    public interface IBaseRepo<TEntity> where TEntity : BaseEntity
+    public interface IBaseRepo
     {
         string ConnectionString
         {
             get;
         }
-        string TableName { get; }
     }
 }

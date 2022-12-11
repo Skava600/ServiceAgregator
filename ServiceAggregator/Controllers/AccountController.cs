@@ -30,7 +30,7 @@ namespace ServiceAggregator.Controllers
         {
             var connString = optionsAccessor.Value.ConnectionString;
 
-            repo = new AccountRepo("Account", connString);
+            repo = new AccountRepo(connString);
             options = optionsAccessor.Value;
         }
 
@@ -38,7 +38,13 @@ namespace ServiceAggregator.Controllers
         [HttpGet]
         public async Task<IActionResult> Info()
         {
-            throw new NotImplementedException();
+            int userId = Convert.ToInt32(User.FindFirst("Id")?.Value);
+            var account = await repo.Find(userId);
+            if (account == null)
+                return Json(Results.NotFound());
+
+
+            return Json(new AccountData(account));
         }
         [HttpGet]
         public async Task<IActionResult> GetAsync()
@@ -84,6 +90,7 @@ namespace ServiceAggregator.Controllers
                         new Claim(JwtRegisteredClaimNames.Sub, options.Subject),
                         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                         new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
+                        new Claim(ClaimTypes.NameIdentifier, account.Login),
                         new Claim("Id", account.Id.ToString()),
                         new Claim("IsAdmin", account.IsAdmin.ToString()),
                         new Claim("Login", account.Login)

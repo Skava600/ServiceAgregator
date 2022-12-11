@@ -4,18 +4,16 @@ using System.Data;
 
 namespace TrialBalanceWebApp.Repos.Base
 {
-    public abstract class BaseRepo<T> : IDisposable, IBaseRepo<T> where T : BaseEntity, new()
+    public abstract class BaseRepo: IDisposable, IBaseRepo
     {
         public string ConnectionString { get; }
-        public string TableName { get; }
 
         private bool disposedValue;
 
         protected NpgsqlConnection? _sqlConnection = null;
 
-        public BaseRepo(string tableName, string connectionString)
+        public BaseRepo(string connectionString)
         {
-            TableName = tableName;
             ConnectionString = connectionString;
         }
 

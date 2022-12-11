@@ -1,4 +1,5 @@
 ﻿using ServiceAggregator.Entities.Base;
+using TrialBalanceWebApp.Repos.Base;
 
 namespace ServiceAggregator.Repos.Interfaces
 {
@@ -6,11 +7,8 @@ namespace ServiceAggregator.Repos.Interfaces
     {
         Task<IEnumerable<TEntity>> GetAll();
         Task<TEntity?> Find(int? id);
-        Task<int> Add(TEntity entity, bool persist = true);
-        Task AddRange(IEnumerable<TEntity> entities, bool persist = true);
-        Task<int> Update(TEntity entity, bool persist = true);
-        Task UpdateRange(IEnumerable<TEntity> entities, bool persist = true);
-        Task<int> Delete(TEntity entity, bool persist = true);
-        Task DeleteRange(IEnumerable<TEntity> entities, bool persist = true);
+        Task<int> Update(TEntity entity);
+        Task<int> Delete(TEntity entity);
+
     }
 }

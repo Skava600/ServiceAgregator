@@ -1,31 +1,38 @@
-﻿using ServiceAggregator.Entities;
+﻿using Npgsql;
+using ServiceAggregator.Entities;
+using ServiceAggregator.Models;
 using ServiceAggregator.Repos.Interfaces;
 using TrialBalanceWebApp.Repos.Base;
 
 namespace ServiceAggregator.Repos
 {
-    public class OrderRepo : BaseRepo<Order>, IOrderRepo
+    public class OrderRepo : BaseRepo, IOrderRepo
     {
-        public OrderRepo(string tableName, string connectionString) : base(tableName, connectionString)
+        public OrderRepo(string connectionString) : base(connectionString)
         {
         }
 
-        public Task<int> Add(Order entity, bool persist = true)
+        public async Task<int> CreateOrder(OrderModel order)
         {
-            throw new NotImplementedException();
+
+            int accountId = -1;
+            OpenConnection();
+            string sql = "SELECT public.createorder(" +
+                $"'{order.Text}'," +
+                $"'{order.CustomerId}'," +
+                $"'{order.WorkSectionId}');";
+
+            using (NpgsqlCommand cmd = new NpgsqlCommand(sql, _sqlConnection))
+            {
+                accountId = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+            }
+
+            CloseConnection();
+
+            return accountId;
         }
 
-        public Task AddRange(IEnumerable<Order> entities, bool persist = true)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<int> Delete(Order entity, bool persist = true)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task DeleteRange(IEnumerable<Order> entities, bool persist = true)
+        public Task<int> Delete(Order entity)
         {
             throw new NotImplementedException();
         }
@@ -40,12 +47,7 @@ namespace ServiceAggregator.Repos
             throw new NotImplementedException();
         }
 
-        public Task<int> Update(Order entity, bool persist = true)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task UpdateRange(IEnumerable<Order> entities, bool persist = true)
+        public Task<int> Update(Order entity)
         {
             throw new NotImplementedException();
         }

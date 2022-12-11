@@ -1,20 +1,20 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Npgsql;
 using ServiceAggregator.Entities;
+using ServiceAggregator.Models;
 using ServiceAggregator.Repos.Interfaces;
 using System.Data;
-using System.Security.Cryptography;
 using TrialBalanceWebApp.Repos.Base;
 
 namespace ServiceAggregator.Repos
 {
-    public class AccountRepo : BaseRepo<Account>, IAccountRepo
+    public class AccountRepo : BaseRepo, IAccountRepo
     {
-        public AccountRepo(string tableName, string connectionString) : base(tableName, connectionString)
+        public AccountRepo(string connectionString) : base(connectionString)
         {
         }
 
-        public async Task<int> Add(Account entity, bool persist = true)
+        public async Task<int> Register(AccountModel entity)
         {
             int accountId = -1;
             OpenConnection();
@@ -24,7 +24,7 @@ namespace ServiceAggregator.Repos
                 $"'{entity.Firstname}'," +
                 $"'{entity.Lastname}'," +
                 $"'{entity.Patronym}'," +
-                $"'{entity.IsAdmin}'," +
+                $"'{false}'," +
                 $"'{entity.PhoneNumber}'," +
             $"'{entity.Location}');";
 
@@ -38,32 +38,9 @@ namespace ServiceAggregator.Repos
             return accountId;
         }
 
-        public async Task AddRange(IEnumerable<Account> entities, bool persist = true)
-        {
-            OpenConnection();
-            foreach (var entity in entities)
-            {
-                string sql = "SELECT public.insertaccount(" +
-               $"'{entity.Login}'," +
-               $"'{entity.Password}'," +
-               $"'{entity.Firstname}'," +
-               $"'{entity.Lastname}'," +
-               $"'{entity.Patronym}'," +
-               $"{entity.IsAdmin}," +
-               $"'{entity.PhoneNumber}'," +
-           $"'{entity.Location}');";
+      
 
-                using (NpgsqlCommand cmd = new NpgsqlCommand(sql, _sqlConnection))
-                {
-                    await cmd.ExecuteNonQueryAsync();
-                }
-            }       
-
-            CloseConnection();
-
-        }
-
-        public Task<int> Delete(Account entity, bool persist = true)
+        public Task<int> Delete(Account entity)
         {
             OpenConnection();
             string sql = "SELECT public.deleteaccount(" +
@@ -80,31 +57,12 @@ namespace ServiceAggregator.Repos
             return task;
         }
 
-        public async Task DeleteRange(IEnumerable<Account> entities, bool persist = true)
-        {
-            OpenConnection();
-
-            foreach (var entity in entities)
-            {
-                string sql = "SELECT public.deleteaccount(" +
-                $"{entity.Id});";
-
-                using (NpgsqlCommand cmd = new NpgsqlCommand(sql, _sqlConnection))
-                {
-                    await cmd.ExecuteNonQueryAsync();
-                }
-            }
-            CloseConnection();
-        }
-
         public async Task<Account?> Find(int? id)
         {
             if (id == null) return null;
             OpenConnection();
             
-            string sql = "SELECT * FROM public.getaccount(" +
-            $"{id});";
-            Account account = null;
+            Account? account = null;
             using (NpgsqlCommand cmd = new NpgsqlCommand("public.getaccount", _sqlConnection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
@@ -202,12 +160,7 @@ namespace ServiceAggregator.Repos
             return account;
         }
 
-        public Task<int> Update(Account entity, bool persist = true)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task UpdateRange(IEnumerable<Account> entities, bool persist = true)
+        public Task<int> Update(Account entity)
         {
             throw new NotImplementedException();
         }

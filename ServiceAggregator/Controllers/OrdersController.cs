@@ -12,7 +12,7 @@ namespace ServiceAggregator.Controllers
     [Authorize]
     public class OrdersController : ControllerBase
     {
-        // GET: api/<ValuesController>
+
         [HttpGet]
         public IEnumerable<Order> Get()
         {

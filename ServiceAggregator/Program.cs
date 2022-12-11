@@ -63,7 +63,7 @@ builder.Services.AddSwaggerGen(
         options.AddSecurityDefinition("Bearer", openApiSecurityScheme);
         options.AddSecurityRequirement(openApiSecurityRequirement);
     });
-
+builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 builder.Services.AddOptions();
 
 builder.Services.Configure<MyOptions>(myOptions =>
@@ -96,6 +96,14 @@ app.UseRouting();
 
 app.UseAuthentication();    // аутентификация
 app.UseAuthorization();     // авторизация
+
+using (var serviceScope = app.Services.CreateScope())
+{
+    var services = serviceScope.ServiceProvider;
+
+    var myDependency = services.GetRequiredService<IDbInitializer>();
+    myDependency.Seed().Wait();
+}
 
 app.MapControllerRoute(
     name: "default",

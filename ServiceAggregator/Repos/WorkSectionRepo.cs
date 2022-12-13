@@ -9,8 +9,10 @@ namespace ServiceAggregator.Repos
 {
     public class WorkSectionRepo : BaseRepo, IWorkSectionRepo
     {
+        private OrderRepo _orderRepo;
         public WorkSectionRepo(string connectionString) : base(connectionString)
         {
+            _orderRepo = new OrderRepo(connectionString);
         }
 
         public async Task<int> Add(WorkSectionModel workSection)
@@ -89,6 +91,7 @@ namespace ServiceAggregator.Repos
             return id;
         }
 
+
         public async Task<WorkSection?> Find(int? id)
         {
 
@@ -96,10 +99,10 @@ namespace ServiceAggregator.Repos
             OpenConnection();
 
             WorkSection? workSection = null;
-            using (NpgsqlCommand cmd = new NpgsqlCommand("public.getaccount", _sqlConnection))
+            using (NpgsqlCommand cmd = new NpgsqlCommand("public.get_worksection_by_id", _sqlConnection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("id", id);
+                cmd.Parameters.AddWithValue("w_id", id);
                 using (var reader = await cmd.ExecuteReaderAsync())
                 {
                     while (reader.Read())
@@ -118,5 +121,6 @@ namespace ServiceAggregator.Repos
 
             return workSection;
         }
+
     }
 }

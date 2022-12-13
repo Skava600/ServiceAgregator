@@ -4,6 +4,7 @@ namespace ServiceAggregator.Models
 {
     public class AccountData
     {
+        public bool Success { get; set; } = true;
         public string Login { get; set; }
         public string Firstname { get; set; }
         public string Lastname { get; set; }
@@ -11,7 +12,6 @@ namespace ServiceAggregator.Models
         public bool IsAdmin { get; set; }
         public string PhoneNumber { get; set; }
         public string Location { get; set; }
-
         public AccountData(Account account)
         {
             Login = account.Login;
@@ -22,6 +22,8 @@ namespace ServiceAggregator.Models
             IsAdmin = account.IsAdmin;
             PhoneNumber = account.PhoneNumber;
         }
+
+        public AccountData() { }
 
     }
 }

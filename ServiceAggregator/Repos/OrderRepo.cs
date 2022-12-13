@@ -18,7 +18,11 @@ namespace ServiceAggregator.Repos
             int accountId = -1;
             OpenConnection();
             string sql = "SELECT public.createorder(" +
+                $"'{order.Header}'," +
                 $"'{order.Text}'," +
+                $"'{order.Location}'," +
+                 $"'{order.ExpireDate.ToString("dd-MM-yyyy")}'," +
+                 $"'{order.Price}'," +
                 $"'{order.CustomerId}'," +
                 $"'{order.WorkSectionId}');";
 
@@ -42,9 +46,36 @@ namespace ServiceAggregator.Repos
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Order>> GetAll()
+        public async  Task<IEnumerable<Order>> GetAll()
         {
-            throw new NotImplementedException();
+            OpenConnection();
+
+            string commandText = "SELECT * FROM public.get_orders()";
+            List<Order> orders = new List<Order>();
+            using (NpgsqlCommand cmd = new NpgsqlCommand(commandText, _sqlConnection))
+            {
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (reader.Read())
+                    {
+                        orders.Add(new Order
+                        {
+                            Id = reader.GetInt32(0),
+                            Header = reader.GetString(1),
+                            Text = reader.GetString(2),
+                            Location = reader.GetString(3),
+                            ExpireDate = DateTime.ParseExact(reader.GetString(4), "dd-MM-yyyy", System.Globalization.CultureInfo.InvariantCulture),
+                            Price = reader.GetDouble(5),
+                            CustomerId = reader.GetInt32(6),
+                            WorkSectionId = reader.GetInt32(7),
+                        });
+                    }
+                }
+            }
+
+            CloseConnection();
+
+            return orders;
         }
 
         public Task<int> Update(Order entity)

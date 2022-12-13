@@ -40,8 +40,9 @@ namespace ServiceAggregator.Controllers
         {
             int userId = Convert.ToInt32(User.FindFirst("Id")?.Value);
             var account = await repo.Find(userId);
+            AccountData accountData;
             if (account == null)
-                return Json(Results.NotFound());
+                return Json(new AccountData { Success = false });
 
 
             return Json(new AccountData(account));

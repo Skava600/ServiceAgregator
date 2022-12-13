@@ -8,5 +8,6 @@ namespace ServiceAggregator.Repos.Interfaces
     {
         Task<Account?> Login(string email, string password);
         Task<int> Register(AccountModel entity);
+        Task<Account?> GetAccountByCustomerId(int id);
     }
 }

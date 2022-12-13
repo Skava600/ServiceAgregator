@@ -164,5 +164,36 @@ namespace ServiceAggregator.Repos
         {
             throw new NotImplementedException();
         }
+
+        public async Task<Account?> GetAccountByCustomerId(int id)
+        {
+            OpenConnection();
+
+            Account? account = null;
+            using (NpgsqlCommand cmd = new NpgsqlCommand("public.get_account_by_customer", _sqlConnection))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("id", id);
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (reader.Read())
+                    {
+                        account = new Account
+                        {
+                         
+                            Firstname = reader.GetString(0),
+                            Lastname = reader.GetString(1),
+                            Patronym = reader.GetString(2),
+                            PhoneNumber = reader.GetString(3),
+                            Location = reader.GetString(4),
+                        };
+                    }
+                }
+            }
+
+            CloseConnection();
+
+            return account;
+        }
     }
 }

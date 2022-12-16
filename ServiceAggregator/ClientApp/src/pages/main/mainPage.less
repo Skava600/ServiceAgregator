@@ -1,0 +1,47 @@
+.main-page{
+    padding:80px, 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    .task-list{
+        width: 200px;
+        padding:0;
+        
+        list-style-type: none;
+
+        .task-link{
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-decoration: none;
+
+            .task-name{
+                font-size: 30px;
+                font-weight: 500;
+                color: #000000;
+            }
+        
+            .task-status{
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                box-shadow: 0 0 5px grey;
+        
+                &-red{
+                    background-color: #ff1100;
+                }
+                &-yellow{
+                    background-color: #f6f600;
+                }
+                &-green{
+                    background-color: #1dff59;
+                }
+            }
+        }   
+    }
+
+    
+}

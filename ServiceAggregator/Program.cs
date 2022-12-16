@@ -64,6 +64,7 @@ builder.Services.AddSwaggerGen(
         options.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
         options.AddSecurityDefinition("Bearer", openApiSecurityScheme);
         options.AddSecurityRequirement(openApiSecurityRequirement);
+        options.EnableAnnotations();
     });
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 builder.Services.AddOptions();

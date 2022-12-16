@@ -15,28 +15,26 @@ namespace ServiceAggregator.Repos
         {
         }
 
-        public async Task<int> CreateOrder(OrderModel order)
+        public async Task CreateOrder(Order order)
         {
 
-            int accountId = -1;
             OpenConnection();
             string sql = "SELECT public.createorder(" +
+                $"'{order.Id}'," +
                 $"'{order.Header}'," +
                 $"'{order.Text}'," +
                 $"'{order.Location}'," +
-                 $"'{order.ExpireDate.ToString("dd-MM-yyyy")}'," +
+                 $"'{order.ExpireDate}'," +
                  $"'{order.Price}'," +
                 $"'{order.CustomerId}'," +
-                $"'{order.WorkSectionId}');";
+                $"'{order.SectionId}');";
 
             using (NpgsqlCommand cmd = new NpgsqlCommand(sql, _sqlConnection))
             {
-                accountId = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+                 await cmd.ExecuteNonQueryAsync();
             }
 
             CloseConnection();
-
-            return accountId;
         }
 
         public override Task<int> Delete(Order entity)

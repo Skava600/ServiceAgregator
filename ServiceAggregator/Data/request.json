@@ -2,7 +2,7 @@
     "sections": [
         {
             "id": 1,
-            "category_id": 1,
+            "CategoryId": 1,
             "name": "Муж на час",
             "meta_title": "Муж на час",
             "slug": "homemaster",
@@ -12,7 +12,7 @@
         },
         {
             "id": 2,
-            "category_id": 1,
+            "CategoryId": 1,
             "name": "Сантехнические работы",
             "meta_title": "Сантехнические работы. Услуги сантехника",
             "slug": "plumber",
@@ -22,7 +22,7 @@
         },
         {
             "id": 3,
-            "category_id": 1,
+            "CategoryId": 1,
             "name": "Электромонтажные работы",
             "meta_title": "Электромонтажные работы. Услуги электрика. Вызвать на дом",
             "slug": "electrician",
@@ -32,7 +32,7 @@
         },
         {
             "id": 4,
-            "category_id": 1,
+            "CategoryId": 1,
             "name": "Гипсокартонные работы",
             "meta_title": "Гипсокартонные работы",
             "slug": "drywall",
@@ -42,7 +42,7 @@
         },
         {
             "id": 5,
-            "category_id": 1,
+            "CategoryId": 1,
             "name": "Напольные работы",
             "meta_title": "Укладка ламината, паркета, линолеума. Шлифовка, стяжка полов",
             "slug": "floorcovering",
@@ -52,7 +52,7 @@
         },
         {
             "id": 6,
-            "category_id": 1,
+            "CategoryId": 1,
             "name": "Штукатурные работы. Шпатлевка",
             "meta_title": "Штукатурные работы. Услуги штукатура",
             "slug": "plasterer",
@@ -62,7 +62,7 @@
         },
         {
             "id": 7,
-            "category_id": 1,
+            "CategoryId": 1,
             "name": "Малярные работы",
             "meta_title": "Малярные работы",
             "slug": "painter",
@@ -72,7 +72,7 @@
         },
         {
             "id": 8,
-            "category_id": 1,
+            "CategoryId": 1,
             "name": "Поклейка обоев",
             "meta_title": "Поклейка обоев",
             "slug": "paperwall",
@@ -82,7 +82,7 @@
         },
         {
             "id": 9,
-            "category_id": 1,
+            "CategoryId": 1,
             "name": "Укладка плитки",
             "meta_title": "Укладка плитки. Услуги плиточника",
             "slug": "tile",
@@ -92,7 +92,7 @@
         },
         {
             "id": 10,
-            "category_id": 1,
+            "CategoryId": 1,
             "name": "Канализация",
             "meta_title": "Монтаж, прокладка, откачка, прочистка канализации",
             "slug": "sewerage",
@@ -102,7 +102,7 @@
         },
         {
             "id": 11,
-            "category_id": 1,
+            "CategoryId": 1,
             "name": "Вентиляция. Обслуживание кондиционеров",
             "meta_title": "Монтаж и проектирование систем вентиляции. Обслуживание кондиционеров",
             "slug": "ventilation",
@@ -112,7 +112,7 @@
         },
         {
             "id": 12,
-            "category_id": 1,
+            "CategoryId": 1,
             "name": "Отопление, водоснабжение",
             "meta_title": "Монтаж систем отопления и водоснабжения",
             "slug": "heating",
@@ -122,7 +122,7 @@
         },
         {
             "id": 13,
-            "category_id": 1,
+            "CategoryId": 1,
             "name": "Кровельные работы",
             "meta_title": "Кровельные работы. Услуги кровельщика",
             "slug": "roofing",
@@ -132,7 +132,7 @@
         },
         {
             "id": 14,
-            "category_id": 1,
+            "CategoryId": 1,
             "name": "Фундамент",
             "meta_title": "Фундаментные работы. Фундамент под ключ",
             "slug": "foundationbuilding",
@@ -142,7 +142,7 @@
         },
         {
             "id": 15,
-            "category_id": 1,
+            "CategoryId": 1,
             "name": "Утепление и отделка фасадов",
             "meta_title": "Утепление, отделка фасадов и стен",
             "slug": "warmedfacade",
@@ -152,7 +152,7 @@
         },
         {
             "id": 16,
-            "category_id": 1,
+            "CategoryId": 1,
             "name": "Другие строительные и ремонтные работы",
             "meta_title": "Другие строительные и ремонтные работы",
             "slug": "otherconstruction",
@@ -162,7 +162,7 @@
         },
         {
             "id": 17,
-            "category_id": 2,
+            "CategoryId": 2,
             "name": "Грузоперевозки",
             "meta_title": "Грузоперевозки. Грузовое такси. Перевозка мебели. Переезд",
             "slug": "trucking",
@@ -172,7 +172,7 @@
         },
         {
             "id": 18,
-            "category_id": 2,
+            "CategoryId": 2,
             "name": "Пассажирские перевозки",
             "meta_title": "Пассажирские перевозки. Заказ микроавтобуса. Трансфер",
             "slug": "passenger",
@@ -182,7 +182,7 @@
         },
         {
             "id": 19,
-            "category_id": 2,
+            "CategoryId": 2,
             "name": "Вывоз мусора",
             "meta_title": "Вывоз строительного мусора",
             "slug": "trash",
@@ -192,7 +192,7 @@
         },
         {
             "id": 20,
-            "category_id": 2,
+            "CategoryId": 2,
             "name": "Услуги грузчиков",
             "meta_title": "Услуги грузчиков",
             "slug": "loader",
@@ -202,7 +202,7 @@
         },
         {
             "id": 21,
-            "category_id": 2,
+            "CategoryId": 2,
             "name": "Эвакуаторы",
             "meta_title": "Заказать эвакуатор",
             "slug": "evacuator",
@@ -212,7 +212,7 @@
         },
         {
             "id": 22,
-            "category_id": 2,
+            "CategoryId": 2,
             "name": "Курьерские услуги",
             "meta_title": "Курьерские услуги. Курьерская службы доставки",
             "slug": "courier",
@@ -222,7 +222,7 @@
         },
         {
             "id": 23,
-            "category_id": 2,
+            "CategoryId": 2,
             "name": "Другой груз",
             "meta_title": "Другой груз",
             "slug": "othertransportation",
@@ -232,7 +232,7 @@
         },
         {
             "id": 24,
-            "category_id": 3,
+            "CategoryId": 3,
             "name": "Изготовление корпусной мебели",
             "meta_title": "Изготовление корпусной мебели",
             "slug": "cabinetfurniture",
@@ -242,7 +242,7 @@
         },
         {
             "id": 25,
-            "category_id": 3,
+            "CategoryId": 3,
             "name": "Шкафы-купе и другая встраиваемая мебель",
             "meta_title": "Заказать шкафы-купе и встраиваемую мебель",
             "slug": "cupboard",
@@ -252,7 +252,7 @@
         },
         {
             "id": 26,
-            "category_id": 3,
+            "CategoryId": 3,
             "name": "Мебель для кухни",
             "meta_title": "Мебель для кухни на заказ",
             "slug": "kitchenfurniture",
@@ -262,7 +262,7 @@
         },
         {
             "id": 27,
-            "category_id": 3,
+            "CategoryId": 3,
             "name": "Установка дверей",
             "meta_title": "Установка дверей",
             "slug": "doorinstallation",
@@ -272,7 +272,7 @@
         },
         {
             "id": 28,
-            "category_id": 3,
+            "CategoryId": 3,
             "name": "Натяжные потолки",
             "meta_title": "Натяжные потолки заказать",
             "slug": "stretchceiling",
@@ -282,7 +282,7 @@
         },
         {
             "id": 29,
-            "category_id": 3,
+            "CategoryId": 3,
             "name": "Установка окон",
             "meta_title": "Установка окон",
             "slug": "pvcwindows",
@@ -292,7 +292,7 @@
         },
         {
             "id": 30,
-            "category_id": 3,
+            "CategoryId": 3,
             "name": "Сборка мебели",
             "meta_title": "Сборка мебели",
             "slug": "giuseppe",
@@ -302,7 +302,7 @@
         },
         {
             "id": 31,
-            "category_id": 3,
+            "CategoryId": 3,
             "name": "Ремонт и реставрация мебели",
             "meta_title": "Ремонт мебели. Перетяжка, реставрация",
             "slug": "furniturerepair",
@@ -312,7 +312,7 @@
         },
         {
             "id": 32,
-            "category_id": 3,
+            "CategoryId": 3,
             "name": "Ландшафтный дизайн",
             "meta_title": "Ландшафтный дизайн. Услуги ландшафтного дизайнера",
             "slug": "landscaping",
@@ -322,7 +322,7 @@
         },
         {
             "id": 33,
-            "category_id": 3,
+            "CategoryId": 3,
             "name": "Другие услуги по дому",
             "meta_title": "Другие услуги по дому",
             "slug": "houseother",
@@ -332,7 +332,7 @@
         },
         {
             "id": 34,
-            "category_id": 4,
+            "CategoryId": 4,
             "name": "Ремонт мобильных телефонов",
             "meta_title": "Ремонт мобильных телефонов",
             "slug": "phonerepair",
@@ -342,7 +342,7 @@
         },
         {
             "id": 35,
-            "category_id": 4,
+            "CategoryId": 4,
             "name": "Ремонт бытовой техники",
             "meta_title": "Ремонт холодильников, стиральных машин. Ремонт бытовой техники",
             "slug": "appliancerepair",
@@ -352,7 +352,7 @@
         },
         {
             "id": 36,
-            "category_id": 4,
+            "CategoryId": 4,
             "name": "Ремонт компьютерной техники",
             "meta_title": "Ремонт ноутбуков, принтеров. Ремонт компьютерной техники",
             "slug": "computerrepair",
@@ -362,7 +362,7 @@
         },
         {
             "id": 37,
-            "category_id": 4,
+            "CategoryId": 4,
             "name": "Ремонт аудиотехники",
             "meta_title": "Ремонт аудиотехники",
             "slug": "audiorepair",
@@ -372,7 +372,7 @@
         },
         {
             "id": 38,
-            "category_id": 4,
+            "CategoryId": 4,
             "name": "Ремонт видеотехники",
             "meta_title": "Ремонт видеотехники",
             "slug": "videorepair",
@@ -382,7 +382,7 @@
         },
         {
             "id": 39,
-            "category_id": 4,
+            "CategoryId": 4,
             "name": "Ремонт фототехники",
             "meta_title": "Ремонт фототехники",
             "slug": "photorepair",
@@ -392,7 +392,7 @@
         },
         {
             "id": 40,
-            "category_id": 4,
+            "CategoryId": 4,
             "name": "Ремонт другой техники",
             "meta_title": "Ремонт другой техники",
             "slug": "otherrepair",
@@ -402,7 +402,7 @@
         },
         {
             "id": 41,
-            "category_id": 5,
+            "CategoryId": 5,
             "name": "Генеральная уборка",
             "meta_title": "Клининговые услуги",
             "slug": "clearout",
@@ -412,7 +412,7 @@
         },
         {
             "id": 42,
-            "category_id": 5,
+            "CategoryId": 5,
             "name": "Поддерживающая уборка",
             "meta_title": "Уборка квартир",
             "slug": "easycleaning",
@@ -422,7 +422,7 @@
         },
         {
             "id": 43,
-            "category_id": 5,
+            "CategoryId": 5,
             "name": "Уборка после ремонта",
             "meta_title": "Уборка после ремонта",
             "slug": "complexcleaning",
@@ -432,7 +432,7 @@
         },
         {
             "id": 44,
-            "category_id": 5,
+            "CategoryId": 5,
             "name": "Мойка окон",
             "meta_title": "Мойка окон",
             "slug": "windowswashing",
@@ -442,7 +442,7 @@
         },
         {
             "id": 45,
-            "category_id": 5,
+            "CategoryId": 5,
             "name": "Уборка офисов",
             "meta_title": "Уборка офисов",
             "slug": "cleanoffice",
@@ -452,7 +452,7 @@
         },
         {
             "id": 46,
-            "category_id": 5,
+            "CategoryId": 5,
             "name": "Другие услуги по уборке",
             "meta_title": "Другие услуги по уборке",
             "slug": "cleaningother",
@@ -462,7 +462,7 @@
         },
         {
             "id": 47,
-            "category_id": 6,
+            "CategoryId": 6,
             "name": "Разработка и поддержка сайтов",
             "meta_title": "Создание сайтов",
             "slug": "developer",
@@ -472,7 +472,7 @@
         },
         {
             "id": 48,
-            "category_id": 6,
+            "CategoryId": 6,
             "name": "Продвижение сайтов",
             "meta_title": "Продвижение сайтов. Заказать продвижение сайта",
             "slug": "seo",
@@ -482,7 +482,7 @@
         },
         {
             "id": 49,
-            "category_id": 7,
+            "CategoryId": 7,
             "name": "Маникюр, педикюр",
             "meta_title": "Наращивание ногтей, маникюр, педикюр",
             "slug": "manicure",
@@ -492,7 +492,7 @@
         },
         {
             "id": 50,
-            "category_id": 7,
+            "CategoryId": 7,
             "name": "Услуги визажиста",
             "meta_title": "Услуги визажиста. Макияж, татуаж",
             "slug": "makeup",
@@ -502,7 +502,7 @@
         },
         {
             "id": 51,
-            "category_id": 7,
+            "CategoryId": 7,
             "name": "Другие услуги в разделе «Красота и стиль»",
             "meta_title": "Другие услуги в разделе «Красота и стиль»",
             "slug": "fashionother",
@@ -512,7 +512,7 @@
         },
         {
             "id": 52,
-            "category_id": 8,
+            "CategoryId": 8,
             "name": "Ремонт и обслуживание авто",
             "meta_title": "Ремонт авто. Автоэлектрик. Кузовные работы",
             "slug": "service",
@@ -522,7 +522,7 @@
         },
         {
             "id": 53,
-            "category_id": 8,
+            "CategoryId": 8,
             "name": "Автомойка",
             "meta_title": "Автомойки",
             "slug": "carwash",
@@ -532,7 +532,7 @@
         },
         {
             "id": 54,
-            "category_id": 8,
+            "CategoryId": 8,
             "name": "Шиномонтаж",
             "meta_title": "Шиномонтаж",
             "slug": "tirefitting",
@@ -542,7 +542,7 @@
         },
         {
             "id": 55,
-            "category_id": 8,
+            "CategoryId": 8,
             "name": "Химчистка",
             "meta_title": "Химчистка автомобилей",
             "slug": "drycleaner",
@@ -552,7 +552,7 @@
         },
         {
             "id": 56,
-            "category_id": 8,
+            "CategoryId": 8,
             "name": "Другие автоуслуги",
             "meta_title": "Другие автоуслуги",
             "slug": "carother",
@@ -562,7 +562,7 @@
         },
         {
             "id": 57,
-            "category_id": 9,
+            "CategoryId": 9,
             "name": "Установка и настройка ПО",
             "meta_title": "Компьютерная помощь. Установка и настройка ПО",
             "slug": "software",
@@ -572,7 +572,7 @@
         },
         {
             "id": 58,
-            "category_id": 9,
+            "CategoryId": 9,
             "name": "Настройка Интернета и Wi-Fi",
             "meta_title": "Настройка интернета и Wi-Fi",
             "slug": "connectinternet",
@@ -582,7 +582,7 @@
         },
         {
             "id": 59,
-            "category_id": 9,
+            "CategoryId": 9,
             "name": "Заправка картриджей",
             "meta_title": "Заправка картриджей",
             "slug": "cartridges",
@@ -592,7 +592,7 @@
         },
         {
             "id": 60,
-            "category_id": 9,
+            "CategoryId": 9,
             "name": "Удаление вирусов",
             "meta_title": "Удаление компьютерных вирусов",
             "slug": "antivirus",
@@ -602,7 +602,7 @@
         },
         {
             "id": 61,
-            "category_id": 9,
+            "CategoryId": 9,
             "name": "Другая помощь с ПК",
             "meta_title": "Другая помощь с ПК",
             "slug": "computerhelpother",
@@ -612,7 +612,7 @@
         },
         {
             "id": 62,
-            "category_id": 10,
+            "CategoryId": 10,
             "name": "Репетитор по английскому языку",
             "meta_title": "Репетитор по английскому языку",
             "slug": "englishtutors",
@@ -622,7 +622,7 @@
         },
         {
             "id": 63,
-            "category_id": 10,
+            "CategoryId": 10,
             "name": "Репетитор по русскому языку",
             "meta_title": "Репетитор по русскому языку",
             "slug": "russiantutors",
@@ -632,7 +632,7 @@
         },
         {
             "id": 64,
-            "category_id": 10,
+            "CategoryId": 10,
             "name": "Репетитор по математике",
             "meta_title": "Репетитор по математике",
             "slug": "mathtutors",
@@ -642,7 +642,7 @@
         },
         {
             "id": 65,
-            "category_id": 10,
+            "CategoryId": 10,
             "name": "Репетитор по физике",
             "meta_title": "Репетитор по физике",
             "slug": "physicstutors",
@@ -652,7 +652,7 @@
         },
         {
             "id": 66,
-            "category_id": 10,
+            "CategoryId": 10,
             "name": "Другие репетиторы",
             "meta_title": "Другие репетиторы",
             "slug": "tutorsother",
@@ -662,7 +662,7 @@
         },
         {
             "id": 67,
-            "category_id": 11,
+            "CategoryId": 11,
             "name": "Рефераты",
             "meta_title": "Заказать реферат",
             "slug": "studreview",
@@ -672,7 +672,7 @@
         },
         {
             "id": 70,
-            "category_id": 11,
+            "CategoryId": 11,
             "name": "Конспекты",
             "meta_title": "Заказать конспект",
             "slug": "synopsis",
@@ -682,7 +682,7 @@
         },
         {
             "id": 71,
-            "category_id": 11,
+            "CategoryId": 11,
             "name": "Инструктор по вождению",
             "meta_title": "Инструкторы по вождению",
             "slug": "drivinglessons",
@@ -692,7 +692,7 @@
         },
         {
             "id": 72,
-            "category_id": 11,
+            "CategoryId": 11,
             "name": "Другие образовательные услуги",
             "meta_title": "Другие образовательные услуги",
             "slug": "educationother",
@@ -702,7 +702,7 @@
         },
         {
             "id": 73,
-            "category_id": 12,
+            "CategoryId": 12,
             "name": "Фотосъемка",
             "meta_title": "Фотографы. Фотосессии. Свадебные, семейные фотографы",
             "slug": "photographer",
@@ -712,7 +712,7 @@
         },
         {
             "id": 74,
-            "category_id": 12,
+            "CategoryId": 12,
             "name": "Видеосъемка",
             "meta_title": "Видеооператоры. Свадебная видеосъемка",
             "slug": "videographer",
@@ -722,7 +722,7 @@
         },
         {
             "id": 75,
-            "category_id": 12,
+            "CategoryId": 12,
             "name": "Другие фото- и видеоуслуги",
             "meta_title": "Другие фото- и видеоуслуги",
             "slug": "photovideoother",
@@ -732,7 +732,7 @@
         },
         {
             "id": 76,
-            "category_id": 13,
+            "CategoryId": 13,
             "name": "Логотипы",
             "meta_title": "Заказать логотип. Разработка логотипов",
             "slug": "designlogo",
@@ -742,7 +742,7 @@
         },
         {
             "id": 77,
-            "category_id": 13,
+            "CategoryId": 13,
             "name": "Листовки, буклеты и др.",
             "meta_title": "Печать флаеров, листовок, календарей",
             "slug": "promoprod",
@@ -752,7 +752,7 @@
         },
         {
             "id": 78,
-            "category_id": 13,
+            "CategoryId": 13,
             "name": "Визитки",
             "meta_title": "Визитки. Печать, изготовление",
             "slug": "businesscards",
@@ -762,7 +762,7 @@
         },
         {
             "id": 79,
-            "category_id": 13,
+            "CategoryId": 13,
             "name": "Баннеры",
             "meta_title": "Заказать баннер",
             "slug": "banner",
@@ -772,7 +772,7 @@
         },
         {
             "id": 80,
-            "category_id": 13,
+            "CategoryId": 13,
             "name": "Наружная реклама",
             "meta_title": "Изготовление и размещение наружной рекламы",
             "slug": "adv",
@@ -782,7 +782,7 @@
         },
         {
             "id": 81,
-            "category_id": 13,
+            "CategoryId": 13,
             "name": "Веб-дизайн",
             "meta_title": "Услуги веб-дизайнера",
             "slug": "webdesign",
@@ -792,7 +792,7 @@
         },
         {
             "id": 82,
-            "category_id": 13,
+            "CategoryId": 13,
             "name": "Другие услуги дизайнера",
             "meta_title": "Другие услуги дизайнера",
             "slug": "designother",
@@ -802,7 +802,7 @@
         },
         {
             "id": 83,
-            "category_id": 14,
+            "CategoryId": 14,
             "name": "Переводы",
             "meta_title": "Заказать перевод текстов, документов",
             "slug": "translator",
@@ -812,7 +812,7 @@
         },
         {
             "id": 84,
-            "category_id": 14,
+            "CategoryId": 14,
             "name": "Копирайтинг",
             "meta_title": "Услуги копирайтера",
             "slug": "copywriter",
@@ -822,7 +822,7 @@
         },
         {
             "id": 85,
-            "category_id": 14,
+            "CategoryId": 14,
             "name": "Поиск и сбор информации",
             "meta_title": "Поиск и сбор информации",
             "slug": "searchhelp",
@@ -832,7 +832,7 @@
         },
         {
             "id": 86,
-            "category_id": 14,
+            "CategoryId": 14,
             "name": "Другие онлайн-услуги",
             "meta_title": "Другие онлайн-услуги",
             "slug": "internetother",
@@ -842,7 +842,7 @@
         },
         {
             "id": 87,
-            "category_id": 15,
+            "CategoryId": 15,
             "name": "Ведущий торжества. Шоу-программы",
             "meta_title": "Ведущий, тамада на свадьбу. Артисты, шоу-программы",
             "slug": "partymaster",
@@ -852,7 +852,7 @@
         },
         {
             "id": 88,
-            "category_id": 15,
+            "CategoryId": 15,
             "name": "Кейтеринг",
             "meta_title": "Кейтеринг",
             "slug": "catering",
@@ -862,7 +862,7 @@
         },
         {
             "id": 89,
-            "category_id": 15,
+            "CategoryId": 15,
             "name": "Аренда автомобилей",
             "meta_title": "Прокат, аренда автомобилей",
             "slug": "rentcar",
@@ -872,7 +872,7 @@
         },
         {
             "id": 90,
-            "category_id": 16,
+            "CategoryId": 16,
             "name": "Аудит",
             "meta_title": "Бухгалтерский аудит",
             "slug": "accountingaudit",
@@ -882,7 +882,7 @@
         },
         {
             "id": 91,
-            "category_id": 16,
+            "CategoryId": 16,
             "name": "Бухгалтерские услуги",
             "meta_title": "Бухгалтерские услуги",
             "slug": "accounting",
@@ -892,7 +892,7 @@
         },
         {
             "id": 92,
-            "category_id": 17,
+            "CategoryId": 17,
             "name": "Юристы по вопросам ведения бизнеса",
             "meta_title": "Юридические услуги. Помощь, консультация",
             "slug": "jurist",
@@ -902,7 +902,7 @@
         },
         {
             "id": 93,
-            "category_id": 17,
+            "CategoryId": 17,
             "name": "Юристы по вопросам граждан (Адвокаты)",
             "meta_title": "Адвокаты по гражданским и уголовным делам",
             "slug": "advocate",
@@ -912,7 +912,7 @@
         },
         {
             "id": 94,
-            "category_id": 17,
+            "CategoryId": 17,
             "name": "Регистрация, ликвидация, реорганизация предприятия",
             "meta_title": "Регистрация, ликвидация, реорганизация предприятия",
             "slug": "entrepreneur",
@@ -922,7 +922,7 @@
         },
         {
             "id": 95,
-            "category_id": 17,
+            "CategoryId": 17,
             "name": "Другие юридические услуги",
             "meta_title": "Другие юридические услуги",
             "slug": "legalother",
@@ -932,7 +932,7 @@
         },
         {
             "id": 96,
-            "category_id": 18,
+            "CategoryId": 18,
             "name": "Изготовление памятников",
             "meta_title": "Изготовление памятников",
             "slug": "tombstone",
@@ -942,7 +942,7 @@
         },
         {
             "id": 97,
-            "category_id": 18,
+            "CategoryId": 18,
             "name": "Другие ритуальные услуги",
             "meta_title": "Ритуальные услуги",
             "slug": "funeral",
@@ -952,7 +952,7 @@
         },
         {
             "id": 98,
-            "category_id": 19,
+            "CategoryId": 19,
             "name": "Ремонт велосипедов",
             "meta_title": "Ремонт велосипедов",
             "slug": "bike-repair",
@@ -962,7 +962,7 @@
         },
         {
             "id": 99,
-            "category_id": 20,
+            "CategoryId": 20,
             "name": "Прокат туристического снаряжения",
             "meta_title": "Прокат велосипедов, палаток. Прокат туристического снаряжения",
             "slug": "tourist-equipment",
@@ -972,7 +972,7 @@
         },
         {
             "id": 100,
-            "category_id": 1,
+            "CategoryId": 1,
             "name": "Заборы, ограждения, ворота, калитки",
             "meta_title": "Заборы под ключ. Ворота, калитки",
             "slug": "palisade",
@@ -982,7 +982,7 @@
         },
         {
             "id": 101,
-            "category_id": 1,
+            "CategoryId": 1,
             "name": "Буровые работы",
             "meta_title": "Бурение скважин на воду",
             "slug": "drilling-works",
@@ -992,7 +992,7 @@
         },
         {
             "id": 102,
-            "category_id": 1,
+            "CategoryId": 1,
             "name": "Сварочные работы",
             "meta_title": "Сварочные работы. Услуги сварщика",
             "slug": "welding-works",
@@ -1002,7 +1002,7 @@
         },
         {
             "id": 103,
-            "category_id": 1,
+            "CategoryId": 1,
             "name": "Комплексный ремонт",
             "meta_title": "Ремонт квартир под ключ",
             "slug": "complete-renovation",
@@ -1012,7 +1012,7 @@
         },
         {
             "id": 104,
-            "category_id": 3,
+            "CategoryId": 3,
             "name": "Изготовление мягкой мебели",
             "meta_title": "Изготовление мягкой мебели. Кровати, диваны на заказ",
             "slug": "soft-furniture",
@@ -1022,7 +1022,7 @@
         },
         {
             "id": 105,
-            "category_id": 3,
+            "CategoryId": 3,
             "name": "Изготовление и монтаж штор, жалюзи",
             "meta_title": "Пошив штор. Заказать жалюзи",
             "slug": "curtains-jalousie",
@@ -1032,7 +1032,7 @@
         },
         {
             "id": 106,
-            "category_id": 4,
+            "CategoryId": 4,
             "name": "Ремонт электробензоинструмента",
             "meta_title": "Ремонт электробензоинструмента",
             "slug": "construction-tool-repair",
@@ -1042,7 +1042,7 @@
         },
         {
             "id": 107,
-            "category_id": 5,
+            "CategoryId": 5,
             "name": "Химчистка мебели и ковров",
             "meta_title": "Химчистка мебели и ковров",
             "slug": "furniture-cleaning",
@@ -1052,7 +1052,7 @@
         },
         {
             "id": 108,
-            "category_id": 7,
+            "CategoryId": 7,
             "name": "Услуги парикмахера",
             "meta_title": "Услуги парикмахера. Вызвать на дом",
             "slug": "barber",
@@ -1062,7 +1062,7 @@
         },
         {
             "id": 109,
-            "category_id": 7,
+            "CategoryId": 7,
             "name": "Пошив одежды",
             "meta_title": "Пошив одежды на заказ",
             "slug": "tailoring",
@@ -1072,7 +1072,7 @@
         },
         {
             "id": 110,
-            "category_id": 7,
+            "CategoryId": 7,
             "name": "Ремонт одежды",
             "meta_title": "Ремонт одежды",
             "slug": "clothing-repair",
@@ -1082,7 +1082,7 @@
         },
         {
             "id": 111,
-            "category_id": 21,
+            "CategoryId": 21,
             "name": "Стрижка домашних животных",
             "meta_title": "Стрижка собак, кошек на дому",
             "slug": "animal-barbershop",
@@ -1092,7 +1092,7 @@
         },
         {
             "id": 112,
-            "category_id": 8,
+            "CategoryId": 8,
             "name": "Ремонт и обслуживание мототехники",
             "meta_title": "Ремонт мотоциклов, квадроциклов",
             "slug": "motorbike-repair",
@@ -1102,7 +1102,7 @@
         },
         {
             "id": 113,
-            "category_id": 8,
+            "CategoryId": 8,
             "name": "Перетяжка и ремонт салона",
             "meta_title": "Перетяжка и ремонт салона автомобиля",
             "slug": "car-interior",
@@ -1112,7 +1112,7 @@
         },
         {
             "id": 114,
-            "category_id": 10,
+            "CategoryId": 10,
             "name": "Репетитор по химии",
             "meta_title": "Репетитор по химии",
             "slug": "chemistry-tutors",
@@ -1122,7 +1122,7 @@
         },
         {
             "id": 115,
-            "category_id": 11,
+            "CategoryId": 11,
             "name": "Курсы, тренинги",
             "meta_title": "Курсы, тренинги. Курсы английского языка, массажа, парикмахера",
             "slug": "trainings",
@@ -1132,7 +1132,7 @@
         },
         {
             "id": 116,
-            "category_id": 13,
+            "CategoryId": 13,
             "name": "Полиграфические услуги",
             "meta_title": "Полиграфические услуги. Печатные центры",
             "slug": "polygraphy",
@@ -1142,7 +1142,7 @@
         },
         {
             "id": 117,
-            "category_id": 13,
+            "CategoryId": 13,
             "name": "Дизайн интерьера",
             "meta_title": "Дизайн интерьера",
             "slug": "interior-design",
@@ -1152,7 +1152,7 @@
         },
         {
             "id": 118,
-            "category_id": 15,
+            "CategoryId": 15,
             "name": "Развлечения",
             "meta_title": "Развлечения. Квесты, лазертаг, страйкбол",
             "slug": "entertainment",
@@ -1162,7 +1162,7 @@
         },
         {
             "id": 119,
-            "category_id": 15,
+            "CategoryId": 15,
             "name": "Торты на заказ",
             "meta_title": "Торты на заказ",
             "slug": "bakery",
@@ -1172,7 +1172,7 @@
         },
         {
             "id": 120,
-            "category_id": 19,
+            "CategoryId": 19,
             "name": "Услуги персонального тренера",
             "meta_title": "Персональный тренер. Фитнес-инструктор",
             "slug": "coach",
@@ -1182,7 +1182,7 @@
         },
         {
             "id": 121,
-            "category_id": 20,
+            "CategoryId": 20,
             "name": "Подготовка документов для визы",
             "meta_title": "Подготовка документов для визы. Визовые агентства",
             "slug": "visa",
@@ -1192,7 +1192,7 @@
         },
         {
             "id": 122,
-            "category_id": 1,
+            "CategoryId": 1,
             "name": "Услуги по металлообработке. Слесари",
             "meta_title": "Услуги по металлообработке и изготовлению деталей",
             "slug": "metalworking",
@@ -1202,7 +1202,7 @@
         },
         {
             "id": 123,
-            "category_id": 1,
+            "CategoryId": 1,
             "name": "Услуги плотника",
             "meta_title": "Услуги плотника",
             "slug": "carpenter",
@@ -1212,7 +1212,7 @@
         },
         {
             "id": 124,
-            "category_id": 3,
+            "CategoryId": 3,
             "name": "Покос травы, стрижка газона",
             "meta_title": "Покос травы, стрижка газона",
             "slug": "grass-mower",
@@ -1222,7 +1222,7 @@
         },
         {
             "id": 125,
-            "category_id": 13,
+            "CategoryId": 13,
             "name": "3D-печать",
             "meta_title": "3D-печать",
             "slug": "3d-printing",
@@ -1232,7 +1232,7 @@
         },
         {
             "id": 126,
-            "category_id": 21,
+            "CategoryId": 21,
             "name": "Гостиница для животных",
             "meta_title": "Гостиница для животных",
             "slug": "pet-hotel",
@@ -1242,7 +1242,7 @@
         },
         {
             "id": 127,
-            "category_id": 21,
+            "CategoryId": 21,
             "name": "Дрессировка",
             "meta_title": "Услуги. Дрессировка собак",
             "slug": "animal-trainer",
@@ -1252,7 +1252,7 @@
         },
         {
             "id": 128,
-            "category_id": 1,
+            "CategoryId": 1,
             "name": "Архитектура и проектирование",
             "meta_title": "Услуги. Архитектура и проектирование",
             "slug": "architecture-plan",
@@ -1262,7 +1262,7 @@
         },
         {
             "id": 129,
-            "category_id": 1,
+            "CategoryId": 1,
             "name": "Демонтажные работы",
             "meta_title": "Демонтажные работы",
             "slug": "dismantling",
@@ -1272,7 +1272,7 @@
         },
         {
             "id": 130,
-            "category_id": 8,
+            "CategoryId": 8,
             "name": "Ремонт автоэлектрики",
             "meta_title": "Автоэлектрик. Ремонт автоэлектрики",
             "slug": "automotive-electrician",
@@ -1282,7 +1282,7 @@
         },
         {
             "id": 131,
-            "category_id": 8,
+            "CategoryId": 8,
             "name": "Кузовные работы и покраска",
             "meta_title": "Покраска авто, кузовной ремонт",
             "slug": "car-body-shop",
@@ -1292,7 +1292,7 @@
         },
         {
             "id": 132,
-            "category_id": 8,
+            "CategoryId": 8,
             "name": "Тюнинг и стайлинг",
             "meta_title": "Тюнинг, чип-тюнинг, стайлинг",
             "slug": "car-style-performance",
@@ -1302,7 +1302,7 @@
         },
         {
             "id": 133,
-            "category_id": 15,
+            "CategoryId": 15,
             "name": "Оформление залов",
             "meta_title": "Оформление залов",
             "slug": "event-masters-decor",
@@ -1312,7 +1312,7 @@
         },
         {
             "id": 134,
-            "category_id": 3,
+            "CategoryId": 3,
             "name": "Уборка снега",
             "meta_title": "Уборка снега",
             "slug": "snow-removal",
@@ -1322,7 +1322,7 @@
         },
         {
             "id": 136,
-            "category_id": 7,
+            "CategoryId": 7,
             "name": "Депиляция",
             "meta_title": "Депиляция (лазерная, восковая)",
             "slug": "depilation-master",
@@ -1332,7 +1332,7 @@
         },
         {
             "id": 137,
-            "category_id": 1,
+            "CategoryId": 1,
             "name": "Укладка тротуарной плитки, брусчатки",
             "meta_title": "Заказать укладку тротуарной плитки",
             "slug": "master-paving",
@@ -1342,7 +1342,7 @@
         },
         {
             "id": 138,
-            "category_id": 1,
+            "CategoryId": 1,
             "name": "Возведение стен и перегородок",
             "meta_title": "Заказать возведение стен из блоков, перегородок из гипсокартона",
             "slug": "wall-builder",
@@ -1352,7 +1352,7 @@
         },
         {
             "id": 139,
-            "category_id": 12,
+            "CategoryId": 12,
             "name": "Аудиоуслуги",
             "meta_title": "Аудиоуслуги",
             "slug": "audio-production",
@@ -1362,7 +1362,7 @@
         },
         {
             "id": 140,
-            "category_id": 3,
+            "CategoryId": 3,
             "name": "Земляные работы, садоводство, работы на участке",
             "meta_title": "Выравнивание земельных участков, земляные работы на участке",
             "slug": "earthwork",
@@ -1372,7 +1372,7 @@
         },
         {
             "id": 141,
-            "category_id": 1,
+            "CategoryId": 1,
             "name": "Декоративное оформление стен, декоративная штукатурка",
             "meta_title": "Заказать отделку стен декоративной штукатуркой",
             "slug": "master-art-plaster",
@@ -1382,7 +1382,7 @@
         },
         {
             "id": 142,
-            "category_id": 21,
+            "CategoryId": 21,
             "name": "Выгул животных",
             "meta_title": "Заказать выгул собак (догвокер, догситтер)",
             "slug": "dogwalker",
@@ -1392,7 +1392,7 @@
         },
         {
             "id": 143,
-            "category_id": 3,
+            "CategoryId": 3,
             "name": "Работа со стеклом, зеркалами",
             "meta_title": "Резка стекла, закаленное стекло на заказ",
             "slug": "glass-work",
@@ -1402,7 +1402,7 @@
         },
         {
             "id": 144,
-            "category_id": 1,
+            "CategoryId": 1,
             "name": "Услуги столяров",
             "meta_title": "Услуги столяров",
             "slug": "woodworker",
@@ -1412,7 +1412,7 @@
         },
         {
             "id": 145,
-            "category_id": 7,
+            "CategoryId": 7,
             "name": "Уход за бровями и ресницами",
             "meta_title": "Наращивание ресниц, коррекция бровей (бровисты, лешмейкеры)",
             "slug": "brow-lash-master",
@@ -1422,7 +1422,7 @@
         },
         {
             "id": 146,
-            "category_id": 6,
+            "CategoryId": 6,
             "name": "Разработка iOS-приложений",
             "meta_title": "Заказать разработку мобильных приложений для iOS",
             "slug": "ios-app-development",
@@ -1432,7 +1432,7 @@
         },
         {
             "id": 147,
-            "category_id": 6,
+            "CategoryId": 6,
             "name": "Разработка Android-приложений",
             "meta_title": "Заказать разработку мобильных приложений для Android",
             "slug": "android-app-development",
@@ -1442,7 +1442,7 @@
         },
         {
             "id": 148,
-            "category_id": 6,
+            "CategoryId": 6,
             "name": "Продвижение в социальных сетях",
             "meta_title": "Заказать продвижение в социальных сетях (SMM)",
             "slug": "smm",
@@ -1452,7 +1452,7 @@
         },
         {
             "id": 149,
-            "category_id": 8,
+            "CategoryId": 8,
             "name": "Автосигнализация",
             "meta_title": "Установка сигнализации на авто",
             "slug": "car-alarm-installation",
@@ -1462,7 +1462,7 @@
         },
         {
             "id": 150,
-            "category_id": 1,
+            "CategoryId": 1,
             "name": "Услуги печников и каменщиков",
             "meta_title": "Услуги печника",
             "slug": "bricklayer",
@@ -1472,7 +1472,7 @@
         },
         {
             "id": 151,
-            "category_id": 15,
+            "CategoryId": 15,
             "name": "Приготовление еды на дому, домашний повар",
             "meta_title": "Услуги повара",
             "slug": "cooking-master",
@@ -1482,7 +1482,7 @@
         },
         {
             "id": 152,
-            "category_id": 7,
+            "CategoryId": 7,
             "name": "Тату",
             "meta_title": "Тату-мастер, сделать тату",
             "slug": "tattoo-master",
@@ -1492,7 +1492,7 @@
         },
         {
             "id": 153,
-            "category_id": 3,
+            "CategoryId": 3,
             "name": "Ковка",
             "meta_title": "Ковка на заказ, художественна ковка, кованые заборы",
             "slug": "metal-art",
@@ -1502,7 +1502,7 @@
         },
         {
             "id": 154,
-            "category_id": 9,
+            "CategoryId": 9,
             "name": "Сборка компьютера",
             "meta_title": "Сборка компьютера (ПК) на заказ специалистом",
             "slug": "hardware-installation",
@@ -1512,7 +1512,7 @@
         },
         {
             "id": 155,
-            "category_id": 1,
+            "CategoryId": 1,
             "name": "Промышленный альпинизм",
             "meta_title": "Услуги промышленных альпинистов",
             "slug": "industrial-climber",
@@ -1522,7 +1522,7 @@
         },
         {
             "id": 156,
-            "category_id": 1,
+            "CategoryId": 1,
             "name": "Строительство бани",
             "meta_title": "Строительство бани под ключ",
             "slug": "steam-sauna-construction",
@@ -1532,7 +1532,7 @@
         },
         {
             "id": 158,
-            "category_id": 1,
+            "CategoryId": 1,
             "name": "Строительство домов и иных сооружений",
             "meta_title": "Cтроительство домов под ключ",
             "slug": "buildinghouses",
@@ -1542,7 +1542,7 @@
         },
         {
             "id": 159,
-            "category_id": 1,
+            "CategoryId": 1,
             "name": "Изготовление и отделка лестниц",
             "meta_title": "Изготовление лестниц и ограждений на заказ",
             "slug": "buildingstairs",
@@ -1552,7 +1552,7 @@
         },
         {
             "id": 160,
-            "category_id": 1,
+            "CategoryId": 1,
             "name": "Внутренняя отделка и утепление балконов",
             "meta_title": "Отделка, обшивка, утепление балконов",
             "slug": "workbalcony",
@@ -1562,7 +1562,7 @@
         },
         {
             "id": 161,
-            "category_id": 1,
+            "CategoryId": 1,
             "name": "Реставрация ванн",
             "meta_title": "Реставрация ванн",
             "slug": "bathrestoration",
@@ -1572,7 +1572,7 @@
         },
         {
             "id": 162,
-            "category_id": 3,
+            "CategoryId": 3,
             "name": "Изготовление и ремонт дверей",
             "meta_title": "Заказать двери (межкомнатные, входные)",
             "slug": "doormaster",
@@ -1582,7 +1582,7 @@
         },
         {
             "id": 163,
-            "category_id": 3,
+            "CategoryId": 3,
             "name": "Изготовление окон",
             "meta_title": "Изготовление окон ПВХ на заказ",
             "slug": "windowmaster",
@@ -1592,7 +1592,7 @@
         },
         {
             "id": 164,
-            "category_id": 7,
+            "CategoryId": 7,
             "name": "Пошив изделий на заказ",
             "meta_title": "Пошив одежды на заказ (платья, костюмы, чехлы)",
             "slug": "seamstress",
@@ -1602,7 +1602,7 @@
         },
         {
             "id": 165,
-            "category_id": 4,
+            "CategoryId": 4,
             "name": "Ремонт часов",
             "meta_title": "Ремонт часов, умных смарт часов",
             "slug": "watchrepair",
@@ -1612,7 +1612,7 @@
         },
         {
             "id": 166,
-            "category_id": 10,
+            "CategoryId": 10,
             "name": "Дефектологи, логопеды",
             "meta_title": "Дефектологи для детей, логопеды",
             "slug": "speechtherapist",
@@ -1622,7 +1622,7 @@
         },
         {
             "id": 167,
-            "category_id": 19,
+            "CategoryId": 19,
             "name": "Ремонт и обслуживание спортивного инвентаря",
             "meta_title": "Ремонт и обслуживание спортивного инвентаря",
             "slug": "sportsstuffrepair",
@@ -1632,7 +1632,7 @@
         },
         {
             "id": 168,
-            "category_id": 19,
+            "CategoryId": 19,
             "name": "Ремонт электросамокатов",
             "meta_title": "Ремонт электросамокатов",
             "slug": "repairelectricscooters",
@@ -1642,7 +1642,7 @@
         },
         {
             "id": 169,
-            "category_id": 8,
+            "CategoryId": 8,
             "name": "Ремонт лобовых стекол",
             "meta_title": "Ремонт сколов лобовых стекол",
             "slug": "windshieldrepair",
@@ -1652,7 +1652,7 @@
         },
         {
             "id": 170,
-            "category_id": 11,
+            "CategoryId": 11,
             "name": "Уход за детьми и взрослыми",
             "meta_title": "Няни, сиделки",
             "slug": "nanny",

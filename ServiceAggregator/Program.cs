@@ -31,7 +31,6 @@ builder.Services.AddRepositories();
 builder.Services.AddDataServices();
 
 builder.Services.AddScoped<ApplicationDbContext>(conn => new ApplicationDbContext(builder.Configuration.GetConnectionString("DataAccessPostgreSqlProviderNeon")));
-// ConfigureServices method
 
 var openApiSecurityScheme = new OpenApiSecurityScheme
 {
@@ -57,6 +56,16 @@ var openApiSecurityRequirement = new OpenApiSecurityRequirement
         Array.Empty<string>()
     },
 };
+
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.WithOrigins("https://localhost:44492");
+                      });
+});
 
 builder.Services.AddSwaggerGen(
     options =>
@@ -100,6 +109,8 @@ app.UseRouting();
 app.UseAuthentication();    // аутентификация
 app.UseAuthorization();     // авторизация
 
+
+app.UseCors(MyAllowSpecificOrigins);
 using (var serviceScope = app.Services.CreateScope())
 {
     var services = serviceScope.ServiceProvider;
@@ -112,7 +123,7 @@ using (var serviceScope = app.Services.CreateScope())
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller}/{action=Index}/{id?}");
+    pattern: "{controller}/{action=Index}");
 
 app.MapFallbackToFile("index.html"); ;
 

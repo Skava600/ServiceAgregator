@@ -14,6 +14,8 @@ namespace ServiceAggregator.Services
             services.AddScoped<ISectionRepo, SectionRepo>();
             services.AddScoped<IAccountRepo, AccountRepo>();
             services.AddScoped<ICategoryRepo, CategoryRepo>();
+            services.AddScoped<IOrderRepo, OrderRepo>();
+            services.AddScoped<ICustomerRepo, CustomerRepo>();
             return services;
         }
         public static IServiceCollection AddDataServices(
@@ -22,6 +24,7 @@ namespace ServiceAggregator.Services
             services.AddScoped<IDataServiceBase<Section>, SectionDalDataService>();
             services.AddScoped<IDataServiceBase<Account>, AccountDalDataService>();
             services.AddScoped<IDataServiceBase<Category>, CategoryDalDataService>();
+            services.AddScoped<IDataServiceBase<Order>,OrderDalDataService>();
             return services;
         }
     }

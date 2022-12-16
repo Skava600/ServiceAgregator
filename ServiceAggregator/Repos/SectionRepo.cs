@@ -62,7 +62,7 @@ namespace ServiceAggregator.Repos
             OpenConnection();
 
             Section? workSection = null;
-            using (NpgsqlCommand cmd = new NpgsqlCommand("public.get_worksection_by_id", _sqlConnection))
+            using (NpgsqlCommand cmd = new NpgsqlCommand("public.get_section_by_id", _sqlConnection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("w_id", id);

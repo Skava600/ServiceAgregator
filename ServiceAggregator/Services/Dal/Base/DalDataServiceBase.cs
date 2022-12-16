@@ -16,10 +16,10 @@ namespace ServiceAggregator.Services.Dal.Base
             MainRepo = mainRepo;
         }
 
-        public async Task<IEnumerable<TEntity>> GetAllAsync()
+        public virtual async Task<IEnumerable<TEntity>> GetAllAsync()
             => await MainRepo.GetAll();
 
-        public async Task<TEntity?> FindAsync(Guid id) => await MainRepo.Find(id);
+        public virtual  async Task<TEntity?> FindAsync(Guid id) => await MainRepo.Find(id);
 
         public async Task<TEntity> UpdateAsync(TEntity entity)
         {

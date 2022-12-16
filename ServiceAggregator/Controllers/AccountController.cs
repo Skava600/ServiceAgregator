@@ -30,12 +30,12 @@ namespace ServiceAggregator.Controllers
     public class AccountController : Controller
     {
         private readonly IDataServiceBase<Account> dataService;
-        private AccountRepo repo;
+        private IAccountRepo repo;
         MyOptions options;
-        public AccountController(IOptions<MyOptions> optionsAccessor, ApplicationDbContext context, IDataServiceBase<Account> accountDalDataService)
+        public AccountController(IOptions<MyOptions> optionsAccessor, IAccountRepo repo, IDataServiceBase<Account> accountDalDataService)
         {
             this.dataService = accountDalDataService;
-            repo = new AccountRepo(optionsAccessor, context);
+            this.repo = repo;
             options = optionsAccessor.Value;
         }
 

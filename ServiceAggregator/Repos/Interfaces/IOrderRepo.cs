@@ -6,7 +6,7 @@ namespace ServiceAggregator.Repos.Interfaces
 {
     public interface IOrderRepo: IBaseRepo<Order>
     {
-        Task<int> CreateOrder(OrderModel order);
+        Task CreateOrder(Order order);
 
     }
 }

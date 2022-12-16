@@ -17,34 +17,7 @@ namespace ServiceAggregator.Repos
         public AccountRepo(IOptions<MyOptions> optionsAccessor, ApplicationDbContext context) : base(optionsAccessor, context)
         {
         }
-
-        /*public async Task<Guid> Register(AccountModel entity)
-        {
-            Guid accountId;
-            OpenConnection();
-            string sql = "SELECT public.insertaccount(" +
-                $"'{Guid.NewGuid().ToString()}'," +
-                $"'{entity.Login}'," +
-                $"'{entity.Password}'," +
-                $"'{entity.Firstname}'," +
-                $"'{entity.Lastname}'," +
-                $"'{entity.Patronym}'," +
-                $"'{false}'," +
-                $"'{entity.PhoneNumber}'," +
-            $"'{entity.Location}');";
-
-           using(NpgsqlCommand cmd = new NpgsqlCommand(sql, _sqlConnection))
-            {
-                accountId = (Guid)await cmd.ExecuteScalarAsync();
-            }
-
-            CloseConnection();
-
-            return accountId;
-        }*/
-
       
-
         public override Task<int> Delete(Account entity)
         {
             OpenConnection();
@@ -179,7 +152,6 @@ namespace ServiceAggregator.Repos
                     {
                         account = new Account
                         {
-                         
                             Firstname = reader.GetString(0),
                             Lastname = reader.GetString(1),
                             Patronym = reader.GetString(2),

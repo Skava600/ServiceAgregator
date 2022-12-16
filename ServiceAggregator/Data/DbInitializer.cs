@@ -8,6 +8,7 @@ using ServiceAggregator.Entities.Serializable;
 using ServiceAggregator.Models;
 using ServiceAggregator.Options;
 using ServiceAggregator.Repos;
+using ServiceAggregator.Repos.Interfaces;
 using ServiceAggregator.Services.Dal;
 using ServiceAggregator.Services.Interfaces;
 using System.Text;
@@ -17,21 +18,23 @@ namespace ServiceAggregator.Data
 {
     public class DbInitializer: IDbInitializer
     {
-        private AccountRepo accountRepo;
+        private IDataServiceBase<Account> accountService;
+        private ICustomerRepo customerRepo;
         private IDataServiceBase<Section> sectionService;
         private IDataServiceBase<Category> categoryService;
-        public DbInitializer(IOptions<MyOptions> optionsAccessor, ApplicationDbContext context, IDataServiceBase<Section> sectionService, IDataServiceBase<Category> categoryService)
+        public DbInitializer(IOptions<MyOptions> optionsAccessor, ApplicationDbContext context, IDataServiceBase<Section> sectionService, IDataServiceBase<Category> categoryService, IDataServiceBase<Account> accountService, ICustomerRepo customerRepo)
         {
             var connString = optionsAccessor.Value.ConnectionString;
 
-            accountRepo = new AccountRepo(optionsAccessor, context);
+            this.accountService = accountService;
             this.sectionService = sectionService;
             this.categoryService = categoryService;
+            this.customerRepo = customerRepo;
         }
 
         public async Task Seed()
         {
-            if (!(await accountRepo.GetAll()).Any())
+            if (!(await accountService.GetAllAsync()).Any())
             {
                 var user = new Account
                 {
@@ -56,11 +59,13 @@ namespace ServiceAggregator.Data
                     Location = "minsk"
                 };
 
-                await accountRepo.Add(user);
-                await accountRepo.Add(admin);
+                await accountService.AddAsync(user);
+                await accountService.AddAsync(admin);
+                await customerRepo.Add(new Customer { Id = Guid.NewGuid(), AccountId = user.Id });
+                await customerRepo.Add(new Customer { Id = Guid.NewGuid(), AccountId = admin.Id });
             }
 
-            if (!(await sectionService.GetAllAsync()).Any())
+            if (!(await sectionService.GetAllAsync()).Any() && !(await categoryService.GetAllAsync()).Any())
             {
                 string jsontext =await  File.ReadAllTextAsync("Data/request.json");
 

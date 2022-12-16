@@ -14,6 +14,12 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using ServiceAggregator.Data;
+using ServiceAggregator.Repos.Interfaces;
+using System.Text.RegularExpressions;
+using System.Net.Mail;
+using ServiceAggregator.Services.Dal;
+using ServiceAggregator.Services.Interfaces;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -23,14 +29,13 @@ namespace ServiceAggregator.Controllers
     [ApiController]
     public class AccountController : Controller
     {
-
+        private readonly IDataServiceBase<Account> dataService;
         private AccountRepo repo;
         MyOptions options;
-        public AccountController(IOptions<MyOptions> optionsAccessor)
+        public AccountController(IOptions<MyOptions> optionsAccessor, ApplicationDbContext context, IDataServiceBase<Account> accountDalDataService)
         {
-            var connString = optionsAccessor.Value.ConnectionString;
-
-            repo = new AccountRepo(connString);
+            this.dataService = accountDalDataService;
+            repo = new AccountRepo(optionsAccessor, context);
             options = optionsAccessor.Value;
         }
 
@@ -38,8 +43,8 @@ namespace ServiceAggregator.Controllers
         [HttpGet]
         public async Task<IActionResult> Info()
         {
-            int userId = Convert.ToInt32(User.FindFirst("Id")?.Value);
-            var account = await repo.Find(userId);
+            Guid userId = Guid.Parse(User.FindFirst("Id")?.Value);
+            var account = await dataService.FindAsync(userId);
             AccountData accountData;
             if (account == null)
                 return Json(new AccountData { Success = false });
@@ -50,13 +55,13 @@ namespace ServiceAggregator.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAsync()
         {
-            return Json(await repo.GetAll());
+            return Json(await dataService.GetAllAsync());
         }
 
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> Get(int id)
+        [HttpGet("{id:Guid}")]
+        public async Task<IActionResult> Get(Guid id)
         {
-            return Json(await repo.Find(id));
+            return Json(await dataService.FindAsync(id));
         }
 
         // DELETE api/<ФController>/5
@@ -114,7 +119,111 @@ namespace ServiceAggregator.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> Register([FromForm] RegistrationModel registrationModel)
         {
-            throw new NotImplementedException();
+            string nameRussianRegex = @"^[а-яА-Я ,.'-]+$";
+            string nameEnglishRegex = @"^[a-zA-Z ,.'-]+$";
+            RegistrationResult registrationResult = new RegistrationResult() { Success = true };
+            if (string.IsNullOrEmpty(registrationModel.FirstName))
+            {
+                registrationResult.ErrorCodes.Add(RegistrationResultConstants.ERROR_FIRSTNAME_EMPTY);
+            }
+            else if (!Regex.IsMatch(registrationModel.FirstName, nameRussianRegex) &&
+                    !Regex.IsMatch(registrationModel.FirstName, nameEnglishRegex))
+            {
+                registrationResult.ErrorCodes.Add(RegistrationResultConstants.ERROR_FIRSTNAME_VALIDATION_FAIL);
+            }
+            else if (registrationModel.FirstName.Length > 20)
+            {
+                registrationResult.ErrorCodes.Add(RegistrationResultConstants.ERROR_FIRSTNAME_TOO_LONG);
+            }
+
+
+            if (string.IsNullOrEmpty(registrationModel.LastName))
+            {
+                registrationResult.ErrorCodes.Add(RegistrationResultConstants.ERROR_LASTNAME_EMPTY);
+            }
+            else if (!Regex.IsMatch(registrationModel.LastName, nameRussianRegex) &&
+                    !Regex.IsMatch(registrationModel.LastName, nameEnglishRegex))
+            {
+                registrationResult.ErrorCodes.Add(RegistrationResultConstants.ERROR_LASTNAME_VALIDATION_FAIL);
+            }
+            else if (registrationModel.LastName.Length > 20)
+            {
+                registrationResult.ErrorCodes.Add(RegistrationResultConstants.ERROR_LASTNAME_TOO_LONG);
+            }
+
+
+            if (string.IsNullOrEmpty(registrationModel.Email))
+            {
+                registrationResult.ErrorCodes.Add(RegistrationResultConstants.ERROR_EMAIL_EMPTY);
+            }
+            else if (!MailAddress.TryCreate(registrationModel.Email, out var _))
+            {
+                registrationResult.ErrorCodes.Add(RegistrationResultConstants.ERROR_EMAIL_VALIDATION_FAIL);
+            }
+
+            bool passwordValidated = true;
+
+            if (string.IsNullOrEmpty(registrationModel.Password))
+            {
+                registrationResult.ErrorCodes.Add(RegistrationResultConstants.ERROR_PASSWORD_FIELD1_EMPTY);
+                passwordValidated = false;
+            }
+            if (string.IsNullOrEmpty(registrationModel.PasswordConfirm))
+            {
+                registrationResult.ErrorCodes.Add(RegistrationResultConstants.ERROR_PASSWORD_FIELD2_EMPTY);
+                passwordValidated = false;
+            }
+            if (passwordValidated)
+            {
+                if (registrationModel.Password != registrationModel.PasswordConfirm)
+                {
+                    registrationResult.ErrorCodes.Add(RegistrationResultConstants.ERROR_PASSWORD_MATCH_FAIL);
+                }
+                else if (registrationModel.Password.Length < 8)
+                {
+                    registrationResult.ErrorCodes.Add(RegistrationResultConstants.ERROR_PASSWORD_TOO_WEAK);
+                }
+            }
+
+           
+
+            if (registrationResult.ErrorCodes.Count > 0)
+            {
+                registrationResult.Success = false;
+                return Json(registrationResult);
+            }
+
+            var accountWithEmail = await repo.FindByField("login", registrationModel.Email);
+
+            if (accountWithEmail.Count() > 0)
+            {
+                registrationResult.Success = false;
+                registrationResult.ErrorCodes.Add(RegistrationResultConstants.ERROR_EMAIL_ALREADY_EXISTS);
+                return Json(registrationResult);
+            }
+            var accountWithPhone = await repo.FindByField("phonenumber", registrationModel.PhoneNumber);
+            if (accountWithPhone.Count() > 0)
+            {
+                registrationResult.Success = false;
+                registrationResult.ErrorCodes.Add(RegistrationResultConstants.ERROR_PHONE_ALREADY_EXISTS);
+                return Json(registrationResult);
+            }
+
+            var user = new Account
+            {
+                Id = Guid.NewGuid(),
+                Login = registrationModel.Email,
+                Password = registrationModel.Password,
+                Firstname = registrationModel.FirstName,
+                Lastname = registrationModel.LastName,
+                IsAdmin = false,
+                Patronym = registrationModel.Patronym,
+                PhoneNumber = registrationModel.PhoneNumber,
+                Location = registrationModel.Location,
+            };
+
+            await repo.Add(user);
+            return Json(registrationResult);
         }
 
         [HttpGet]

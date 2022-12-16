@@ -1,19 +1,20 @@
-﻿using ServiceAggregator.Entities.Base;
+﻿using ORM;
+using ServiceAggregator.Entities.Base;
 
 namespace ServiceAggregator.Entities
 {
-    public class Review : BaseEntity
+    public class Review : DbInstance
     {
-        public int AccountAuthorId { get; set; }
-        public Account AccountAuthor { get; set; }
+        public Guid AccountAuthorId { get; set; }
+       // public Account AccountAuthor { get; set; }
         public string Text { get; set; }
-        public byte Grade { get; set; }
+        public short Grade { get; set; }
 
-        public int CustomerId { get; set; }
-        public Customer ReviewedCustomer { get; set; }
+        public Guid CustomerId { get; set; }
+      //  public Customer ReviewedCustomer { get; set; }
 
-        public int DoerId { get; set; }
-        public Doer ReviewedDoer { get; set; }
+        public Guid DoerId { get; set; }
+       // public Doer ReviewedDoer { get; set; }
 
     }
 }

@@ -4,7 +4,7 @@ using TrialBalanceWebApp.Repos.Base;
 
 namespace ServiceAggregator.Repos.Interfaces
 {
-    public interface IOrderRepo: IBaseEntityRepo<Order>, IBaseRepo
+    public interface IOrderRepo: IBaseRepo<Order>
     {
         Task<int> CreateOrder(OrderModel order);
 

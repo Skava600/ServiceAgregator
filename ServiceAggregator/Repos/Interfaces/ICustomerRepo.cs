@@ -3,8 +3,8 @@ using TrialBalanceWebApp.Repos.Base;
 
 namespace ServiceAggregator.Repos.Interfaces
 {
-    public interface ICustomerRepo : IBaseEntityRepo<Customer>, IBaseRepo
+    public interface ICustomerRepo : IBaseRepo<Customer>
     {
-        Task<Customer?> GetByAccountId(int id);
+        Task<Customer?> GetByAccountId(Guid id);
     }
 }

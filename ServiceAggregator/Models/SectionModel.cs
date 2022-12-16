@@ -2,9 +2,10 @@
 
 namespace ServiceAggregator.Models
 {
-    public class WorkSectionModel
+    public class SectionModel
     {
         public string Name { get; set; }
-        public string CategoryName { get; set; }
+        public string Slug { get; set; }
+        public int CategoryId { get; set; }
     }
 }

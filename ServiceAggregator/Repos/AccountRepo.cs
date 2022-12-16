@@ -1,24 +1,29 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Options;
 using Npgsql;
+using ServiceAggregator.Data;
 using ServiceAggregator.Entities;
 using ServiceAggregator.Models;
+using ServiceAggregator.Options;
 using ServiceAggregator.Repos.Interfaces;
 using System.Data;
+using System.Xml;
 using TrialBalanceWebApp.Repos.Base;
 
 namespace ServiceAggregator.Repos
 {
-    public class AccountRepo : BaseRepo, IAccountRepo
+    public class AccountRepo : BaseRepo<Account>, IAccountRepo
     {
-        public AccountRepo(string connectionString) : base(connectionString)
+        public AccountRepo(IOptions<MyOptions> optionsAccessor, ApplicationDbContext context) : base(optionsAccessor, context)
         {
         }
 
-        public async Task<int> Register(AccountModel entity)
+        /*public async Task<Guid> Register(AccountModel entity)
         {
-            int accountId = -1;
+            Guid accountId;
             OpenConnection();
             string sql = "SELECT public.insertaccount(" +
+                $"'{Guid.NewGuid().ToString()}'," +
                 $"'{entity.Login}'," +
                 $"'{entity.Password}'," +
                 $"'{entity.Firstname}'," +
@@ -30,17 +35,17 @@ namespace ServiceAggregator.Repos
 
            using(NpgsqlCommand cmd = new NpgsqlCommand(sql, _sqlConnection))
             {
-                accountId = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+                accountId = (Guid)await cmd.ExecuteScalarAsync();
             }
 
             CloseConnection();
 
             return accountId;
-        }
+        }*/
 
       
 
-        public Task<int> Delete(Account entity)
+        public override Task<int> Delete(Account entity)
         {
             OpenConnection();
             string sql = "SELECT public.deleteaccount(" +
@@ -57,23 +62,22 @@ namespace ServiceAggregator.Repos
             return task;
         }
 
-        public async Task<Account?> Find(int? id)
+        public override async Task<Account?> Find(Guid id)
         {
-            if (id == null) return null;
             OpenConnection();
             
             Account? account = null;
             using (NpgsqlCommand cmd = new NpgsqlCommand("public.getaccount", _sqlConnection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("id", id);
+                cmd.Parameters.AddWithValue("a_id", id);
                 using(var reader = await cmd.ExecuteReaderAsync())
                 {
                     while (reader.Read())
                     {
                         account = new Account
                         {
-                            Id = reader.GetInt32(0),
+                            Id = reader.GetGuid(0),
                             Login = reader.GetString(1),
                             Password = reader.GetString(2),
                             Firstname = reader.GetString(3),
@@ -92,7 +96,7 @@ namespace ServiceAggregator.Repos
             return account;
         }
 
-        public async Task<IEnumerable<Account>> GetAll()
+        public override async Task<IEnumerable<Account>> GetAll()
         {
             OpenConnection();
 
@@ -106,7 +110,7 @@ namespace ServiceAggregator.Repos
                     {
                         accounts.Add(new Account
                         {
-                            Id = reader.GetInt32(0) ,
+                            Id = reader.GetGuid(0) ,
                             Login = reader.GetString(1),
                             Password = reader.GetString(2),
                             Firstname = reader.GetString(3),
@@ -114,7 +118,7 @@ namespace ServiceAggregator.Repos
                             Patronym = reader.GetString(5),
                             IsAdmin = reader.GetBoolean(6),
                             PhoneNumber = reader.GetString(7),
-                            Location = reader.GetString(8),
+                            Location = reader.IsDBNull(8)? "" : reader.GetString(8),
                         });
                     }
                 }
@@ -141,7 +145,7 @@ namespace ServiceAggregator.Repos
                     {
                         account = new Account
                         {
-                            Id = reader.GetInt32(0),
+                            Id = reader.GetGuid(0),
                             Login = reader.GetString(1),
                             Password = reader.GetString(2),
                             Firstname = reader.GetString(3),
@@ -160,12 +164,7 @@ namespace ServiceAggregator.Repos
             return account;
         }
 
-        public Task<int> Update(Account entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<Account?> GetAccountByCustomerId(int id)
+        public async Task<Account?> GetAccountByCustomerId(Guid id)
         {
             OpenConnection();
 

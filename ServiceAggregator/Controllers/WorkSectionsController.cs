@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using ServiceAggregator.Data;
 using ServiceAggregator.Options;
 using ServiceAggregator.Repos;
 
@@ -10,14 +11,14 @@ namespace ServiceAggregator.Controllers
     [ApiController]
     public class WorkSectionsController : Controller
     {
-        private WorkSectionRepo repo;
+        private SectionRepo repo;
 
         MyOptions options;
-        public WorkSectionsController(IOptions<MyOptions> optionsAccessor)
+        public WorkSectionsController(IOptions<MyOptions> optionsAccessor, ApplicationDbContext context)
         {
             var connString = optionsAccessor.Value.ConnectionString;
 
-            repo = new WorkSectionRepo(connString);
+            repo = new SectionRepo(optionsAccessor, context);
             options = optionsAccessor.Value;
         }
 

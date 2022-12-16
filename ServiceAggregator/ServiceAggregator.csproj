@@ -39,8 +39,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="Data\request.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Repos\Base\" />
-    <Folder Include="Services\Dal\Base\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Data\request.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ORM\ORM.csproj" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

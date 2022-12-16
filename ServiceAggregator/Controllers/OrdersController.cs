@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
+using ServiceAggregator.Data;
 using ServiceAggregator.Entities;
 using ServiceAggregator.Models;
 using ServiceAggregator.Options;
@@ -20,18 +21,16 @@ namespace ServiceAggregator.Controllers
         private OrderRepo orderRepo;
         private AccountRepo accountRepo;
         private CustomerRepo customerRepo;
-        private WorkSectionRepo workSectionRepo;
-        MyOptions options;
+        private SectionRepo workSectionRepo;
         
-        public OrdersController(IOptions<MyOptions> optionsAccessor)
+        public OrdersController(IOptions<MyOptions> optionsAccessor, ApplicationDbContext context)
         {
             var connString = optionsAccessor.Value.ConnectionString;
 
-            orderRepo = new OrderRepo(connString);
-            accountRepo = new AccountRepo(connString);
-            customerRepo = new CustomerRepo(connString);
-            workSectionRepo = new WorkSectionRepo(connString);
-            options = optionsAccessor.Value;
+            orderRepo = new OrderRepo(optionsAccessor, context);
+            accountRepo = new AccountRepo(optionsAccessor, context);
+            customerRepo = new CustomerRepo(optionsAccessor, context);
+            workSectionRepo = new SectionRepo(optionsAccessor, context);
         }
 
         [HttpPost]
@@ -40,29 +39,33 @@ namespace ServiceAggregator.Controllers
             if (page == null)
                 page = 1;
 
-            int userId = -1;
-            userId = Convert.ToInt32(User.FindFirst("Id")?.Value);
-            Customer? customer = await customerRepo.GetByAccountId(userId);
-            if (myOrders && customer == null)
+            Guid userId;
+            if (!Guid.TryParse(User.FindFirst("Id")?.Value, out userId) && myOrders)
             {
-                Json(new OrderData { Success = false });
+                return Json(new OrderData { Success = false });
             }
+            Customer? customer = await customerRepo.GetByAccountId(userId);
+
 
             var orders = await orderRepo.GetAll();
 
             if (filters != null && filters.Any())
             {
-                orders = orders.Where(o => Array.IndexOf(filters, o.WorkSectionId) != -1);
+                orders = orders.Where(o => Array.IndexOf(filters, o.SectionId) != -1);
             }
 
             if (myOrders && customer != null)
             {
                 orders = orders.Where(o => o.CustomerId == customer.Id);
             }
+            else if (customer == null && myOrders)
+            {
+                return Json(new OrderData { Success = false });
+            }
 
             orders = orders.Skip(((int)page - 1) * 50).Take(50);
             var ordersData = new List<OrderData>();
-            WorkSection? workSection;
+            Section? section;
             foreach (var order in orders)
             {
 
@@ -76,17 +79,17 @@ namespace ServiceAggregator.Controllers
                     ExpireDate = order.ExpireDate,
                  };
 
-                workSection = await workSectionRepo.Find(order.WorkSectionId);
-                if (workSection == null)
+                section = await workSectionRepo.Find(order.SectionId);
+                if (section == null)
                 {
                     orderData.Success = false;
                 }
                 else
-                    orderData.WorkSection = new WorkSectionData
+                    orderData.Section = new SectionData
                     {
-                        Id = order.WorkSectionId,
-                        Name = workSection.Name,
-                        CategoryName = workSection.CategoryName,
+                        Name = section.Name,
+                        Slug = section.Slug,
+                        CategoryId = section.CategoryId,
                     };
                 ordersData.Add(orderData);
 
@@ -96,8 +99,8 @@ namespace ServiceAggregator.Controllers
         } 
 
         // GET api/<ValuesController>/5
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> Get(int id)
+        [HttpGet("{id:Guid}")]
+        public async Task<IActionResult> Get(Guid id)
         {
             var order = await orderRepo.Find(id);
             if (order == null)

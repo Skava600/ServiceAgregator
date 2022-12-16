@@ -7,7 +7,7 @@
         public string Location { get; set; }
         public DateTime ExpireDate { get; set; }
         public double? Price { get; set; }
-        public int CustomerId { get; set; }
-        public int WorkSectionId { get; set; }
+        public Guid CustomerId { get; set; }
+        public Guid WorkSectionId { get; set; }
     }
 }

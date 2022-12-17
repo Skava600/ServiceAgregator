@@ -35,5 +35,10 @@ namespace ServiceAggregator.Services.Dal.Base
             await MainRepo.Add(entity);
             return entity;
         }
+
+        public async Task<IEnumerable<TEntity>> FindByField(string field, string value)
+        {
+            return await MainRepo.FindByField(field, value);
+        }
     }
 }

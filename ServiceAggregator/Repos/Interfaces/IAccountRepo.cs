@@ -7,7 +7,6 @@ namespace ServiceAggregator.Repos.Interfaces
     public interface IAccountRepo : IBaseRepo<Account>
     {
         Task<Account?> Login(string email, string password);
-        //Task<Guid> Register(AccountModel entity);
         Task<Account?> GetAccountByCustomerId(Guid id);
     }
 }

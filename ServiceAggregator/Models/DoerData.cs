@@ -1,13 +1,11 @@
-﻿using ServiceAggregator.Entities.Base;
-
-namespace ServiceAggregator.Entities
+﻿namespace ServiceAggregator.Models
 {
-    public class Doer : User
+    public class DoerData
     {
-
+        public Guid Id { get; set; }
         public string DoerName { get; set; }
         public string DoerDescription { get; set; }
         public int OrderCount { get; set; }
-
+        public List<SectionData> Sections { get; set; }
     }
 }

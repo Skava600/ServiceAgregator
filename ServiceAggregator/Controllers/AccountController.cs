@@ -29,13 +29,11 @@ namespace ServiceAggregator.Controllers
     [ApiController]
     public class AccountController : Controller
     {
-        private readonly IDataServiceBase<Account> dataService;
-        private IAccountRepo repo;
+        private readonly IAccountDalDataService accountService;
         MyOptions options;
-        public AccountController(IOptions<MyOptions> optionsAccessor, IAccountRepo repo, IDataServiceBase<Account> accountDalDataService)
+        public AccountController(IOptions<MyOptions> optionsAccessor, IAccountDalDataService accountDalDataService)
         {
-            this.dataService = accountDalDataService;
-            this.repo = repo;
+            this.accountService = accountDalDataService;
             options = optionsAccessor.Value;
         }
 
@@ -44,7 +42,7 @@ namespace ServiceAggregator.Controllers
         public async Task<IActionResult> Info()
         {
             Guid userId = Guid.Parse(User.FindFirst("Id")?.Value);
-            var account = await dataService.FindAsync(userId);
+            var account = await accountService.FindAsync(userId);
             AccountData accountData;
             if (account == null)
                 return Json(new AccountData { Success = false });
@@ -55,13 +53,13 @@ namespace ServiceAggregator.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAsync()
         {
-            return Json(await dataService.GetAllAsync());
+            return Json(await accountService.GetAllAsync());
         }
 
         [HttpGet("{id:Guid}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            return Json(await dataService.FindAsync(id));
+            return Json(await accountService.FindAsync(id));
         }
 
         // DELETE api/<ФController>/5
@@ -87,7 +85,7 @@ namespace ServiceAggregator.Controllers
         public async Task<IActionResult> Login([FromForm] LoginModel loginModel)
         {
             
-            Account? account = await repo.Login(loginModel.Email, loginModel.Password);
+            Account? account = await accountService.Login(loginModel.Email, loginModel.Password);
             if (account == null)
             {
                 return Json(Results.Unauthorized());
@@ -193,7 +191,7 @@ namespace ServiceAggregator.Controllers
                 return Json(registrationResult);
             }
 
-            var accountWithEmail = await repo.FindByField("login", registrationModel.Email);
+            var accountWithEmail = await accountService.FindByField("login", registrationModel.Email);
 
             if (accountWithEmail.Count() > 0)
             {
@@ -201,7 +199,7 @@ namespace ServiceAggregator.Controllers
                 registrationResult.ErrorCodes.Add(RegistrationResultConstants.ERROR_EMAIL_ALREADY_EXISTS);
                 return Json(registrationResult);
             }
-            var accountWithPhone = await repo.FindByField("phonenumber", registrationModel.PhoneNumber);
+            var accountWithPhone = await accountService.FindByField("phonenumber", registrationModel.PhoneNumber);
             if (accountWithPhone.Count() > 0)
             {
                 registrationResult.Success = false;
@@ -222,7 +220,7 @@ namespace ServiceAggregator.Controllers
                 Location = registrationModel.Location,
             };
 
-            await repo.Add(user);
+            await accountService.AddAsync(user);
             return Json(registrationResult);
         }
 

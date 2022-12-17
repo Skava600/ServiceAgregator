@@ -16,15 +16,17 @@ namespace ServiceAggregator.Services
             services.AddScoped<ICategoryRepo, CategoryRepo>();
             services.AddScoped<IOrderRepo, OrderRepo>();
             services.AddScoped<ICustomerRepo, CustomerRepo>();
+            services.AddScoped<IDoerRepo, DoerRepo>();
             return services;
         }
         public static IServiceCollection AddDataServices(
             this IServiceCollection services)
         {
             services.AddScoped<IDataServiceBase<Section>, SectionDalDataService>();
-            services.AddScoped<IDataServiceBase<Account>, AccountDalDataService>();
+            services.AddScoped<IAccountDalDataService, AccountDalDataService>();
             services.AddScoped<IDataServiceBase<Category>, CategoryDalDataService>();
-            services.AddScoped<IDataServiceBase<Order>,OrderDalDataService>();
+            services.AddScoped<IOrderDalDataService,OrderDalDataService>();
+            services.AddScoped<ICustomerDalDataService, CustomerDalDataService>();
             return services;
         }
     }

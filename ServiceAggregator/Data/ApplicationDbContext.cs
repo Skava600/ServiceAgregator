@@ -10,10 +10,12 @@ namespace ServiceAggregator.Data
         public DbTable<Doer> Doers { get; set; }
         public DbTable<DoerWorkSection> DoerWorkSections { get; set; }
         public DbTable<Customer> Customers { get; set; }
-        public DbTable<Review> Reviews { get; set; }
+        public DbTable<CustomerReview> CustomerReviews { get; set; }
+        public DbTable<DoerReview> DoerReviews { get; set; }
         public DbTable<Order> Orders { get; set; }    
         public DbTable<Section> Sections { get; set; }
         public DbTable<Category> Categorys { get; set; }
+        public DbTable<OrderResponse> Responses { get; set; }
 
         public ApplicationDbContext(string connectionString)
        : base(connectionString)

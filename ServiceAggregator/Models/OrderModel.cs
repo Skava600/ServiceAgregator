@@ -1,4 +1,7 @@
-﻿namespace ServiceAggregator.Models
+﻿using Swashbuckle.AspNetCore.Annotations;
+using System.Text.Json.Serialization;
+
+namespace ServiceAggregator.Models
 {
     public class OrderModel
     {
@@ -7,7 +10,7 @@
         public string Location { get; set; }
         public DateTime ExpireDate { get; set; }
         public double? Price { get; set; }
-        public int CustomerId { get; set; }
-        public int WorkSectionId { get; set; }
+        public Guid? CustomerId { get; set; }
+        public string Slug { get; set; }
     }
 }

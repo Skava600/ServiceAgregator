@@ -1,8 +1,10 @@
-﻿namespace ServiceAggregator.Entities.Base
+﻿using ORM;
+
+namespace ServiceAggregator.Entities.Base
 {
-    public class User : BaseEntity
+    public class User : DbInstance
     {
-        public Account Account { get; set; }
-        public int AccountId { get; set; }
+       // public Account Account { get; set; }
+        public Guid AccountId { get; set; }
     }
 }

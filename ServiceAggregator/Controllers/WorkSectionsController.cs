@@ -1,8 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using ServiceAggregator.Data;
+using ServiceAggregator.Entities;
+using ServiceAggregator.Models;
 using ServiceAggregator.Options;
 using ServiceAggregator.Repos;
+using ServiceAggregator.Services.Interfaces;
 
 namespace ServiceAggregator.Controllers
 {
@@ -10,23 +14,37 @@ namespace ServiceAggregator.Controllers
     [ApiController]
     public class WorkSectionsController : Controller
     {
-        private WorkSectionRepo repo;
+        private readonly IDataServiceBase<Section> sectionService;
+        private readonly IDataServiceBase<Category> categoryService;
 
-        MyOptions options;
-        public WorkSectionsController(IOptions<MyOptions> optionsAccessor)
+        public WorkSectionsController(IDataServiceBase<Section> sectionService, IDataServiceBase<Category> categoryService)
         {
-            var connString = optionsAccessor.Value.ConnectionString;
-
-            repo = new WorkSectionRepo(connString);
-            options = optionsAccessor.Value;
+            this.sectionService = sectionService;
+            this.categoryService = categoryService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetListOfSections()
         {
-            var sections = await repo.GetAll();
+            var categories = await categoryService.GetAllAsync();
+            var sections = await sectionService.GetAllAsync();
+            List<CategoryData> categoryDatas = new List<CategoryData>();
+            foreach(var category in categories)
+            {
+                categoryDatas.Add(new CategoryData
+                {
+                    Name = category.Name,
+                });
 
-            return Json(sections);
+                categoryDatas.Last().Sections = sections.Where(s => s.CategoryId == category.Id).Select(s => new SectionData
+                {
+                    Name = s.Name,
+                    Slug = s.Slug,
+                }).ToList();
+            }
+
+
+            return Json(categoryDatas);
         }
 
     }

@@ -1,14 +1,16 @@
-﻿using ServiceAggregator.Entities.Base;
+﻿using ORM;
+using ServiceAggregator.Entities.Base;
 
 namespace ServiceAggregator.Services.Interfaces
 {
-    public interface IDataServiceBase<TEntity> where TEntity : BaseEntity, new()
+    public interface IDataServiceBase<TEntity> where TEntity : DbInstance, new()
     {
         Task<IEnumerable<TEntity>> GetAllAsync();
-        Task<TEntity?> FindAsync(int? id);
-        Task<TEntity> UpdateAsync(TEntity entity, bool persist = true);
-        Task DeleteAsync(TEntity entity, bool persist = true);
-        Task<TEntity> AddAsync(TEntity entity, bool persist = true);
+        Task<TEntity?> FindAsync(Guid id);
+        Task<TEntity> UpdateAsync(TEntity entity);
+        Task DeleteAsync(TEntity entity);
+        Task<TEntity> AddAsync(TEntity entity);
+        Task<IEnumerable<TEntity>> FindByField(string field, string value);
     }
 
 }

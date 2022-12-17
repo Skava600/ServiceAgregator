@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ServiceAggregator.Entities;
 using ServiceAggregator.Models;
+using ServiceAggregator.Services.Dal;
+using ServiceAggregator.Services.Interfaces;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,12 +10,20 @@ namespace ServiceAggregator.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DoerController : ControllerBase
+    public class DoerController : Controller
     {
-        // GET: api/<ValuesController>
-        [HttpGet]
-        public IEnumerable<Doer> Get()
+        IDoerDalDataService doerService;
+        public DoerController(IDoerDalDataService doerService) 
         {
+            this.doerService = doerService;
+        }
+        [HttpPost]
+        public IActionResult GetPage(int? page, [FromBody] string[] filters)
+        {
+            if (page == null)
+                page = 1;
+
+
             throw new NotImplementedException();
         }
 

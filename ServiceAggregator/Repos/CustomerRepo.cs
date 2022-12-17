@@ -1,33 +1,26 @@
-﻿using Npgsql;
+﻿using Microsoft.Extensions.Options;
+using Npgsql;
+using ServiceAggregator.Data;
 using ServiceAggregator.Entities;
+using ServiceAggregator.Options;
 using ServiceAggregator.Repos.Interfaces;
 using System.Data;
 using TrialBalanceWebApp.Repos.Base;
 
 namespace ServiceAggregator.Repos
 {
-    public class CustomerRepo : BaseRepo, ICustomerRepo
+    public class CustomerRepo : BaseRepo<Customer>, ICustomerRepo
     {
-        public CustomerRepo(string connectionString) : base(connectionString)
+        public CustomerRepo(IOptions<MyOptions> optionsAccessor, ApplicationDbContext context) : base(optionsAccessor, context)
         {
         }
 
-        public Task<int> Delete(Customer entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Customer?> Find(int? id)
+        public override Task<int> Delete(Customer entity)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Customer>> GetAll()
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<Customer?> GetByAccountId(int id)
+        public async Task<Customer?> GetByAccountId(Guid id)
         {
             OpenConnection();
 
@@ -42,8 +35,8 @@ namespace ServiceAggregator.Repos
                     {
                         customer = new Customer
                         {
-                            Id = reader.GetInt32(0),
-                            AccountId = reader.GetInt32(1)
+                            Id = reader.GetGuid(0),
+                            AccountId = reader.GetGuid(1)
                         };
                     }
                 }
@@ -54,7 +47,7 @@ namespace ServiceAggregator.Repos
             return customer;
         }
 
-        public Task<int> Update(Customer entity)
+        public override Task<int> Update(Customer entity)
         {
             throw new NotImplementedException();
         }

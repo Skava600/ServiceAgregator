@@ -1,52 +1,50 @@
-﻿using Npgsql;
+﻿using Microsoft.Extensions.Options;
+using Npgsql;
+using ServiceAggregator.Data;
 using ServiceAggregator.Entities;
 using ServiceAggregator.Models;
+using ServiceAggregator.Options;
 using ServiceAggregator.Repos.Interfaces;
 using TrialBalanceWebApp.Repos.Base;
 
 namespace ServiceAggregator.Repos
 {
-    public class OrderRepo : BaseRepo, IOrderRepo
+    public class OrderRepo : BaseRepo<Order>, IOrderRepo
     {
-        public OrderRepo(string connectionString) : base(connectionString)
+        public OrderRepo(IOptions<MyOptions> optionsAccessor, ApplicationDbContext context) : base(optionsAccessor, context)
         {
         }
 
-        public async Task<int> CreateOrder(OrderModel order)
+        public async Task CreateOrder(Order order)
         {
 
-            int accountId = -1;
             OpenConnection();
             string sql = "SELECT public.createorder(" +
+                $"'{order.Id}'," +
                 $"'{order.Header}'," +
                 $"'{order.Text}'," +
                 $"'{order.Location}'," +
-                 $"'{order.ExpireDate.ToString("dd-MM-yyyy")}'," +
+                 $"'{order.ExpireDate}'," +
                  $"'{order.Price}'," +
                 $"'{order.CustomerId}'," +
-                $"'{order.WorkSectionId}');";
+                $"'{order.SectionId}'," +
+                $"'{order.StatusId}');";
 
             using (NpgsqlCommand cmd = new NpgsqlCommand(sql, _sqlConnection))
             {
-                accountId = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+                 await cmd.ExecuteNonQueryAsync();
             }
 
             CloseConnection();
-
-            return accountId;
         }
 
-        public Task<int> Delete(Order entity)
+        public override Task<int> Delete(Order entity)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Order?> Find(int? id)
-        {
-            throw new NotImplementedException();
-        }
 
-        public async  Task<IEnumerable<Order>> GetAll()
+        public override async Task<IEnumerable<Order>> GetAll()
         {
             OpenConnection();
 
@@ -60,14 +58,15 @@ namespace ServiceAggregator.Repos
                     {
                         orders.Add(new Order
                         {
-                            Id = reader.GetInt32(0),
+                            Id = reader.GetGuid(0),
                             Header = reader.GetString(1),
                             Text = reader.GetString(2),
                             Location = reader.GetString(3),
-                            ExpireDate = DateTime.ParseExact(reader.GetString(4), "dd-MM-yyyy", System.Globalization.CultureInfo.InvariantCulture),
+                            ExpireDate = reader.GetDateTime(4),
                             Price = reader.GetDouble(5),
-                            CustomerId = reader.GetInt32(6),
-                            WorkSectionId = reader.GetInt32(7),
+                            CustomerId = reader.GetGuid(6),
+                            SectionId = reader.GetGuid(7),
+                            StatusId = reader.GetInt32(8),
                         });
                     }
                 }
@@ -78,7 +77,7 @@ namespace ServiceAggregator.Repos
             return orders;
         }
 
-        public Task<int> Update(Order entity)
+        public override Task<int> Update(Order entity)
         {
             throw new NotImplementedException();
         }

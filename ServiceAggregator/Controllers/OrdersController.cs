@@ -2,11 +2,15 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
+using ServiceAggregator.Data;
 using ServiceAggregator.Entities;
 using ServiceAggregator.Models;
 using ServiceAggregator.Options;
 using ServiceAggregator.Repos;
+using ServiceAggregator.Repos.Interfaces;
+using ServiceAggregator.Services.Interfaces;
 using System.Linq;
+using static ServiceAggregator.Models.OrderData;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -16,57 +20,65 @@ namespace ServiceAggregator.Controllers
     [ApiController]
     public class OrdersController : Controller
     {
-
-        private OrderRepo orderRepo;
-        private AccountRepo accountRepo;
-        private CustomerRepo customerRepo;
-        private WorkSectionRepo workSectionRepo;
-        MyOptions options;
+        IOrderDalDataService orderService;
+        private ICustomerDalDataService customerService;
+        private ISectionRepo sectionRepo;
+        private IAccountDalDataService accountService;
         
-        public OrdersController(IOptions<MyOptions> optionsAccessor)
+        public OrdersController(IOrderDalDataService orderService,IAccountDalDataService accountService, ISectionRepo sectionRepo, ICustomerDalDataService customerService)
         {
-            var connString = optionsAccessor.Value.ConnectionString;
-
-            orderRepo = new OrderRepo(connString);
-            accountRepo = new AccountRepo(connString);
-            customerRepo = new CustomerRepo(connString);
-            workSectionRepo = new WorkSectionRepo(connString);
-            options = optionsAccessor.Value;
+            this.orderService = orderService;
+            this.accountService = accountService;
+            this.customerService = customerService;
+            this.sectionRepo = sectionRepo;
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetPage(int? page, [FromBody]int[] filters, bool myOrders = false)
+        public async Task<IActionResult> GetPage(int? page, [FromBody]string[] filters, bool myOrders = false)
         {
+            OrderData orderData = new OrderData { OrderResult = new OrderResult { Success = true } };
             if (page == null)
                 page = 1;
 
-            int userId = -1;
-            userId = Convert.ToInt32(User.FindFirst("Id")?.Value);
-            Customer? customer = await customerRepo.GetByAccountId(userId);
-            if (myOrders && customer == null)
+            Guid userId;
+            if (!Guid.TryParse(User.FindFirst("Id")?.Value, out userId) && myOrders)
             {
-                Json(new OrderData { Success = false });
+                orderData.OrderResult.Success = false;
+                orderData.OrderResult.ErrorCodes.Add(OrderDataConstants.ERROR_USER_UNAUTHORIZED);
+                return Json(new List<OrderData> {orderData });
             }
+            Customer? customer = await customerService.GetByAccountId(userId);
 
-            var orders = await orderRepo.GetAll();
 
-            if (filters != null && filters.Any())
-            {
-                orders = orders.Where(o => Array.IndexOf(filters, o.WorkSectionId) != -1);
-            }
-
+            List<Order> orders = (await orderService.GetAllAsync()).ToList();
             if (myOrders && customer != null)
             {
-                orders = orders.Where(o => o.CustomerId == customer.Id);
+                orders.RemoveAll(o => o.CustomerId != customer.Id);
+            }
+            else if (customer == null && myOrders)
+            {
+                orderData.OrderResult.Success = false;
+                orderData.OrderResult.ErrorCodes.Add(OrderDataConstants.ERROR_NO_SUCH_CUSTOMER);
+                return Json(new List<OrderData> { orderData });
             }
 
-            orders = orders.Skip(((int)page - 1) * 50).Take(50);
             var ordersData = new List<OrderData>();
-            WorkSection? workSection;
+            if (filters != null && filters.Any())
+            {
+                for(int i = 0; i < orders.Count;  i++)
+                {
+                    var currentSection = await sectionRepo.Find(orders[i].SectionId);
+                    if (currentSection != null) 
+                        orders.RemoveAll(o => Array.IndexOf(filters, currentSection.Slug) == -1);
+                }
+            }      
+          
+            orders.Skip(((int)page - 1) * 50).Take(50);
+         
+            Section? section;
             foreach (var order in orders)
             {
-
-                OrderData orderData = new OrderData
+                orderData = new OrderData
                 {
                     Id = order.Id,
                     Header       = order.Header,
@@ -74,55 +86,80 @@ namespace ServiceAggregator.Controllers
                     Price        = order.Price,
                     Location     = order.Location,
                     ExpireDate = order.ExpireDate,
+                    Status = order.Status.ToString(),
                  };
 
-                workSection = await workSectionRepo.Find(order.WorkSectionId);
-                if (workSection == null)
+                section = await sectionRepo.Find(order.SectionId);
+                if (section == null)
                 {
-                    orderData.Success = false;
+                    orderData.OrderResult.Success = false;
+                    orderData.OrderResult.ErrorCodes.Add(OrderDataConstants.ERROR_NO_SUCH_SECTION);
                 }
                 else
-                    orderData.WorkSection = new WorkSectionData
+                {
+                    orderData.Section = new SectionData
                     {
-                        Id = order.WorkSectionId,
-                        Name = workSection.Name,
-                        CategoryName = workSection.CategoryName,
+                        Name = section.Name,
+                        Slug = section.Slug,
                     };
-                ordersData.Add(orderData);
-
+                    ordersData.Add(orderData);
+                }
             } 
             return Json(ordersData); 
              
         } 
 
         // GET api/<ValuesController>/5
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> Get(int id)
+        [HttpGet("{id:Guid}")]
+        public async Task<IActionResult> Get(Guid id)
         {
-            var order = await orderRepo.Find(id);
+            OrderData orderData = new OrderData { OrderResult = new OrderResult { Success = true } };
+            var order = await orderService.FindAsync(id);
+           
             if (order == null)
-                return Json(Results.NotFound());
-
-            OrderData orderData = new OrderData
             {
-                Id = order.Id,
-                Header = order.Header,
-                Text = order.Text,
-                Price = order.Price,
-                Location = order.Location,
-                ExpireDate = order.ExpireDate,
-            };
-
-            Account? customersAccount = await accountRepo.GetAccountByCustomerId(order.CustomerId);
-
+                orderData.OrderResult.ErrorCodes.Add(OrderDataConstants.ERROR_WRONG_ORDER_ID);
+                orderData.OrderResult.Success = false;
+                return Json(orderData);
+            }
+            Account? customersAccount = await accountService.GetAccountByCustomerId(order.CustomerId);
+            Section? section = await sectionRepo.Find(order.SectionId);
             if (customersAccount == null)
-                orderData.Success = false;
+            {
+                orderData.OrderResult.ErrorCodes.Add(OrderDataConstants.ERROR_NO_SUCH_CUSTOMER);
+            }
+            if (section == null)
+            {
+                orderData.OrderResult.ErrorCodes.Add(OrderDataConstants.ERROR_NO_SUCH_SECTION);
+            }
+
+            if (orderData.OrderResult.ErrorCodes.Count > 0)
+            {
+                orderData.OrderResult.Success = false;
+            }
             else
-                orderData.Customer = new CustomerData
+            {
+                orderData = new OrderData
                 {
-                    Account = new AccountData(customersAccount),
-                    Id = order.CustomerId,
-                };
+                    Id = order.Id,
+                    Header = order.Header,
+                    Text = order.Text,
+                    Price = order.Price,
+                    Location = order.Location,
+                    ExpireDate = order.ExpireDate,
+                    Status = order.Status.ToString(),
+                    Customer = new CustomerData
+                    {
+                        Account = new AccountData(customersAccount!),
+                        Id = order.CustomerId,
+                    },
+                    Section = new SectionData
+                    {
+                        Name = section!.Name,
+                        Slug = section!.Slug,
+                    }
+                };            
+            }
 
             return Json(orderData);
 
@@ -132,42 +169,210 @@ namespace ServiceAggregator.Controllers
         [Authorize]
         public async Task<IActionResult> MakeOrder([FromForm] OrderModel orderModel)
         {
-            var id = await orderRepo.CreateOrder(orderModel);
-            if(id == -1)
+            Guid userId;
+            OrderResult result = new OrderResult { Success = true  };
+            if (!Guid.TryParse(User.FindFirst("Id")?.Value, out userId))
             {
-                return Json(Results.StatusCode(400));
+                result.ErrorCodes.Add(OrderDataConstants.ERROR_USER_UNAUTHORIZED);
             }
 
-            return Json(Results.Ok());
+            
+            Customer? customer = await customerService.GetByAccountId(userId);
+            if ( customer == null )
+            {
+                result.Success = false;
+                result.ErrorCodes.Add(OrderDataConstants.ERROR_NO_SUCH_CUSTOMER);
+                return Json(result);
+            }
+
+            Guid customerId = orderModel.CustomerId ?? customer.Id;
+
+            Account account = (await accountService.FindAsync(userId))!;
+            if (!account.IsAdmin && customerId != customer.Id)
+            {
+                result.ErrorCodes.Add(OrderDataConstants.ERROR_WRONG_PRIVILEGES);
+            }
+            var section = await sectionRepo.FindByField("Slug", orderModel.Slug);
+            if (!section.Any())
+            {
+                result.ErrorCodes.Add(OrderDataConstants.ERROR_NO_SUCH_SECTION);
+            }
+
+            if (result.ErrorCodes.Count > 0)
+            {
+                result.Success = false;
+            }
+            else
+            {
+
+                Order order = new Order
+                {
+                    Id = Guid.NewGuid(),
+                    Header = orderModel.Header,
+                    Text = orderModel.Text,
+                    Price = orderModel.Price,
+                    Location = orderModel.Location,
+                    CustomerId = customer.Id,
+                    SectionId = section.First().Id,
+                    ExpireDate = orderModel.ExpireDate,
+                    Status = OrderStatus.Open,
+                };
+
+                await orderService.CreateOrder(order);
+
+            }
+            return Json(result);
         }
 
 
         [HttpDelete]
         [Authorize]
-        public async Task<IActionResult> DeleteOrder(int id)
+        public async Task<IActionResult> DeleteOrder(Guid id)
         {
-            throw new NotImplementedException();
-        }
+            Guid userId;
+            OrderResult result = new OrderResult{  Success = true };
+            if (!Guid.TryParse(User.FindFirst("Id")?.Value, out userId))
+            {
+                result.ErrorCodes.Add(OrderDataConstants.ERROR_USER_UNAUTHORIZED);
+            }
 
-        [HttpDelete]
-        [Authorize]
-        public async Task<IActionResult> UpdateOrder([FromForm] OrderModel orderModel)
-        {
-            throw new NotImplementedException();
-        }
 
-        [HttpPost]
-        [Authorize]
-        public async Task<IActionResult> MarkOrderDone(int id)
-        {
-            throw new NotImplementedException();
+            return Json(result);
         }
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> MarkOrderCanceled (int id)
+        public async Task<IActionResult> UpdateOrder(Guid orderId, [FromForm] OrderModel orderModel)
         {
-            throw new NotImplementedException();
+            Guid userId;
+            OrderResult result = new OrderResult { Success = true };
+            if (!Guid.TryParse(User.FindFirst("Id")?.Value, out userId))
+            {
+                result.ErrorCodes.Add(OrderDataConstants.ERROR_USER_UNAUTHORIZED);
+            }
+
+            Order? order = await orderService.FindAsync(orderId);
+            if (order == null)
+            {
+                result.ErrorCodes.Add(OrderDataConstants.ERROR_WRONG_ORDER_ID);
+            }
+            else if (order.Status != OrderStatus.Open)
+            {
+                result.ErrorCodes.Add(OrderDataConstants.ERROR_WRONG_OPERATION);
+            }
+
+            Account? account = await accountService.FindAsync(userId);
+
+            if (account == null)
+            {
+                result.ErrorCodes.Add(OrderDataConstants.ERROR_USER_UNAUTHORIZED);
+                result.Success = false;
+                return Json(result);
+            }
+
+
+            Customer? customer = await customerService.GetByAccountId(userId);
+            if (customer == null)
+            {
+                result.Success = false;
+                result.ErrorCodes.Add(OrderDataConstants.ERROR_NO_SUCH_CUSTOMER);
+                return Json(result);
+            }
+            if (orderModel.CustomerId != customer.Id && !account.IsAdmin)
+            {
+                result.ErrorCodes.Add(OrderDataConstants.ERROR_WRONG_PRIVILEGES);
+            }
+
+            var section = await sectionRepo.FindByField("Slug", orderModel.Slug);
+            if (!section.Any())
+            {
+                result.ErrorCodes.Add(OrderDataConstants.ERROR_NO_SUCH_SECTION);
+            }
+
+            if (result.ErrorCodes.Count > 0)
+            {
+                result.Success = false;
+            }
+            else
+            {
+
+                Order newOrder = new Order
+                {
+                    Id = orderId,
+                    CustomerId = customer.Id,
+                    Location = orderModel.Location,
+                    Price = orderModel.Price,
+                    Text = orderModel.Text,
+                    Header = orderModel.Header,
+                    ExpireDate = orderModel.ExpireDate,
+                    SectionId = section.First().Id,
+                    StatusId = order!.StatusId,
+                };
+
+                await orderService.UpdateAsync(newOrder);
+            }
+
+            return Json(result);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> MarkOrderDone(Guid id)
+        {
+            Order? order = await orderService.FindAsync(id);
+            OrderResult result = new OrderResult { Success = true };
+
+
+            if (order != null && order.Status != OrderStatus.InProgress)
+            {
+                result.ErrorCodes.Add(OrderDataConstants.ERROR_WRONG_OPERATION);
+            }
+            else if (order == null)
+            {
+                result.ErrorCodes.Add(OrderDataConstants.ERROR_WRONG_ORDER_ID);
+            }
+
+            if (result.ErrorCodes.Count > 0)
+            {
+                result.Success = false;
+            }
+            else
+            {
+                order!.Status = OrderStatus.Done;
+                await orderService.UpdateAsync(order);
+            }
+
+            return Json(result);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> MarkOrderCanceled (Guid id)
+        {
+            Order? order = await orderService.FindAsync(id);
+            OrderResult result = new OrderResult { Success = true };
+
+
+            if (order != null && (order.Status == OrderStatus.Done || order.Status == OrderStatus.Canceled))
+            {
+                result.ErrorCodes.Add(OrderDataConstants.ERROR_WRONG_OPERATION);
+            }
+            else if (order == null)
+            {
+                result.ErrorCodes.Add(OrderDataConstants.ERROR_WRONG_ORDER_ID);
+            }
+
+            if (result.ErrorCodes.Count > 0)
+            {
+                result.Success = false;
+            }
+            else
+            {
+                order!.Status = OrderStatus.Canceled;
+                await orderService.UpdateAsync(order);
+            }
+
+            return Json(result);
         }
     }
 }

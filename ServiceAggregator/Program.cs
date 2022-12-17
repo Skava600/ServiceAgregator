@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using ORM;
 using ServiceAggregator.Data;
 using ServiceAggregator.Options;
+using ServiceAggregator.Services;
 using System.Configuration;
 using System.Text;
 
@@ -26,10 +27,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 });
 builder.Services.AddAuthorization();
 
+builder.Services.AddRepositories();
+builder.Services.AddDataServices();
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-options.UseNpgsql(builder.Configuration.GetConnectionString("DataAccessPostgreSqlProviderNeon")));
-// ConfigureServices method
+builder.Services.AddScoped<ApplicationDbContext>(conn => new ApplicationDbContext(builder.Configuration.GetConnectionString("DataAccessPostgreSqlProviderNeon")));
 
 var openApiSecurityScheme = new OpenApiSecurityScheme
 {
@@ -56,12 +57,27 @@ var openApiSecurityRequirement = new OpenApiSecurityRequirement
     },
 };
 
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.WithOrigins("https://localhost:44492")
+                          .WithMethods("PUT", "DELETE", "GET", "POST", "UPDATE")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+
+                      });
+});
+
 builder.Services.AddSwaggerGen(
     options =>
     {
         options.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
         options.AddSecurityDefinition("Bearer", openApiSecurityScheme);
         options.AddSecurityRequirement(openApiSecurityRequirement);
+        options.EnableAnnotations();
     });
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 builder.Services.AddOptions();
@@ -94,20 +110,26 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
+app.UseCors(MyAllowSpecificOrigins);
+
 app.UseAuthentication();    // аутентификация
 app.UseAuthorization();     // авторизация
+
+
 
 using (var serviceScope = app.Services.CreateScope())
 {
     var services = serviceScope.ServiceProvider;
 
     var myDependency = services.GetRequiredService<IDbInitializer>();
+    var context = services.GetRequiredService<ApplicationDbContext>();
+    context.MigrateAsync().Wait();
     myDependency.Seed().Wait();
 }
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller}/{action=Index}/{id?}");
+    pattern: "{controller}/{action=Index}");
 
 app.MapFallbackToFile("index.html"); ;
 

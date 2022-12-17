@@ -1,23 +1,27 @@
-﻿using Microsoft.EntityFrameworkCore;
-using ServiceAggregator.Entities;
+﻿using ServiceAggregator.Entities;
+using ORM;
+using Microsoft.EntityFrameworkCore;
 
 namespace ServiceAggregator.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : DbContract
     {
-        public DbSet<Account> Accounts { get; set; }
-        public DbSet<Doer> Doers { get; set; }
-        public DbSet<DoerWorkSection> DoerWorkSections { get; set; }
-        public DbSet<Customer> Customers { get; set; }
-        public DbSet<Review> Reviews { get; set; }
-        public DbSet<Order> Orders { get; set; }    
-        public DbSet<WorkSection> WorkSections { get; set; }
+        public DbTable<Account> Accounts { get; set; }
+        public DbTable<Doer> Doers { get; set; }
+        public DbTable<DoerWorkSection> DoerWorkSections { get; set; }
+        public DbTable<Customer> Customers { get; set; }
+        public DbTable<CustomerReview> CustomerReviews { get; set; }
+        public DbTable<DoerReview> DoerReviews { get; set; }
+        public DbTable<Order> Orders { get; set; }    
+        public DbTable<Section> Sections { get; set; }
+        public DbTable<Category> Categorys { get; set; }
+        public DbTable<OrderResponse> Responses { get; set; }
 
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        public ApplicationDbContext(string connectionString)
+       : base(connectionString)
         {
-
         }
-
+        /*
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Account>()
@@ -74,6 +78,6 @@ namespace ServiceAggregator.Data
                 .WithOne(o => o.Customer)
                 .HasForeignKey(o => o.CustomerId)
                 .OnDelete(DeleteBehavior.Cascade);
-        }
+        }*/
     }
 }

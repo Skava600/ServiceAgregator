@@ -9,8 +9,15 @@ namespace ServiceAggregator.Services.Dal
 {
     public class DoerDalDataService : DalDataServiceBase<Doer, DoerDalDataService>, IDoerDalDataService
     {
+        private IDoerRepo doerRepo;
         public DoerDalDataService(IDoerRepo mainRepo) : base(mainRepo)
         {
+            doerRepo = mainRepo;
+        }
+
+        public async Task<IEnumerable<Doer>> GetDoersByFilters(string[] slugFilters)
+        {
+            return await doerRepo.GetDoersByFilters(slugFilters);
         }
     }
 }

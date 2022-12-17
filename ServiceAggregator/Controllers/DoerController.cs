@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ServiceAggregator.Entities;
 using ServiceAggregator.Models;
+using ServiceAggregator.Repos;
 using ServiceAggregator.Services.Dal;
 using ServiceAggregator.Services.Interfaces;
 
@@ -8,31 +9,39 @@ using ServiceAggregator.Services.Interfaces;
 
 namespace ServiceAggregator.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class DoerController : Controller
     {
         IDoerDalDataService doerService;
-        IDoerSectionDalDataService sectionService;
-        public DoerController(IDoerDalDataService doerService, IDoerSectionDalDataService sectionService) 
+        ISectionDalDataService sectionService;
+        public DoerController(IDoerDalDataService doerService, ISectionDalDataService sectionService) 
         {
             this.doerService = doerService;
             this.sectionService = sectionService;
         }
         [HttpPost]
-        public async Task<IActionResult> GetPage(int? page, [FromBody] string[] filters)
+        public async Task<IActionResult> Get([FromBody] string[] filters)
         {
-            if (page == null)
-                page = 1;
+            var doers = await doerService.GetDoersByFilters(filters);
 
-            var doers = await doerService.GetAllAsync();
-            var doerSections = (await sectionService.GetAllAsync()).ToList();
-            for (int i = 0; i < doerSections.Count; i++)
+            List<DoerData> result = new List<DoerData>();
+            DoerData currentDoer;
+            foreach (var d in doers)
             {
+                currentDoer = new DoerData
+                {
+                    Id = d.Id,
+                    DoerName = d.DoerName,
+                    DoerDescription = d.DoerDescription,
+                    OrderCount = d.OrderCount,
+                };
 
+                currentDoer.Sections = (await sectionService.GetSectionsByDoerIdAsync(d.Id)).Select(s => new SectionData { Name = s.Name, Slug = s.Slug, }).ToList();
+                result.Add(currentDoer);
             }
 
-            return Json(Ok());
+            return Json(result);
         }
 
         // GET: api/<ValuesController>
@@ -43,22 +52,37 @@ namespace ServiceAggregator.Controllers
         }*/
 
         // GET api/<ValuesController>/5
-        [HttpGet("{id:int}")]
-        public Doer Get(int id)
+        [HttpGet]
+        public async Task<IActionResult> Get(Guid id)
         {
-            throw new NotImplementedException();
+            DoerData result;
+            var doer = await doerService.FindAsync(id);
+            if (doer == null)
+            {
+                return Json(Results.NotFound());
+            }
+            result = new DoerData
+            {
+                Id = id,
+                DoerName = doer.DoerName,
+                DoerDescription = doer.DoerDescription,
+                OrderCount = doer.OrderCount,
+                Sections = (await sectionService.GetSectionsByDoerIdAsync(doer.Id)).Select(s => new SectionData { Name = s.Name, Slug = s.Slug, }).ToList()
+            };
+
+            return Json(result);
         }
 
         // PUT api/<ValuesController>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromForm] DoerModel doerModel)
+        public async Task<IActionResult> Put(Guid id, [FromForm] DoerModel doerModel)
         {
             throw new NotImplementedException();
         }
 
         // DELETE api/<ValuesController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public void Delete(Guid id)
         {
         }
     }

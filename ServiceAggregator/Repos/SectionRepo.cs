@@ -86,5 +86,33 @@ namespace ServiceAggregator.Repos
             return workSection;
         }
 
+        public async Task<IEnumerable<Section>> GetSectionsByDoerIdAsync(Guid doerId)
+        {
+            OpenConnection();
+
+            string commandText = "SELECT * FROM public.get_sections_by_doer_id(" +
+                $"'{doerId}');";
+            List<Section> workSections = new List<Section>();
+            using (NpgsqlCommand cmd = new NpgsqlCommand(commandText, _sqlConnection))
+            {
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (reader.Read())
+                    {
+                        workSections.Add(new Section
+                        {
+                            Id = reader.GetGuid(0),
+                            Name = reader.GetString(1),
+                            Slug = reader.GetString(2),
+                            CategoryId = reader.GetGuid(3),
+                        });
+                    }
+                }
+            }
+
+            CloseConnection();
+
+            return workSections;
+        }
     }
 }

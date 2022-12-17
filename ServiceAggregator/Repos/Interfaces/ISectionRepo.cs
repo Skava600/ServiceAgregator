@@ -6,5 +6,6 @@ namespace ServiceAggregator.Repos.Interfaces
 {
     public interface ISectionRepo : IBaseRepo<Section>
     {
+        public Task<IEnumerable<Section>> GetSectionsByDoerIdAsync(Guid doerId);
     }
 }

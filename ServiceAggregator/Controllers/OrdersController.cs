@@ -21,15 +21,13 @@ namespace ServiceAggregator.Controllers
     public class OrdersController : Controller
     {
         IOrderDalDataService orderService;
-        private IOrderRepo orderRepo;
         private ICustomerDalDataService customerService;
         private ISectionRepo sectionRepo;
         private IAccountDalDataService accountService;
         
-        public OrdersController(IOrderDalDataService orderService, IOrderRepo orderRepo, IAccountDalDataService accountService, ISectionRepo sectionRepo, ICustomerDalDataService customerService)
+        public OrdersController(IOrderDalDataService orderService,IAccountDalDataService accountService, ISectionRepo sectionRepo, ICustomerDalDataService customerService)
         {
             this.orderService = orderService;
-            this.orderRepo = orderRepo;
             this.accountService = accountService;
             this.customerService = customerService;
             this.sectionRepo = sectionRepo;
@@ -70,19 +68,16 @@ namespace ServiceAggregator.Controllers
                 for(int i = 0; i < orders.Count;  i++)
                 {
                     var currentSection = await sectionRepo.Find(orders[i].SectionId);
-
-                    orders.RemoveAll(o => Array.IndexOf(filters, currentSection.Slug) == -1);
+                    if (currentSection != null) 
+                        orders.RemoveAll(o => Array.IndexOf(filters, currentSection.Slug) == -1);
                 }
-            }
-
-         
+            }      
           
             orders.Skip(((int)page - 1) * 50).Take(50);
          
             Section? section;
             foreach (var order in orders)
             {
-
                 orderData = new OrderData
                 {
                     Id = order.Id,
@@ -91,7 +86,7 @@ namespace ServiceAggregator.Controllers
                     Price        = order.Price,
                     Location     = order.Location,
                     ExpireDate = order.ExpireDate,
-                    Status = order.Status,
+                    Status = order.Status.ToString(),
                  };
 
                 section = await sectionRepo.Find(order.SectionId);
@@ -101,13 +96,14 @@ namespace ServiceAggregator.Controllers
                     orderData.OrderResult.ErrorCodes.Add(OrderDataConstants.ERROR_NO_SUCH_SECTION);
                 }
                 else
+                {
                     orderData.Section = new SectionData
                     {
                         Name = section.Name,
                         Slug = section.Slug,
                     };
-                ordersData.Add(orderData);
-
+                    ordersData.Add(orderData);
+                }
             } 
             return Json(ordersData); 
              
@@ -119,36 +115,51 @@ namespace ServiceAggregator.Controllers
         {
             OrderData orderData = new OrderData { OrderResult = new OrderResult { Success = true } };
             var order = await orderService.FindAsync(id);
+           
             if (order == null)
             {
-                orderData.OrderResult.Success = false;
                 orderData.OrderResult.ErrorCodes.Add(OrderDataConstants.ERROR_WRONG_ORDER_ID);
+                orderData.OrderResult.Success = false;
                 return Json(orderData);
             }
-
-            orderData = new OrderData
-            {
-                Id = order.Id,
-                Header = order.Header,
-                Text = order.Text,
-                Price = order.Price,
-                Location = order.Location,
-            };
-
-
             Account? customersAccount = await accountService.GetAccountByCustomerId(order.CustomerId);
-
+            Section? section = await sectionRepo.Find(order.SectionId);
             if (customersAccount == null)
             {
-                orderData.OrderResult.Success = false;
                 orderData.OrderResult.ErrorCodes.Add(OrderDataConstants.ERROR_NO_SUCH_CUSTOMER);
             }
+            if (section == null)
+            {
+                orderData.OrderResult.ErrorCodes.Add(OrderDataConstants.ERROR_NO_SUCH_SECTION);
+            }
+
+            if (orderData.OrderResult.ErrorCodes.Count > 0)
+            {
+                orderData.OrderResult.Success = false;
+            }
             else
-                orderData.Customer = new CustomerData
+            {
+                orderData = new OrderData
                 {
-                    Account = new AccountData(customersAccount),
-                    Id = order.CustomerId,
-                };
+                    Id = order.Id,
+                    Header = order.Header,
+                    Text = order.Text,
+                    Price = order.Price,
+                    Location = order.Location,
+                    ExpireDate = order.ExpireDate,
+                    Status = order.Status.ToString(),
+                    Customer = new CustomerData
+                    {
+                        Account = new AccountData(customersAccount!),
+                        Id = order.CustomerId,
+                    },
+                    Section = new SectionData
+                    {
+                        Name = section!.Name,
+                        Slug = section!.Slug,
+                    }
+                };            
+            }
 
             return Json(orderData);
 
@@ -207,7 +218,7 @@ namespace ServiceAggregator.Controllers
                     Status = OrderStatus.Open,
                 };
 
-                await orderRepo.CreateOrder(order);
+                await orderService.CreateOrder(order);
 
             }
             return Json(result);

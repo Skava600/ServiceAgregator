@@ -16,6 +16,7 @@ namespace ServiceAggregator.Services
             services.AddScoped<ICategoryRepo, CategoryRepo>();
             services.AddScoped<IOrderRepo, OrderRepo>();
             services.AddScoped<ICustomerRepo, CustomerRepo>();
+            services.AddScoped<IDoerRepo, DoerRepo>();
             return services;
         }
         public static IServiceCollection AddDataServices(

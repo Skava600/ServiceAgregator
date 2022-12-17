@@ -63,7 +63,11 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       policy =>
                       {
-                          policy.WithOrigins("https://localhost:44492");
+                          policy.WithOrigins("https://localhost:44492")
+                          .WithMethods("PUT", "DELETE", "GET", "POST", "UPDATE")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+
                       });
 });
 
@@ -106,11 +110,13 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
+app.UseCors(MyAllowSpecificOrigins);
+
 app.UseAuthentication();    // аутентификация
 app.UseAuthorization();     // авторизация
 
 
-app.UseCors(MyAllowSpecificOrigins);
+
 using (var serviceScope = app.Services.CreateScope())
 {
     var services = serviceScope.ServiceProvider;

@@ -18,18 +18,18 @@ namespace ServiceAggregator.Data
 {
     public class DbInitializer: IDbInitializer
     {
-        private IDataServiceBase<Account> accountService;
-        private ICustomerRepo customerRepo;
+        private IAccountDalDataService accountService;
+        private ICustomerDalDataService customerService;
         private IDataServiceBase<Section> sectionService;
         private IDataServiceBase<Category> categoryService;
-        public DbInitializer(IOptions<MyOptions> optionsAccessor, ApplicationDbContext context, IDataServiceBase<Section> sectionService, IDataServiceBase<Category> categoryService, IDataServiceBase<Account> accountService, ICustomerRepo customerRepo)
+        public DbInitializer(IOptions<MyOptions> optionsAccessor, ApplicationDbContext context, IDataServiceBase<Section> sectionService, IDataServiceBase<Category> categoryService, IAccountDalDataService accountService, ICustomerDalDataService customerService)
         {
             var connString = optionsAccessor.Value.ConnectionString;
 
             this.accountService = accountService;
             this.sectionService = sectionService;
             this.categoryService = categoryService;
-            this.customerRepo = customerRepo;
+            this.customerService = customerService;
         }
 
         public async Task Seed()
@@ -61,8 +61,8 @@ namespace ServiceAggregator.Data
 
                 await accountService.AddAsync(user);
                 await accountService.AddAsync(admin);
-                await customerRepo.Add(new Customer { Id = Guid.NewGuid(), AccountId = user.Id });
-                await customerRepo.Add(new Customer { Id = Guid.NewGuid(), AccountId = admin.Id });
+                await customerService.AddAsync(new Customer { Id = Guid.NewGuid(), AccountId = user.Id });
+                await customerService.AddAsync(new Customer { Id = Guid.NewGuid(), AccountId = admin.Id });
             }
 
             if (!(await sectionService.GetAllAsync()).Any() && !(await categoryService.GetAllAsync()).Any())

@@ -44,6 +44,10 @@ internal static class TableMappingHelper
         {
             return new Guid(value);
         }
+        if (type == typeof(double))
+        {
+            return double.Parse(value);
+        }
         if (type == typeof(Guid?))
         {
             return string.IsNullOrEmpty(value) ? null : new Guid(value);

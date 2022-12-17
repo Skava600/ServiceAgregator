@@ -22,9 +22,10 @@ namespace ServiceAggregator.Services
             this IServiceCollection services)
         {
             services.AddScoped<IDataServiceBase<Section>, SectionDalDataService>();
-            services.AddScoped<IDataServiceBase<Account>, AccountDalDataService>();
+            services.AddScoped<IAccountDalDataService, AccountDalDataService>();
             services.AddScoped<IDataServiceBase<Category>, CategoryDalDataService>();
-            services.AddScoped<IDataServiceBase<Order>,OrderDalDataService>();
+            services.AddScoped<IOrderDalDataService,OrderDalDataService>();
+            services.AddScoped<ICustomerDalDataService, CustomerDalDataService>();
             return services;
         }
     }

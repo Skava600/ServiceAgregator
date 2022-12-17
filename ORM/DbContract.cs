@@ -78,10 +78,14 @@ public class DbContract
         List<ColumnInfo> columns = new List<ColumnInfo>();
         foreach (var property in properties)
         {
-            string name = property.Name;
-            string dbType = PropertyTypeMapper.MapType(property.PropertyType);
-            IEnumerable<string> constraints = PropertyTypeMapper.MapConstraints(property);
-            columns.Add(new ColumnInfo(name, dbType, constraints));
+            if (!property.PropertyType.IsEnum)
+            {
+                string name = property.Name;
+                string dbType = PropertyTypeMapper.MapType(property.PropertyType);
+                IEnumerable<string> constraints = PropertyTypeMapper.MapConstraints(property);
+                columns.Add(new ColumnInfo(name, dbType, constraints));
+            }
+            
         }
 
         await this.basicScriptRunner.CreateTableIfNotExistsAsync(tableName, columns);

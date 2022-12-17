@@ -27,7 +27,8 @@ namespace ServiceAggregator.Repos
                  $"'{order.ExpireDate}'," +
                  $"'{order.Price}'," +
                 $"'{order.CustomerId}'," +
-                $"'{order.SectionId}');";
+                $"'{order.SectionId}'," +
+                $"'{order.StatusId}');";
 
             using (NpgsqlCommand cmd = new NpgsqlCommand(sql, _sqlConnection))
             {
@@ -65,6 +66,7 @@ namespace ServiceAggregator.Repos
                             Price = reader.GetDouble(5),
                             CustomerId = reader.GetGuid(6),
                             SectionId = reader.GetGuid(7),
+                            StatusId = reader.GetInt32(8),
                         });
                     }
                 }

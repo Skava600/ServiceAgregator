@@ -10,6 +10,7 @@ namespace ServiceAggregator.Services.Interfaces
         Task<TEntity> UpdateAsync(TEntity entity);
         Task DeleteAsync(TEntity entity);
         Task<TEntity> AddAsync(TEntity entity);
+        Task<IEnumerable<TEntity>> FindByField(string field, string value);
     }
 
 }

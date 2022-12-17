@@ -40,6 +40,8 @@ internal static class PropertyTypeMapper
         {
             return "smallint";
         }
+    
+
 
         throw new NotSupportedException();
     }

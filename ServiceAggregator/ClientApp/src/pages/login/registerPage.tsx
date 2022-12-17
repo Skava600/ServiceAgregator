@@ -1,4 +1,5 @@
-import { TextField, Paper, Button, Stack, Typography } from "@mui/material";
+import { TextField, Paper, Button, Stack, IconButton } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import { useState } from "react";
 import { registerUser } from "./login.api";
 import "./loginPage.less";
@@ -50,7 +51,12 @@ export const LoginPage = () => {
     return (
         <div className="login-page">
             <div>
-                <h1 className="form-title">Service Agregator</h1>
+                <div>
+                    <h1 className="form-title">Service Agregator</h1>
+                    <IconButton aria-label="delete" size="small">
+                        <CloseIcon fontSize="inherit" />
+                    </IconButton>
+                </div>
                 <Paper className="content" elevation={5}>
                     <h1 className="form-title">Регистрация</h1>
                     <TextField

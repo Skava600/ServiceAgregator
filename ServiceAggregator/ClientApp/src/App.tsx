@@ -3,11 +3,13 @@ import { Routes, Route } from "react-router-dom";
 import axios from "axios";
 import { ErrorPage } from "./pages";
 import { routes } from "./routes/routes";
+import appAxios from "./axios";
 
 export const App = () => {
     useEffect(() => {
         axios
-            .get(`api/WorkSections/GetListOfSections`)
+            .get(`https://localhost:7280/api/WorkSections/GetListOfSections`)
+            .then(() => appAxios.get(`/WorkSections/GetListOfSections`))
             .then((res) => console.log(res));
     }, []);
     return (

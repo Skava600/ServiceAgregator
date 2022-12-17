@@ -6,6 +6,6 @@
         public string DoerName { get; set; }
         public string DoerDescription { get; set; }
         public int OrderCount { get; set; }
-        public List<SectionData> Sections { get; set; }
+        public List<SectionData> Sections { get; set; } = new List<SectionData>();
     }
 }

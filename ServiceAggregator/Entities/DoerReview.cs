@@ -4,7 +4,8 @@ namespace ServiceAggregator.Entities
 {
     public class DoerReview : DbInstance
     {
-        public Guid AccountAuthorId { get; set; }
+        public Guid CustomerAuthorId { get; set; }
+        public Guid OrderId { get; set; }
         public string Text { get; set; }
         public short Grade { get; set; }
 

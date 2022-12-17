@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ServiceAggregator.Entities;
 using ServiceAggregator.Models;
 using ServiceAggregator.Services.Interfaces;
 
@@ -13,11 +14,15 @@ namespace ServiceAggregator.Controllers
         private ICustomerDalDataService customerService;
         private IAccountDalDataService accountService;
         private IOrderDalDataService orderService;
-        public CustomerController(ICustomerDalDataService customerService, IAccountDalDataService accountDal, IOrderDalDataService orderService) 
+        private ICustomerReviewDalDataService customerReviewService;
+        private IDoerDalDataService doerService;
+        public CustomerController(IDoerDalDataService doerService, ICustomerDalDataService customerService, IAccountDalDataService accountDal, IOrderDalDataService orderService, ICustomerReviewDalDataService customerReviewService) 
         {
             this.customerService = customerService;
             this.accountService = accountDal;
             this.orderService = orderService;
+            this.customerReviewService = customerReviewService;
+            this.doerService = doerService;
         }
 
         [HttpGet]
@@ -30,13 +35,13 @@ namespace ServiceAggregator.Controllers
                 return Json(Results.NotFound());
             }
 
-            var orders = (await orderService.GetAllAsync()).Where(o => o.CustomerId == guid);
+            var reviews = await customerReviewService.GetCustomersReviews(guid);
+           // var orders = (await orderService.GetAllAsync()).Where(o => o.CustomerId == guid);
             CustomerData customerData = new CustomerData
             {
                 Id = guid,
                 Account = new AccountData(account),
-                Reviews = new List<ReviewData> { },
-                Orders = new List<OrderData>(orders.Select(o => new OrderData
+                /*Orders = new List<OrderData>(orders.Select(o => new OrderData
                 {
                     Id = o.Id,
                     Header = o.Header,
@@ -45,8 +50,26 @@ namespace ServiceAggregator.Controllers
                     Location = o.Location,
                     Price = o.Price,
                     Status = o.Status.ToString(),
-                }))
+                }))*/
             };
+            Doer? doer;
+            foreach (var review in reviews)
+            {
+                doer = await doerService.FindAsync(review.DoerAuthorId);
+                if (doer != null)
+                    customerData.Reviews.Add(new ReviewData
+                    {
+                        Text = review.Text,
+                        Grade = review.Grade,
+                        DoerAuthor = new DoerData
+                        {
+                            Id = doer.Id,
+                            DoerName = doer.DoerName,
+                            DoerDescription = doer.DoerDescription,
+                            OrderCount = doer.OrderCount,
+                        }
+                    });
+            }
 
             return Json(customerData);
         }

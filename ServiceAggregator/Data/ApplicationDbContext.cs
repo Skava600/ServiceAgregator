@@ -8,7 +8,7 @@ namespace ServiceAggregator.Data
     {
         public DbTable<Account> Accounts { get; set; }
         public DbTable<Doer> Doers { get; set; }
-        public DbTable<DoerWorkSection> DoerWorkSections { get; set; }
+        public DbTable<DoerSection> DoerWorkSections { get; set; }
         public DbTable<Customer> Customers { get; set; }
         public DbTable<CustomerReview> CustomerReviews { get; set; }
         public DbTable<DoerReview> DoerReviews { get; set; }

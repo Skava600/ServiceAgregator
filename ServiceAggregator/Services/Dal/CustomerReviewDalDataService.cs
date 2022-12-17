@@ -6,12 +6,10 @@ using TrialBalanceWebApp.Repos.Base;
 
 namespace ServiceAggregator.Services.Dal
 {
-    public class SectionDalDataService : DalDataServiceBase<Section, SectionDalDataService>, ISectionDalDataService
+    public class CustomerReviewDalDataService : DalDataServiceBase<CustomerReview, CustomerReviewDalDataService>, ICustomerReviewDalDataService
     {
-        private readonly ISectionRepo _repo;
-        public SectionDalDataService(ISectionRepo mainRepo) : base(mainRepo)
+        public CustomerReviewDalDataService(ICustomerReviewRepo mainRepo) : base(mainRepo)
         {
-            this._repo = mainRepo;
         }
     }
 }

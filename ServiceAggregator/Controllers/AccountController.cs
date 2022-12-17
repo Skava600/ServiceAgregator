@@ -183,8 +183,6 @@ namespace ServiceAggregator.Controllers
                 }
             }
 
-           
-
             if (registrationResult.ErrorCodes.Count > 0)
             {
                 registrationResult.Success = false;

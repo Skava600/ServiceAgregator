@@ -13,18 +13,26 @@ namespace ServiceAggregator.Controllers
     public class DoerController : Controller
     {
         IDoerDalDataService doerService;
-        public DoerController(IDoerDalDataService doerService) 
+        IDoerSectionDalDataService sectionService;
+        public DoerController(IDoerDalDataService doerService, IDoerSectionDalDataService sectionService) 
         {
             this.doerService = doerService;
+            this.sectionService = sectionService;
         }
         [HttpPost]
-        public IActionResult GetPage(int? page, [FromBody] string[] filters)
+        public async Task<IActionResult> GetPage(int? page, [FromBody] string[] filters)
         {
             if (page == null)
                 page = 1;
 
+            var doers = await doerService.GetAllAsync();
+            var doerSections = (await sectionService.GetAllAsync()).ToList();
+            for (int i = 0; i < doerSections.Count; i++)
+            {
 
-            throw new NotImplementedException();
+            }
+
+            return Json(Ok());
         }
 
         // GET: api/<ValuesController>
@@ -41,12 +49,6 @@ namespace ServiceAggregator.Controllers
             throw new NotImplementedException();
         }
 
-        // POST api/<ValuesController>
-        [HttpPost]
-        public void Post([FromBody] Doer doer)
-        {
-        }
-
         // PUT api/<ValuesController>/5
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromForm] DoerModel doerModel)
@@ -58,12 +60,6 @@ namespace ServiceAggregator.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
-        }
-
-        [HttpPost("{id}")]
-        public async Task<IActionResult> MarkOrderDone(int id)
-        {
-            throw new NotImplementedException();
         }
     }
 }

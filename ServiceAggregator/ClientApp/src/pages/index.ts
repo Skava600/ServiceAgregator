@@ -1,3 +1,4 @@
 export { ErrorPage } from "./error/errorPage";
 export { MainPage } from "./main/mainPage";
-export { LoginPage } from "./login/registerPage";
+export { RegisterPage } from "./login/registerPage";
+export { LoginPage } from "./login/loginPage";

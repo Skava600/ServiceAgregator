@@ -9,6 +9,11 @@
     align-items: center;
     flex-direction: column;
 
+    .login-header{
+        display: flex;
+        justify-content: space-between;
+    }
+
     .content{
         min-width: 330px;
         height: fit-content;
@@ -23,10 +28,18 @@
         align-items: center;
         border-radius: 5px;
 
+        .error{
+            display: flex;
+            .MuiSvgIcon-root{
+                color:red;
+            }
+        }
+
 
         .form-title{
             align-self: flex-start; 
             margin-bottom: 15px;
+            display: block;
         }
 
         .form-input{

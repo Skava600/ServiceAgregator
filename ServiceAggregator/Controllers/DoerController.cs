@@ -18,8 +18,12 @@ namespace ServiceAggregator.Controllers
             this.doerService = doerService;
         }
         [HttpPost]
-        public IActionResult GetPage()
+        public IActionResult GetPage(int? page, [FromBody] string[] filters)
         {
+            if (page == null)
+                page = 1;
+
+
             throw new NotImplementedException();
         }
 

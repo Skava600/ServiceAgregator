@@ -240,7 +240,7 @@ namespace ServiceAggregator.Controllers
             return Json(result);
         }
 
-        [HttpPost]
+        [HttpPut]
         [Authorize]
         public async Task<IActionResult> UpdateOrder(Guid orderId, [FromForm] OrderModel orderModel)
         {

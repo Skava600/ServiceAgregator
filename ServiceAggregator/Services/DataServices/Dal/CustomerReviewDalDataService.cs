@@ -1,15 +1,16 @@
 ﻿using ServiceAggregator.Entities;
 using ServiceAggregator.Repos.Interfaces;
-using ServiceAggregator.Services.Dal.Base;
-using ServiceAggregator.Services.Interfaces;
+using ServiceAggregator.Services.DataServices.Dal.Base;
+using ServiceAggregator.Services.DataServices.Interfaces;
 using TrialBalanceWebApp.Repos.Base;
+using TrialBalanceWebApp.Services.Logging.Interfaces;
 
-namespace ServiceAggregator.Services.Dal
+namespace ServiceAggregator.Services.DataServices.Dal
 {
     public class CustomerReviewDalDataService : DalDataServiceBase<CustomerReview, CustomerReviewDalDataService>, ICustomerReviewDalDataService
     {
         ICustomerReviewRepo repo;
-        public CustomerReviewDalDataService(ICustomerReviewRepo mainRepo) : base(mainRepo)
+        public CustomerReviewDalDataService(ICustomerReviewRepo mainRepo, IAppLogging<CustomerReviewDalDataService> appLogging) : base(mainRepo, appLogging)
         {
             repo = mainRepo;
         }

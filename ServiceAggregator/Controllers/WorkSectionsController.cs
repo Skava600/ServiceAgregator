@@ -6,7 +6,7 @@ using ServiceAggregator.Entities;
 using ServiceAggregator.Models;
 using ServiceAggregator.Options;
 using ServiceAggregator.Repos;
-using ServiceAggregator.Services.Interfaces;
+using ServiceAggregator.Services.DataServices.Interfaces;
 
 namespace ServiceAggregator.Controllers
 {

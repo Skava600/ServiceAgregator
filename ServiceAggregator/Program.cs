@@ -4,9 +4,10 @@ using Microsoft.OpenApi.Models;
 using ORM;
 using ServiceAggregator.Data;
 using ServiceAggregator.Options;
-using ServiceAggregator.Services;
+using ServiceAggregator.Services.DataServices;
 using System.Configuration;
 using System.Text;
+using TrialBalanceWebApp.Services.Logging.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +28,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 });
 builder.Services.AddAuthorization();
 
+builder.ConfigureSerilog();
+builder.Services.RegisterLoggingInterfaces();
 builder.Services.AddRepositories();
 builder.Services.AddDataServices();
 

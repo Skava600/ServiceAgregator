@@ -1,23 +1,24 @@
 ﻿using ServiceAggregator.Entities;
 using ServiceAggregator.Repos.Interfaces;
-using ServiceAggregator.Services.Dal.Base;
-using ServiceAggregator.Services.Interfaces;
+using ServiceAggregator.Services.DataServices.Dal.Base;
+using ServiceAggregator.Services.DataServices.Interfaces;
+using TrialBalanceWebApp.Services.Logging.Interfaces;
 
-namespace ServiceAggregator.Services.Dal
+namespace ServiceAggregator.Services.DataServices.Dal
 {
     public class AccountDalDataService : DalDataServiceBase<Account, AccountDalDataService>, IAccountDalDataService
     {
         private readonly IAccountRepo _repo;
-        public AccountDalDataService(IAccountRepo mainRepo) : base(mainRepo)
+        public AccountDalDataService(IAccountRepo mainRepo, IAppLogging<AccountDalDataService> appLogging) : base(mainRepo, appLogging)
         {
-            this._repo = mainRepo;
+            _repo = mainRepo;
         }
 
         public async Task<Account?> GetAccountByCustomerId(Guid customerGuid) => await _repo.GetAccountByCustomerId(customerGuid);
 
         public async Task<Account?> Login(string email, string password)
         {
-           return await _repo.Login(email, password);
+            return await _repo.Login(email, password);
         }
     }
 }

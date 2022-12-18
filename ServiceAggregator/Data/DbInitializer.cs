@@ -9,8 +9,8 @@ using ServiceAggregator.Models;
 using ServiceAggregator.Options;
 using ServiceAggregator.Repos;
 using ServiceAggregator.Repos.Interfaces;
-using ServiceAggregator.Services.Dal;
-using ServiceAggregator.Services.Interfaces;
+using ServiceAggregator.Services.DataServices.Dal;
+using ServiceAggregator.Services.DataServices.Interfaces;
 using System.Text;
 using System.Text.Json;
 

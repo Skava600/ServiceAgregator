@@ -8,7 +8,5 @@ namespace ServiceAggregator.Entities
         public Guid DoerId { get; set; }
 
         public Guid SectionId { get; set; }
-
-        public string Slug { get; set; }
     }
 }

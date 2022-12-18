@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ServiceAggregator.Entities;
 using ServiceAggregator.Models;
+using ServiceAggregator.Repos;
 using ServiceAggregator.Services.Dal;
 using ServiceAggregator.Services.Interfaces;
 
@@ -8,57 +10,143 @@ using ServiceAggregator.Services.Interfaces;
 
 namespace ServiceAggregator.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class DoerController : Controller
     {
         IDoerDalDataService doerService;
-        IDoerSectionDalDataService sectionService;
-        public DoerController(IDoerDalDataService doerService, IDoerSectionDalDataService sectionService) 
+        ISectionDalDataService sectionService;
+        IDoerReviewDalDataService reviewService;
+        ICustomerDalDataService customerService;
+        IAccountDalDataService accountService;
+        public DoerController(
+            IDoerDalDataService doerService, 
+            ISectionDalDataService sectionService, 
+            IDoerReviewDalDataService reviewService, 
+            ICustomerDalDataService customerService, 
+            IAccountDalDataService accountService) 
         {
             this.doerService = doerService;
+            this.reviewService = reviewService;
             this.sectionService = sectionService;
+            this.customerService = customerService;
+            this.accountService = accountService;
         }
+
+
         [HttpPost]
-        public async Task<IActionResult> GetPage(int? page, [FromBody] string[] filters)
+        [Authorize]
+        public async Task <IActionResult> CreateDoerAccount([FromForm] DoerModel model)
         {
-            if (page == null)
-                page = 1;
-
-            var doers = await doerService.GetAllAsync();
-            var doerSections = (await sectionService.GetAllAsync()).ToList();
-            for (int i = 0; i < doerSections.Count; i++)
+            DoerResult result = new DoerResult { Success = true };
+            Guid accountId = Guid.Parse(User.FindFirst("Id")?.Value);
+            if ((await doerService.FindByField("accountid", accountId.ToString())).Any())
             {
-
+                result.Errors.Add(DoerResultsConstants.ERROR_DOER_ALREADY_CREATED);
             }
 
-            return Json(Ok());
+            if (string.IsNullOrEmpty(model.DoerName))
+            {
+                result.Errors.Add(DoerResultsConstants.ERROR_DOER_NAME_NULL_OR_EMPTY);
+            }
+
+            if (string.IsNullOrEmpty(model.DoerDescription))
+            {
+                result.Errors.Add(DoerResultsConstants.ERROR_DOER_DESCRIPTION_NULL_OR_EMPTY);
+            }
+
+            Doer doer = new Doer
+            {
+                AccountId = accountId,
+                DoerDescription = model.DoerDescription,
+                DoerName = model.DoerName,
+                Id = Guid.NewGuid(),
+                OrderCount = 0,
+            };
+
+            await doerService.AddAsync(doer);
+            return Json(result);
         }
 
-        // GET: api/<ValuesController>
-       /* [HttpGet("{id:int}")]
-        public IEnumerable<Doer> GetPage(int page, int doersPerPage)
+        [HttpPost]
+        public async Task<IActionResult> Get([FromBody] string[] filters)
         {
-            throw new NotImplementedException();
-        }*/
+            var doers = await doerService.GetDoersByFilters(filters);
+
+            List<DoerData> result = new List<DoerData>();
+            DoerData currentDoer;
+            foreach (var d in doers)
+            {
+                var reviews = await reviewService.GetDoersReviews(d.Id);
+                var rating = (double)reviews.Sum(r => r.Grade) / reviews.Count();
+                currentDoer = new DoerData
+                {
+                    Id = d.Id,
+                    DoerName = d.DoerName,
+                    DoerDescription = d.DoerDescription,
+                    OrderCount = d.OrderCount,
+                    Rating = rating,
+                };
+               
+                currentDoer.Sections = (await sectionService.GetSectionsByDoerIdAsync(d.Id)).Select(s => new SectionData { Name = s.Name, Slug = s.Slug, }).ToList();
+                result.Add(currentDoer);
+            }
+
+            return Json(result);
+        }
 
         // GET api/<ValuesController>/5
-        [HttpGet("{id:int}")]
-        public Doer Get(int id)
+        [HttpGet]
+        public async Task<IActionResult> Get(Guid id)
         {
-            throw new NotImplementedException();
+            DoerData result;
+            var doer = await doerService.FindAsync(id);
+            if (doer == null)
+            {
+                return Json(Results.NotFound());
+            }
+            var reviews = await reviewService.GetDoersReviews(doer.Id);
+            result = new DoerData
+            {
+                Id = id,
+                DoerName = doer.DoerName,
+                DoerDescription = doer.DoerDescription,
+                OrderCount = doer.OrderCount,
+                Sections = (await sectionService.GetSectionsByDoerIdAsync(doer.Id)).Select(s => new SectionData { Name = s.Name, Slug = s.Slug, }).ToList()
+            };
+
+            Customer? author;
+            Account? accountAuthor;
+            foreach(var review in reviews)
+            {
+                author = await customerService.FindAsync(review.CustomerAuthorId);
+                accountAuthor = await accountService.GetAccountByCustomerId(review.CustomerAuthorId);
+                if (author != null && accountAuthor != null)
+                    result.Reviews.Add(new ReviewData
+                    {
+                        Text = review.Text,
+                        Grade = review.Grade,
+                        CustomerAuthor = new CustomerData()
+                        {
+                            Id = author.Id,
+                            Account = new AccountData(accountAuthor),
+                        }
+                    });
+            }
+
+            return Json(result);
         }
 
         // PUT api/<ValuesController>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromForm] DoerModel doerModel)
+        public async Task<IActionResult> Put(Guid id, [FromForm] DoerModel doerModel)
         {
             throw new NotImplementedException();
         }
 
         // DELETE api/<ValuesController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public void Delete(Guid id)
         {
         }
     }

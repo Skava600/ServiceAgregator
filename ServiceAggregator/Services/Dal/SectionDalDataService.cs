@@ -13,5 +13,10 @@ namespace ServiceAggregator.Services.Dal
         {
             this._repo = mainRepo;
         }
+
+        public async Task<IEnumerable<Section>> GetSectionsByDoerIdAsync(Guid doerId)
+        {
+            return await _repo.GetSectionsByDoerIdAsync(doerId);
+        }
     }
 }

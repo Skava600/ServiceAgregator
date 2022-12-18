@@ -122,89 +122,97 @@ namespace ServiceAggregator.Controllers
             RegistrationResult registrationResult = new RegistrationResult() { Success = true };
             if (string.IsNullOrEmpty(registrationModel.FirstName))
             {
-                registrationResult.ErrorCodes.Add(RegistrationResultConstants.ERROR_FIRSTNAME_EMPTY);
+                registrationResult.Errors.Add("Поле имени пустое.");
             }
             else if (!Regex.IsMatch(registrationModel.FirstName, nameRussianRegex) &&
                     !Regex.IsMatch(registrationModel.FirstName, nameEnglishRegex))
             {
-                registrationResult.ErrorCodes.Add(RegistrationResultConstants.ERROR_FIRSTNAME_VALIDATION_FAIL);
+                registrationResult.Errors.Add("Введите корректное имя пользователя.");
             }
             else if (registrationModel.FirstName.Length > 20)
             {
-                registrationResult.ErrorCodes.Add(RegistrationResultConstants.ERROR_FIRSTNAME_TOO_LONG);
+                registrationResult.Errors.Add("Имя пользователя слишком длинное.");
             }
 
 
             if (string.IsNullOrEmpty(registrationModel.LastName))
             {
-                registrationResult.ErrorCodes.Add(RegistrationResultConstants.ERROR_LASTNAME_EMPTY);
+                registrationResult.Errors.Add("Поле фамилии пустое.");
             }
             else if (!Regex.IsMatch(registrationModel.LastName, nameRussianRegex) &&
                     !Regex.IsMatch(registrationModel.LastName, nameEnglishRegex))
             {
-                registrationResult.ErrorCodes.Add(RegistrationResultConstants.ERROR_LASTNAME_VALIDATION_FAIL);
+                registrationResult.Errors.Add("Введите корректную фамилию пользователя.");
             }
             else if (registrationModel.LastName.Length > 20)
             {
-                registrationResult.ErrorCodes.Add(RegistrationResultConstants.ERROR_LASTNAME_TOO_LONG);
+                registrationResult.Errors.Add("Фамилия пользователя слишком длинная.");
+            }
+
+            if (!Regex.IsMatch(registrationModel.Patronym, nameRussianRegex) &&
+                    !Regex.IsMatch(registrationModel.Patronym, nameEnglishRegex))
+            {
+                registrationResult.Errors.Add("Введите корректное отчество пользователя.");
+            }
+            else if (registrationModel.Patronym.Length > 20)
+            {
+                registrationResult.Errors.Add("Отчество пользователя слишком длинная.");
             }
 
 
             if (string.IsNullOrEmpty(registrationModel.Email))
             {
-                registrationResult.ErrorCodes.Add(RegistrationResultConstants.ERROR_EMAIL_EMPTY);
+                registrationResult.Errors.Add("Поле почты пустое.");
             }
             else if (!MailAddress.TryCreate(registrationModel.Email, out var _))
             {
-                registrationResult.ErrorCodes.Add(RegistrationResultConstants.ERROR_EMAIL_VALIDATION_FAIL);
+                registrationResult.Errors.Add("Указанная почта в неправильном формате");
             }
 
             bool passwordValidated = true;
 
             if (string.IsNullOrEmpty(registrationModel.Password))
             {
-                registrationResult.ErrorCodes.Add(RegistrationResultConstants.ERROR_PASSWORD_FIELD1_EMPTY);
+                registrationResult.Errors.Add("Поле пароля пустое.");
                 passwordValidated = false;
             }
             if (string.IsNullOrEmpty(registrationModel.PasswordConfirm))
             {
-                registrationResult.ErrorCodes.Add(RegistrationResultConstants.ERROR_PASSWORD_FIELD2_EMPTY);
+                registrationResult.Errors.Add("Поле подтвердить пароль пустое.");
                 passwordValidated = false;
             }
             if (passwordValidated)
             {
                 if (registrationModel.Password != registrationModel.PasswordConfirm)
                 {
-                    registrationResult.ErrorCodes.Add(RegistrationResultConstants.ERROR_PASSWORD_MATCH_FAIL);
+                    registrationResult.Errors.Add("Пароли не совпадают.");
                 }
                 else if (registrationModel.Password.Length < 8)
                 {
-                    registrationResult.ErrorCodes.Add(RegistrationResultConstants.ERROR_PASSWORD_TOO_WEAK);
+                    registrationResult.Errors.Add("Слишком слабый пароль.");
                 }
             }
 
-            if (registrationResult.ErrorCodes.Count > 0)
-            {
-                registrationResult.Success = false;
-                return Json(registrationResult);
-            }
+           
 
             var accountWithEmail = await accountService.FindByField("login", registrationModel.Email);
-
+            var accountWithPhone = await accountService.FindByField("phonenumber", registrationModel.PhoneNumber);
             if (accountWithEmail.Count() > 0)
             {
-                registrationResult.Success = false;
-                registrationResult.ErrorCodes.Add(RegistrationResultConstants.ERROR_EMAIL_ALREADY_EXISTS);
-                return Json(registrationResult);
+                registrationResult.Errors.Add("Пользователь с такой почтой уже зарегистрирован.");
             }
-            var accountWithPhone = await accountService.FindByField("phonenumber", registrationModel.PhoneNumber);
+           
             if (accountWithPhone.Count() > 0)
             {
-                registrationResult.Success = false;
-                registrationResult.ErrorCodes.Add(RegistrationResultConstants.ERROR_PHONE_ALREADY_EXISTS);
+                registrationResult.Errors.Add("Пользователь с таким телефоном уже зарегистрирован");
                 return Json(registrationResult);
             }
 
+            if (registrationResult.Errors.Count > 0)
+            {
+                registrationResult.Success = false;
+                return Json(registrationResult);
+            }
             var user = new Account
             {
                 Id = Guid.NewGuid(),

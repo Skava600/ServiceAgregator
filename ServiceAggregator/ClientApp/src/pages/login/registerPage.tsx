@@ -13,18 +13,18 @@ import CloseIcon from "@mui/icons-material/Close";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
-import { registerUser } from "./login.api";
+import { registerUser } from "../../api";
 import "./loginPage.less";
 
 const INITIAL_STATE = {
-    firstName: { value: "", isError: false },
-    lastName: { value: "", isError: false },
-    patronym: { value: "", isError: false },
-    email: { value: "", isError: false },
-    phoneNubmer: { value: "", isError: false },
-    location: { value: "", isError: false },
-    password: { value: "", isError: false },
-    passwordConfirmation: { value: "", isError: false },
+    firstName: { value: "Кирилл", isError: false },
+    lastName: { value: "Яблонский", isError: false },
+    patronym: { value: "Дмитриевич", isError: false },
+    email: { value: "blackshark564@gmail.com", isError: false },
+    phoneNubmer: { value: "+375447010025", isError: false },
+    location: { value: "Минск", isError: false },
+    password: { value: "1234", isError: false },
+    passwordConfirmation: { value: "1234", isError: false },
     isPassVisible: false,
     isPass2Visible: false,
     errors: [] as string[],
@@ -88,8 +88,6 @@ export const RegisterPage = () => {
 
     const handleRegister = () => {
         const errorMsgs = validateUser();
-        console.log(errors);
-        console.log(email);
 
         setErrors(errorMsgs);
         if (errorMsgs.length) return;
@@ -103,6 +101,13 @@ export const RegisterPage = () => {
             Location: location.value,
             Password: password.value,
             PasswordConfirm: password.value,
+        }).then(({ data }) => {
+            const { success, errorCodes } = data;
+            if (!success) {
+                setErrors((prevValue) => [...prevValue, ...errorCodes]);
+            } else {
+                navigate("/login");
+            }
         });
     };
     const navigate = useNavigate();
@@ -128,20 +133,6 @@ export const RegisterPage = () => {
                     <h1 className="form-title">Регистрация</h1>
                     <TextField
                         size="small"
-                        value={firstName.value}
-                        onChange={(e: any) =>
-                            setFirstName((prevValue) => ({
-                                ...prevValue,
-                                value: e.target.value,
-                            }))
-                        }
-                        className="form-input"
-                        variant="outlined"
-                        label="Имя *"
-                        error={firstName.isError}
-                    />
-                    <TextField
-                        size="small"
                         value={lastName.value}
                         onChange={(e: any) =>
                             setLastName((prevValue) => ({
@@ -153,6 +144,20 @@ export const RegisterPage = () => {
                         variant="outlined"
                         label="Фамилия *"
                         error={lastName.isError}
+                    />
+                    <TextField
+                        size="small"
+                        value={firstName.value}
+                        onChange={(e: any) =>
+                            setFirstName((prevValue) => ({
+                                ...prevValue,
+                                value: e.target.value,
+                            }))
+                        }
+                        className="form-input"
+                        variant="outlined"
+                        label="Имя *"
+                        error={firstName.isError}
                     />
                     <TextField
                         size="small"
@@ -284,7 +289,7 @@ export const RegisterPage = () => {
                         label="Город"
                         error={location.isError}
                     />
-                    <Stack spacing={2} direction="column" className="actions">
+                    <Stack spacing={1} direction="column" className="actions">
                         {errors.map((err) => (
                             <div className="error">
                                 <PriorityHighIcon />

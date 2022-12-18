@@ -1,14 +1,22 @@
 html{
     width:100%;
-    height:100%;
+    height:100%; 
+    box-sizing: border-box;
 }
 
 body{
     width:100%;
     height:100%;
-    margin: 0;
-    background-color: #f6f6f6;
+    margin: 0;background: rgb(255,255,255) no-repeat;
+    background: linear-gradient( rgba(255,255,255,1) 0%, rgba(255,255,255,1) 10%, rgba(243,243,243,1) 15%, rgba(243,243,243,1) 100%);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
     font-family: "Roboto"
+}
+
+.MuiButtonBase-root.MuiIconButton-root{
+    height: fit-content;
+    align-self: center;
 }
 
 #root{

@@ -7,16 +7,20 @@ import {
     Stack,
     IconButton,
     InputAdornment,
+    Typography,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
 import "./loginPage.less";
+import { loginUser } from "../../api";
 
 const INITIAL_STATE = {
-    email: "",
-    password: "",
+    email: { value: "blackshark564@gmail.com", isError: false },
+    password: { value: "1234", isError: false },
     isPassVisible: false,
+    errors: [] as string[],
 };
 
 export const LoginPage = () => {
@@ -25,10 +29,43 @@ export const LoginPage = () => {
     const [isPassVisible, setIsPassVisible] = useState(
         INITIAL_STATE.isPassVisible
     );
+    const [errors, setErrors] = useState(INITIAL_STATE.errors);
 
     const navigate = useNavigate();
 
-    const handleRegister = () => {};
+    const validateUser = () => {
+        let validationMsgs = [];
+
+        if (!email.value) {
+            validationMsgs.push("Укажите логин");
+            setEmail((value) => ({ ...value, isError: true }));
+        }
+        if (!password.value) {
+            validationMsgs.push("Укажите пароль");
+            setPassword((value) => ({ ...value, isError: true }));
+        }
+
+        return validationMsgs;
+    };
+
+    const handleLogin = () => {
+        const errorMsgs = validateUser();
+
+        setErrors(errorMsgs);
+        if (errorMsgs.length) return;
+
+        loginUser({
+            Email: email.value,
+            Password: password.value,
+        }).then(({ data }) => {
+            const { statusCode } = data;
+            if (statusCode === 401) {
+                setErrors(["Неверный логин или пароль"]);
+            } else {
+                navigate("/");
+            }
+        });
+    };
 
     const handleCancel = () => {
         navigate(-1);
@@ -51,16 +88,26 @@ export const LoginPage = () => {
                     <h1 className="form-title">Вход</h1>
                     <TextField
                         size="small"
-                        value={email}
-                        onChange={(e: any) => setEmail(e.target.value)}
+                        value={email.value}
+                        onChange={(e: any) =>
+                            setEmail((prevValue) => ({
+                                ...prevValue,
+                                value: e.target.value,
+                            }))
+                        }
                         className="form-input"
                         variant="outlined"
                         label="Email"
                     />
                     <TextField
                         size="small"
-                        value={password}
-                        onChange={(e: any) => setPassword(e.target.value)}
+                        value={password.value}
+                        onChange={(e: any) =>
+                            setPassword((prevValue) => ({
+                                ...prevValue,
+                                value: e.target.value,
+                            }))
+                        }
                         className="form-input"
                         variant="outlined"
                         label="Пароль"
@@ -88,12 +135,20 @@ export const LoginPage = () => {
                             ),
                         }}
                     />
+                    <Stack spacing={1} direction="column" className="actions">
+                        {errors.map((err) => (
+                            <div className="error">
+                                <PriorityHighIcon />
+                                <Typography color="red">{err}</Typography>
+                            </div>
+                        ))}
+                    </Stack>
 
                     <Stack spacing={15} direction="row" className="actions">
                         <Button variant="outlined" onClick={handleCancel}>
                             Отмена
                         </Button>
-                        <Button variant="contained" onClick={handleRegister}>
+                        <Button variant="contained" onClick={handleLogin}>
                             Войти
                         </Button>
                     </Stack>

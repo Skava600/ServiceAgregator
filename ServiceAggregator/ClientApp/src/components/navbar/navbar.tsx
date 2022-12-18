@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Button, Stack, Tab, Tabs } from "@mui/material";
+import { Button, Divider, Stack, Tab, Tabs } from "@mui/material";
 import "./navbar.less";
 
 type LinkTabProps = {
@@ -25,18 +25,22 @@ export const AppNavbar = ({ tabIndex }: TProps) => {
             <Tabs
                 value={tabIndex}
                 variant="scrollable"
-                sx={{ width: "100%", padding: 2, "box-sizing": "border-box" }}
+                sx={{ width: "100%", padding: 2, boxSizing: "border-box" }}
             >
                 <LinkTab label="Заказы" href="/tasks" />
                 <LinkTab label="Исполнители" href="/profiles" />
                 <div className="actions">
                     <Stack spacing={1} direction="row">
-                        <Button variant="outlined" size="small">
-                            Стать исполнителем
-                        </Button>
-                        <Button variant="contained" size="small">
-                            Разместить заказ
-                        </Button>
+                        {tabIndex !== 1 && (
+                            <Button variant="outlined" size="small">
+                                Стать исполнителем
+                            </Button>
+                        )}
+                        {tabIndex !== 0 && (
+                            <Button variant="contained" size="small">
+                                Разместить заказ
+                            </Button>
+                        )}
                     </Stack>
                 </div>
             </Tabs>

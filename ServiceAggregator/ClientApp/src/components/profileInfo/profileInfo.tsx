@@ -399,12 +399,6 @@ export const ProfileInfo = ({ user }: TProps) => {
                                 {user.password}
                             </div>
                         </Grid>
-                        <Grid item xs={12} sm={6} md={4} lg={3}>
-                            <b>Пароль:</b>
-                            <div className="account-info-value">
-                                {user.password}
-                            </div>
-                        </Grid>
                     </Grid>
                 </>
             )}

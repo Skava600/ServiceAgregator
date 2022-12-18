@@ -1,6 +1,7 @@
 import appAxios from "./axios";
 
-const path = "Account";
+const accountPath = "Account";
+const profilePath = "Doer";
 
 const getFormData = (data: { [key: string]: any }) => {
     const formData = new FormData();
@@ -23,7 +24,7 @@ export const registerUser = async (data: {
     const formData = getFormData(data);
 
     return appAxios({
-        url: `${path}/Register`,
+        url: `${accountPath}/Register`,
         method: "POST",
         data: formData,
         headers: { "Content-Type": "multipart/form-data" },
@@ -34,7 +35,7 @@ export const loginUser = (data: { Email: string; Password: string }) => {
     const formData = getFormData(data);
 
     return appAxios({
-        url: `${path}/Login`,
+        url: `${accountPath}/Login`,
         method: "POST",
         data: formData,
         headers: { "Content-Type": "multipart/form-data" },
@@ -43,4 +44,15 @@ export const loginUser = (data: { Email: string; Password: string }) => {
 
 export const getWorkSections = () => {
     return appAxios.get(`/WorkSections/GetListOfSections`);
+};
+
+export const getProfiles = (slugs: string[]) => {
+    const formData = getFormData(slugs);
+    console.log(formData);
+
+    return appAxios({
+        url: `${profilePath}/Get`,
+        method: "POST",
+        data: slugs,
+    });
 };

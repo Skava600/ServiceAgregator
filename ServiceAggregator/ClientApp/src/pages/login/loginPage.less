@@ -2,7 +2,7 @@
     width:100%;
     height:100%;
     padding: 40px;
-    background-color: #ffffff;
+    background-color: white;
     box-sizing: border-box;
     display: flex;
     justify-content: center;
@@ -12,6 +12,12 @@
     .login-header{
         display: flex;
         justify-content: space-between;
+
+        .form-title{
+            color:white;
+            text-decoration: underline;
+            text-shadow:  rgba(148,187,233,1) 5px 0 10px,rgba(238,174,202,1) 1px 0 10px, #222222 0 0 10px;
+        }
     }
 
     .content{
@@ -41,12 +47,23 @@
             align-self: flex-start; 
             margin-bottom: 15px;
             display: block;
+            color:white;
+            text-shadow:  rgba(148,187,233,1) 5px 0 10px,rgba(238,174,202,1) 1px 0 10px, #222222 0 0 10px;
         }
 
         .form-input{
             margin-top: 15px;
             width: 90%;
+            color:white;
 
+            label{
+                color:white;
+            }
+
+            input{
+                color:white;
+                // text-shadow:  rgba(148,187,233,1) 5px 0 10px,rgba(238,174,202,1) 1px 0 10px, #222222 0 0 10px;
+            }
         }
 
         .actions{

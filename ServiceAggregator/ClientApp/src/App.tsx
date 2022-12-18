@@ -1,9 +1,6 @@
-import { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
-import axios from "axios";
 import { ErrorPage } from "./pages";
 import { routes } from "./routes/routes";
-import appAxios from "./api/axios";
 
 export const App = () => {
     return (

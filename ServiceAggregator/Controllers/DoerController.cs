@@ -33,12 +33,13 @@ namespace ServiceAggregator.Controllers
             this.sectionService = sectionService;
             this.customerService = customerService;
             this.accountService = accountService;
+            this.doerSectionService = doerSectionService;
         }
 
 
         [HttpPost]
         [Authorize]
-        public async Task <IActionResult> CreateDoerAccount([FromForm] DoerModel model, [FromBody] string[] filters)
+        public async Task <IActionResult> CreateDoerAccount([FromForm] DoerModel model)
         {
             DoerResult result = new DoerResult { Success = true };
             Guid accountId = Guid.Parse(User.FindFirst("Id")?.Value);
@@ -73,9 +74,9 @@ namespace ServiceAggregator.Controllers
                 };
                 Section? section;
                 int sectionCount = 0;
-                for(int i = 0; i < filters.Length; i++)
+                for(int i = 0; i < model.Filters.Count; i++)
                 {
-                    section = (await sectionService.FindByField("slug", filters[i])).FirstOrDefault();
+                    section = (await sectionService.FindByField("slug", model.Filters[i])).FirstOrDefault();
 
 
                     if (section != null)
@@ -88,7 +89,7 @@ namespace ServiceAggregator.Controllers
                         });
                         sectionCount++;
                     }
-                    else if (sectionCount == 0 && i == filters.Length - 1)
+                    else if (sectionCount == 0 && i == model.Filters.Count - 1)
                     {
                         result.Errors.Add(DoerResultsConstants.ERROR_SECTION_NOT_EXIST);
                         result.Success = false;

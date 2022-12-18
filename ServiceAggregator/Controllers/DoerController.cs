@@ -121,6 +121,7 @@ namespace ServiceAggregator.Controllers
                     DoerDescription = d.DoerDescription,
                     OrderCount = d.OrderCount,
                     Rating = rating,
+                    ReviewsCount = reviews.Count(),
                 };
                
                 currentDoer.Sections = (await sectionService.GetSectionsByDoerIdAsync(d.Id)).Select(s => new SectionData { Name = s.Name, Slug = s.Slug, }).ToList();
@@ -141,13 +142,17 @@ namespace ServiceAggregator.Controllers
                 return Json(Results.NotFound());
             }
             var reviews = await reviewService.GetDoersReviews(doer.Id);
+            var rating = (double)reviews.Sum(r => r.Grade) / reviews.Count();
+            rating = double.IsNaN(rating) ? 0 : rating;
             result = new DoerData
             {
                 Id = id,
                 DoerName = doer.DoerName,
                 DoerDescription = doer.DoerDescription,
                 OrderCount = doer.OrderCount,
-                Sections = (await sectionService.GetSectionsByDoerIdAsync(doer.Id)).Select(s => new SectionData { Name = s.Name, Slug = s.Slug, }).ToList()
+                Sections = (await sectionService.GetSectionsByDoerIdAsync(doer.Id)).Select(s => new SectionData { Name = s.Name, Slug = s.Slug, }).ToList(),
+                ReviewsCount = reviews.Count(),
+                Rating = rating,
             };
 
             Customer? author;

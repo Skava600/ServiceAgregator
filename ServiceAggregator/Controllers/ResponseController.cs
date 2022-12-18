@@ -48,7 +48,7 @@ namespace ServiceAggregator.Controllers
             ResponseResult result = new ResponseResult { Success = true };
             Guid accountId = Guid.Parse(User.FindFirst("Id")?.Value);
             var doers = await doerService.FindByField("accountid", accountId.ToString());
-            if (doers.Any())
+            if (!doers.Any())
             {
                 result.Errors.Add(DoerResultsConstants.ERROR_DOER_NOT_EXIST);
             }

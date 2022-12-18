@@ -226,7 +226,8 @@ namespace ServiceAggregator.Controllers
                 Location = registrationModel.Location,
             };
 
-            await accountService.AddAsync(user);
+            await accountService.Register(user);
+
             return Json(registrationResult);
         }
 

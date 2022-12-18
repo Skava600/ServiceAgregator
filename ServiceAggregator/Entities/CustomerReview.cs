@@ -9,7 +9,6 @@ namespace ServiceAggregator.Entities
         public string Text { get; set; }
         public Guid OrderId { get; set; }
         public short Grade { get; set; }
-
         public Guid CustomerId { get; set; }
 
     }

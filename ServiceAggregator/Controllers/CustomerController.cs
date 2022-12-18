@@ -36,21 +36,10 @@ namespace ServiceAggregator.Controllers
             }
 
             var reviews = await customerReviewService.GetCustomersReviews(guid);
-           // var orders = (await orderService.GetAllAsync()).Where(o => o.CustomerId == guid);
             CustomerData customerData = new CustomerData
             {
                 Id = guid,
                 Account = new AccountData(account),
-                /*Orders = new List<OrderData>(orders.Select(o => new OrderData
-                {
-                    Id = o.Id,
-                    Header = o.Header,
-                    Text = o.Text,
-                    ExpireDate = o.ExpireDate,
-                    Location = o.Location,
-                    Price = o.Price,
-                    Status = o.Status.ToString(),
-                }))*/
             };
             Doer? doer;
             foreach (var review in reviews)
@@ -65,8 +54,6 @@ namespace ServiceAggregator.Controllers
                         {
                             Id = doer.Id,
                             DoerName = doer.DoerName,
-                            DoerDescription = doer.DoerDescription,
-                            OrderCount = doer.OrderCount,
                         }
                     });
             }

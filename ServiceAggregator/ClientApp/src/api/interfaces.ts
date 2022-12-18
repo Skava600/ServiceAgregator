@@ -1,6 +1,7 @@
 export interface IWorkSection {
     name: string;
     slug: string;
+    categoryName?: string;
 }
 
 export interface IWorkCategory {

@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Paper, Rating } from "@mui/material";
+import { Divider, Paper, Rating } from "@mui/material";
 import FaceIcon from "@mui/icons-material/Face";
 import { getProfile } from "../../api";
-import { IProfile, IWorkCategory } from "../../api/interfaces";
+import { IProfile, IWorkCategory, IWorkSection } from "../../api/interfaces";
 import { Page } from "../../components";
 import "./profilePage.less";
 
@@ -30,21 +30,32 @@ const styleSummaryItem = (n: number, wordForms: string[]) => {
 const INITIAL_STATE = {
     isLoading: true,
     profile: {} as IProfile,
-    categories: [] as IWorkCategory[],
 };
 
 export const ProfilePage = () => {
     const { id } = useParams();
     const [isLoading, setIsLoading] = useState(INITIAL_STATE.isLoading);
     const [profile, setProfile] = useState(INITIAL_STATE.profile);
-    const [categories, setCategories] = useState(INITIAL_STATE.categories);
+
+    const _sections = useMemo(() => {
+        return profile?.sections?.reduce((t, c) => {
+            if (!c.categoryName) return t;
+
+            if (!Array.isArray(t[c.categoryName])) {
+                t[c.categoryName] = [];
+            }
+
+            t[c.categoryName] = [...t[c.categoryName], c];
+
+            return t;
+        }, {} as { [key: string]: IWorkSection[] });
+    }, [profile?.sections]);
 
     useEffect(() => {
         if (id) {
             getProfile({ id }).then(({ data }) => {
                 setIsLoading(false);
                 setProfile(data);
-                console.log(data);
             });
         }
     }, [id]);
@@ -76,7 +87,47 @@ export const ProfilePage = () => {
                 </Paper>
             </div>
             <Paper className="rest">
-                {profile.sections?.map((sect) => sect).join()}
+                <b className="rest-header">Оказываемые услуги:</b>
+                {_sections &&
+                    Object.keys(_sections).reduce((t, c, i) => {
+                        t.push(
+                            <div className="category" key={c}>
+                                {c}
+                                <ul className="category-list">
+                                    {Object.values(_sections)[i].map((sect) => (
+                                        <li>
+                                            <span
+                                                className="section"
+                                                key={sect.slug}
+                                            >
+                                                {sect.name}
+                                            </span>
+                                        </li>
+                                    ))}
+                                </ul>
+                                <Divider />
+                            </div>
+                        );
+                        return t;
+                    }, [] as any)}
+            </Paper>
+
+            <Paper className="rest">
+                <b className="rest-header">Отзывы:</b>
+                {profile?.reviews?.length ? (
+                    profile?.reviews?.map((r) => (
+                        <div className="review">
+                            <div className="review-header">
+                                <span>{r.customerAuthor}</span>
+                                <Rating value={r.grade} readOnly size="small" />
+                            </div>
+                            <p>{r.text}</p>
+                            <Divider />
+                        </div>
+                    ))
+                ) : (
+                    <p>У этого исполнителя пока нет отзывов</p>
+                )}
             </Paper>
         </>
     );

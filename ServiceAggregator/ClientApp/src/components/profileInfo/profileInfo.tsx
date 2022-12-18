@@ -196,22 +196,6 @@ export const ProfileInfo = ({ user }: TProps) => {
                         <Grid item xs={12} md={4} lg={3}>
                             <TextField
                                 size="small"
-                                value={email.value}
-                                onChange={(e: any) =>
-                                    setEmail((prevValue) => ({
-                                        ...prevValue,
-                                        value: e.target.value,
-                                    }))
-                                }
-                                className="account-info-value-input"
-                                variant="outlined"
-                                label="Email"
-                                error={email.isError}
-                            />
-                        </Grid>
-                        <Grid item xs={12} md={4} lg={3}>
-                            <TextField
-                                size="small"
                                 value={phoneNubmer.value}
                                 onChange={(e: any) =>
                                     setPhoneNubmer((prevValue) => ({
@@ -328,7 +312,7 @@ export const ProfileInfo = ({ user }: TProps) => {
                             />
                         </Grid>
                         <Grid item xs={12} md={4} lg={3}>
-                            <Stack direction="row" spacing={1}>
+                            <Stack direction="row" spacing={5}>
                                 <Button
                                     variant="outlined"
                                     onClick={resetUserInfo}

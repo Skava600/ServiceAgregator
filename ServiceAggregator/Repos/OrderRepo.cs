@@ -67,6 +67,7 @@ namespace ServiceAggregator.Repos
                             CustomerId = reader.GetGuid(6),
                             SectionId = reader.GetGuid(7),
                             StatusId = reader.GetInt32(8),
+                            DoerId = reader.GetGuid(9),
                         });
                     }
                 }

@@ -44,6 +44,10 @@ public class DbContract
         return await this.basicScriptRunner.SelectWhereField(name, field, value);
     }
 
+    internal async Task DeleteInstance(string name, string field, string value)
+    {
+        await this.basicScriptRunner.DeleteWhereField(name, field, value);
+    }
     private void SetupTableInstances()
     {
         Type type = this.GetType();

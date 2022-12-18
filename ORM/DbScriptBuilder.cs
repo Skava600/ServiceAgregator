@@ -23,6 +23,11 @@ internal class DbScriptBuilder
         string vals = $"({string.Join(", ", values.Where(item => item.Value != null).Select(item => $"'{item.Value}'"))})";
         return $"INSERT INTO public.{tableName}{columnns} VALUES{vals};";
     }
+
+    public static string DeleteWhereField(string tableName, string field, string value)
+    {
+        return $"DELETE FROM {tableName} WHERE {field}='{value}';";
+    }
     
     public static string Update(string tableName, string id, Dictionary<string, string> values)
     {

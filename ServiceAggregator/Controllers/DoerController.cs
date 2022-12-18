@@ -20,13 +20,15 @@ namespace ServiceAggregator.Controllers
         ICustomerDalDataService customerService;
         IDoerSectionDalDataService doerSectionService;
         IAccountDalDataService accountService;
+        ICategoryDalDataService categoryService;
         public DoerController(
             IDoerDalDataService doerService, 
             ISectionDalDataService sectionService, 
             IDoerReviewDalDataService reviewService, 
             ICustomerDalDataService customerService, 
             IAccountDalDataService accountService,
-            IDoerSectionDalDataService doerSectionService) 
+            IDoerSectionDalDataService doerSectionService,
+            ICategoryDalDataService categoryService) 
         {
             this.doerService = doerService;
             this.reviewService = reviewService;
@@ -34,6 +36,7 @@ namespace ServiceAggregator.Controllers
             this.customerService = customerService;
             this.accountService = accountService;
             this.doerSectionService = doerSectionService;
+            this.categoryService = categoryService;
         }
 
 
@@ -144,16 +147,20 @@ namespace ServiceAggregator.Controllers
             var reviews = await reviewService.GetDoersReviews(doer.Id);
             var rating = (double)reviews.Sum(r => r.Grade) / reviews.Count();
             rating = double.IsNaN(rating) ? 0 : rating;
+            var sections = await sectionService.GetSectionsByDoerIdAsync(doer.Id);
             result = new DoerData
             {
                 Id = id,
                 DoerName = doer.DoerName,
                 DoerDescription = doer.DoerDescription,
                 OrderCount = doer.OrderCount,
-                Sections = (await sectionService.GetSectionsByDoerIdAsync(doer.Id)).Select(s => new SectionData { Name = s.Name, Slug = s.Slug, }).ToList(),
                 ReviewsCount = reviews.Count(),
                 Rating = rating,
             };
+            foreach (var section in sections )
+            {
+                result.Sections.Add(new SectionData { Name = section.Name, Slug = section.Slug, CategoryName = (await categoryService.FindAsync(section.CategoryId))!.Name });
+            }
 
             Customer? author;
             Account? accountAuthor;

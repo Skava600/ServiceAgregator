@@ -29,8 +29,8 @@ namespace ServiceAggregator.Services.DataServices.Dal.Base
             return entity;
         }
 
-        public async Task DeleteAsync(TEntity entity)
-            => await MainRepo.Delete(entity);
+        public async Task DeleteAsync(Guid id)
+            => await MainRepo.Delete(id);
 
         public async Task<TEntity> AddAsync(TEntity entity)
         {

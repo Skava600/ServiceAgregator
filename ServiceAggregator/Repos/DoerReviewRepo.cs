@@ -14,10 +14,6 @@ namespace ServiceAggregator.Repos
         {
         }
 
-        public override Task Delete(DoerReview entity)
-        {
-            throw new NotImplementedException();
-        }
 
         public async Task<IEnumerable<DoerReview>> GetDoersReviews(Guid doerId)
         {

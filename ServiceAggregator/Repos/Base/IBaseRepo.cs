@@ -14,7 +14,7 @@ namespace TrialBalanceWebApp.Repos.Base
         Task<IEnumerable<TEntity>> GetAll();
         Task<TEntity?> Find(Guid id);
         Task Update(TEntity entity);
-        Task Delete(TEntity entity);
+        Task Delete(Guid id);
         Task Add(TEntity entity);
         Task<IEnumerable<TEntity>> FindByField(string field, string value);
     }

@@ -38,10 +38,6 @@ namespace ServiceAggregator.Repos
             CloseConnection();
         }
 
-        public override Task<int> Delete(Order entity)
-        {
-            throw new NotImplementedException();
-        }
 
 
         public override async Task<IEnumerable<Order>> GetAll()

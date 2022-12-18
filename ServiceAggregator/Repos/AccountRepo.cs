@@ -18,11 +18,11 @@ namespace ServiceAggregator.Repos
         {
         }
       
-        public override Task<int> Delete(Account entity)
+        public override Task<int> Delete(Guid id)
         {
             OpenConnection();
             string sql = "SELECT public.deleteaccount(" +
-                $"{entity.Id});";
+                $"{id});";
 
             Task<int> task;
             using (NpgsqlCommand cmd = new NpgsqlCommand(sql, _sqlConnection))

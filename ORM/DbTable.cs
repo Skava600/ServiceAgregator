@@ -37,6 +37,15 @@ public class DbTable<T> where T : DbInstance, new()
     {
         await this.contract.UpdateByIdAsync(this.name, id.ToString(), TableMappingHelper.MapToDictionary(instance));
     }
+
+    public async Task DeleteById(Guid id)
+    {
+        await this.DeleteWhereField("Id", id.ToString());
+    }
+    public async Task DeleteWhereField(string field, string value)
+    {
+        await this.contract.DeleteInstance(this.name, field, value);
+    }
     
     public async Task<IEnumerable<T>> ReadAll()
     {

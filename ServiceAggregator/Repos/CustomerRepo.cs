@@ -15,11 +15,6 @@ namespace ServiceAggregator.Repos
         {
         }
 
-        public override Task<int> Delete(Customer entity)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<Customer?> GetByAccountId(Guid id)
         {
             OpenConnection();

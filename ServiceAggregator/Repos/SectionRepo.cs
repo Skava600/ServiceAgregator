@@ -15,11 +15,6 @@ namespace ServiceAggregator.Repos
         public SectionRepo(IOptions<MyOptions> optionsAccessor, ApplicationDbContext context) : base(optionsAccessor, context)
         {
         }
-        public override Task<int> Delete(Section entity)
-        {
-            throw new NotImplementedException();
-        }
-
 
         public override async Task<IEnumerable<Section>> GetAll()
         {

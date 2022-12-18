@@ -13,9 +13,5 @@ namespace ServiceAggregator.Repos
         {
         }
 
-        public override Task Delete(DoerSection entity)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

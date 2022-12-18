@@ -25,14 +25,21 @@ namespace ServiceAggregator.Controllers
         private ISectionRepo sectionRepo;
         private IAccountDalDataService accountService;
         private IOrderResponseDalDataService orderResponseService;
-        
-        public OrdersController(IOrderDalDataService orderService,IAccountDalDataService accountService, ISectionRepo sectionRepo, ICustomerDalDataService customerService, IOrderResponseDalDataService orderResponseDal)
+        private IDoerDalDataService doerDalDataService;
+        public OrdersController(
+            IOrderDalDataService orderService,
+            IAccountDalDataService accountService,
+            ISectionRepo sectionRepo, 
+            ICustomerDalDataService customerService, 
+            IOrderResponseDalDataService orderResponseDal,
+            IDoerDalDataService doerService)
         {
             this.orderService = orderService;
             this.accountService = accountService;
             this.customerService = customerService;
             this.sectionRepo = sectionRepo;
             this.orderResponseService = orderResponseDal;
+            this.doerDalDataService = doerService;
         }
 
         [HttpPost]
@@ -318,7 +325,6 @@ namespace ServiceAggregator.Controllers
             Order? order = await orderService.FindAsync(id);
             OrderResult result = new OrderResult { Success = true };
 
-
             if (order != null && order.Status != OrderStatus.InProgress)
             {
                 result.Errors.Add(OrderResultConstants.ERROR_WRONG_MARKING_DONE_OPERATION);
@@ -327,7 +333,17 @@ namespace ServiceAggregator.Controllers
             {
                 result.Errors.Add(OrderResultConstants.ERROR_ORDER_NOT_EXIST);
             }
-
+            Doer? doer = null;
+            if (order != null && !order.DoerId.HasValue)
+            {
+                result.Errors.Add(OrderResultConstants.ERROR_NO_CUSTOMER_MAKING_ORDER);
+                doer = await doerDalDataService.FindAsync(order.DoerId!.Value);
+            }
+            
+            if (doer == null)
+            {
+                result.Errors.Add(OrderResultConstants.ERROR_NO_CUSTOMER_MAKING_ORDER);
+            }
             if (result.Errors.Count > 0)
             {
                 result.Success = false;
@@ -335,7 +351,9 @@ namespace ServiceAggregator.Controllers
             else
             {
                 order!.Status = OrderStatus.Done;
+                doer!.OrderCount++;
                 await orderService.UpdateAsync(order);
+                await doerDalDataService.UpdateAsync(doer);
             }
 
             return Json(result);

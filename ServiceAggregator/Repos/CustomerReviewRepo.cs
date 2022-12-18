@@ -14,11 +14,6 @@ namespace ServiceAggregator.Repos
         {
         }
 
-        public override Task Delete(CustomerReview entity)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<IEnumerable<CustomerReview>> GetCustomersReviews(Guid customerId)
         {
             OpenConnection();

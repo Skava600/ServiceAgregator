@@ -8,7 +8,7 @@ namespace ServiceAggregator.Services.DataServices.Interfaces
         Task<IEnumerable<TEntity>> GetAllAsync();
         Task<TEntity?> FindAsync(Guid id);
         Task<TEntity> UpdateAsync(TEntity entity);
-        Task DeleteAsync(TEntity entity);
+        Task DeleteAsync(Guid id);
         Task<TEntity> AddAsync(TEntity entity);
         Task<IEnumerable<TEntity>> FindByField(string field, string value);
     }

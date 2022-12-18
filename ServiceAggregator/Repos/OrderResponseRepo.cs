@@ -13,9 +13,5 @@ namespace ServiceAggregator.Repos
         {
         }
 
-        public override Task Delete(OrderResponse entity)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

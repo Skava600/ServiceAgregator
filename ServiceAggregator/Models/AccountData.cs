@@ -4,7 +4,6 @@ namespace ServiceAggregator.Models
 {
     public class AccountData
     {
-        public bool Success { get; set; } = true;
         public string Login { get; set; }
         public string Firstname { get; set; }
         public string Lastname { get; set; }

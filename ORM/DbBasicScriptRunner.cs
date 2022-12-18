@@ -70,6 +70,13 @@ internal class DbBasicScriptRunner
         return dictionary;
     }
 
+    public async Task DeleteWhereField(string tableName, string field, string value)
+    {
+        string script = DbScriptBuilder.DeleteWhereField(tableName, field, value);
+        Console.WriteLine(script);
+        await this.dbConnector.ExecuteWithoutReaderAsync(script);
+    }
+
     private async Task<IEnumerable<Dictionary<string, string>>> ReadAsDictionaryAsync(NpgsqlDataReader reader)
     {
         List<Dictionary<string, string>> result = new List<Dictionary<string, string>>();

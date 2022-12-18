@@ -14,11 +14,6 @@ namespace ServiceAggregator.Repos
         {
         }
 
-        public override Task Delete(Doer entity)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<IEnumerable<Doer>> GetDoersByFilters(string[] slugFilters)
         {
             OpenConnection();

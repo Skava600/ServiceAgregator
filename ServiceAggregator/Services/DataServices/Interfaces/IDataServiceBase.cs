@@ -1,7 +1,7 @@
 ﻿using ORM;
 using ServiceAggregator.Entities.Base;
 
-namespace ServiceAggregator.Services.Interfaces
+namespace ServiceAggregator.Services.DataServices.Interfaces
 {
     public interface IDataServiceBase<TEntity> where TEntity : DbInstance, new()
     {

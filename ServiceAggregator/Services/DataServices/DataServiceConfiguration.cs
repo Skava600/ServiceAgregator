@@ -1,11 +1,11 @@
 ﻿using ServiceAggregator.Entities;
 using ServiceAggregator.Repos;
 using ServiceAggregator.Repos.Interfaces;
-using ServiceAggregator.Services.Dal;
-using ServiceAggregator.Services.Interfaces;
+using ServiceAggregator.Services.DataServices.Dal;
+using ServiceAggregator.Services.DataServices.Interfaces;
 using TrialBalanceWebApp.Repos.Base;
 
-namespace ServiceAggregator.Services
+namespace ServiceAggregator.Services.DataServices
 {
     public static class DataServiceConfiguration
     {
@@ -29,7 +29,7 @@ namespace ServiceAggregator.Services
             services.AddScoped<ISectionDalDataService, SectionDalDataService>();
             services.AddScoped<IAccountDalDataService, AccountDalDataService>();
             services.AddScoped<ICategoryDalDataService, CategoryDalDataService>();
-            services.AddScoped<IOrderDalDataService,OrderDalDataService>();
+            services.AddScoped<IOrderDalDataService, OrderDalDataService>();
             services.AddScoped<ICustomerDalDataService, CustomerDalDataService>();
             services.AddScoped<IDoerDalDataService, DoerDalDataService>();
             services.AddScoped<ICustomerReviewDalDataService, CustomerReviewDalDataService>();

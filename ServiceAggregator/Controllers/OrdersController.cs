@@ -8,7 +8,7 @@ using ServiceAggregator.Models;
 using ServiceAggregator.Options;
 using ServiceAggregator.Repos;
 using ServiceAggregator.Repos.Interfaces;
-using ServiceAggregator.Services.Interfaces;
+using ServiceAggregator.Services.DataServices.Interfaces;
 using System.Linq;
 using static ServiceAggregator.Models.OrderData;
 

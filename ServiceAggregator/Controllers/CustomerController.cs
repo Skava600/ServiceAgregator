@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ServiceAggregator.Entities;
 using ServiceAggregator.Models;
-using ServiceAggregator.Services.Interfaces;
+using ServiceAggregator.Services.DataServices.Interfaces;
 
 namespace ServiceAggregator.Controllers
 {

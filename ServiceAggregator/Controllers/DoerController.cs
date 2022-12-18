@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using ServiceAggregator.Entities;
 using ServiceAggregator.Models;
 using ServiceAggregator.Repos;
-using ServiceAggregator.Services.Dal;
-using ServiceAggregator.Services.Interfaces;
+using ServiceAggregator.Services.DataServices.Dal;
+using ServiceAggregator.Services.DataServices.Interfaces;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -33,12 +33,13 @@ namespace ServiceAggregator.Controllers
             this.sectionService = sectionService;
             this.customerService = customerService;
             this.accountService = accountService;
+            this.doerSectionService = doerSectionService;
         }
 
 
         [HttpPost]
         [Authorize]
-        public async Task <IActionResult> CreateDoerAccount([FromForm] DoerModel model, [FromBody] string[] filters)
+        public async Task <IActionResult> CreateDoerAccount([FromForm] DoerModel model)
         {
             DoerResult result = new DoerResult { Success = true };
             Guid accountId = Guid.Parse(User.FindFirst("Id")?.Value);
@@ -73,9 +74,9 @@ namespace ServiceAggregator.Controllers
                 };
                 Section? section;
                 int sectionCount = 0;
-                for(int i = 0; i < filters.Length; i++)
+                for(int i = 0; i < model.Filters.Count; i++)
                 {
-                    section = (await sectionService.FindByField("slug", filters[i])).FirstOrDefault();
+                    section = (await sectionService.FindByField("slug", model.Filters[i])).FirstOrDefault();
 
 
                     if (section != null)
@@ -88,7 +89,7 @@ namespace ServiceAggregator.Controllers
                         });
                         sectionCount++;
                     }
-                    else if (sectionCount == 0 && i == filters.Length - 1)
+                    else if (sectionCount == 0 && i == model.Filters.Count - 1)
                     {
                         result.Errors.Add(DoerResultsConstants.ERROR_SECTION_NOT_EXIST);
                         result.Success = false;
@@ -112,6 +113,7 @@ namespace ServiceAggregator.Controllers
             {
                 var reviews = await reviewService.GetDoersReviews(d.Id);
                 var rating = (double)reviews.Sum(r => r.Grade) / reviews.Count();
+                rating = double.IsNaN(rating)? 0 : rating;
                 currentDoer = new DoerData
                 {
                     Id = d.Id,

@@ -113,6 +113,7 @@ namespace ServiceAggregator.Controllers
             {
                 var reviews = await reviewService.GetDoersReviews(d.Id);
                 var rating = (double)reviews.Sum(r => r.Grade) / reviews.Count();
+                rating = double.IsNaN(rating)? 0 : rating;
                 currentDoer = new DoerData
                 {
                     Id = d.Id,

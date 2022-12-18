@@ -28,7 +28,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 });
 builder.Services.AddAuthorization();
 
-builder.ConfigureSerilog();
+//builder.ConfigureSerilog();
 builder.Services.RegisterLoggingInterfaces();
 builder.Services.AddRepositories();
 builder.Services.AddDataServices();

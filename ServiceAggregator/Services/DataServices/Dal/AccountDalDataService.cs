@@ -20,5 +20,10 @@ namespace ServiceAggregator.Services.DataServices.Dal
         {
             return await _repo.Login(email, password);
         }
+
+        public async Task Register(Account account)
+        {
+            await _repo.Register(account);
+        }
     }
 }

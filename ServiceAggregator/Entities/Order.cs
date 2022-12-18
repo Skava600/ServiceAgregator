@@ -28,9 +28,7 @@ namespace ServiceAggregator.Entities
         public OrderStatus Status { get; set; }
         public Guid? DoerId { get; set; }
         public double? Price { get; set; }
-       // public Customer Customer { get; set; } 
         public Guid CustomerId { get; set; }
-      // public WorkSection WorkSection { get; set; }
         public Guid SectionId { get; set; }
     }
 }

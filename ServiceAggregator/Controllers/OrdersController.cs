@@ -24,13 +24,15 @@ namespace ServiceAggregator.Controllers
         private ICustomerDalDataService customerService;
         private ISectionRepo sectionRepo;
         private IAccountDalDataService accountService;
+        private IOrderResponseDalDataService orderResponseService;
         
-        public OrdersController(IOrderDalDataService orderService,IAccountDalDataService accountService, ISectionRepo sectionRepo, ICustomerDalDataService customerService)
+        public OrdersController(IOrderDalDataService orderService,IAccountDalDataService accountService, ISectionRepo sectionRepo, ICustomerDalDataService customerService, IOrderResponseDalDataService orderResponseDal)
         {
             this.orderService = orderService;
             this.accountService = accountService;
             this.customerService = customerService;
             this.sectionRepo = sectionRepo;
+            this.orderResponseService = orderResponseDal;
         }
 
         [HttpPost]
@@ -44,7 +46,7 @@ namespace ServiceAggregator.Controllers
             if (!Guid.TryParse(User.FindFirst("Id")?.Value, out userId) && myOrders)
             {
                 orderData.OrderResult.Success = false;
-                orderData.OrderResult.Errors.Add("Пользователь на авторизован");
+                orderData.OrderResult.Errors.Add(AccountResultsConstants.ERROR_AUTHORISATION);
                 return Json(new List<OrderData> {orderData });
             }
             Customer? customer = await customerService.GetByAccountId(userId);
@@ -58,7 +60,7 @@ namespace ServiceAggregator.Controllers
             else if (customer == null && myOrders)
             {
                 orderData.OrderResult.Success = false;
-                orderData.OrderResult.Errors.Add("Ваш профиль заказчика не найден");
+                orderData.OrderResult.Errors.Add(CustomerResultConstants.ERROR_CUSTOMER_NOT_EXIST);
                 return Json(new List<OrderData> { orderData });
             }
 
@@ -112,7 +114,7 @@ namespace ServiceAggregator.Controllers
            
             if (order == null)
             {
-                orderData.OrderResult.Errors.Add("Заказ не найден.");
+                orderData.OrderResult.Errors.Add(OrderResultConstants.ERROR_ORDER_NOT_EXIST);
                 orderData.OrderResult.Success = false;
                 return Json(orderData);
             }
@@ -120,11 +122,11 @@ namespace ServiceAggregator.Controllers
             Section? section = await sectionRepo.Find(order.SectionId);
             if (customersAccount == null)
             {
-                orderData.OrderResult.Errors.Add("Заказчик не найден.");
+                orderData.OrderResult.Errors.Add(CustomerResultConstants.ERROR_CUSTOMER_NOT_EXIST);
             }
             if (section == null)
             {
-                orderData.OrderResult.Errors.Add("Раздел не найден.");
+                orderData.OrderResult.Errors.Add(SectionResultConstants.ERROR_SECTION_NOT_EXIST);
             }
 
             if (orderData.OrderResult.Errors.Count > 0)
@@ -167,7 +169,7 @@ namespace ServiceAggregator.Controllers
             OrderResult result = new OrderResult { Success = true  };
             if (!Guid.TryParse(User.FindFirst("Id")?.Value, out userId))
             {
-                result.Errors.Add("Ошибка авторизации.");
+                result.Errors.Add(AccountResultsConstants.ERROR_AUTHORISATION);
             }
 
             
@@ -175,7 +177,7 @@ namespace ServiceAggregator.Controllers
             if ( customer == null )
             {
                 result.Success = false;
-                result.Errors.Add("Вы забанены.");
+                result.Errors.Add(CustomerResultConstants.ERROR_CUSTOMER_NOT_EXIST);
                 return Json(result);
             }
 
@@ -184,12 +186,12 @@ namespace ServiceAggregator.Controllers
             Account account = (await accountService.FindAsync(userId))!;
             if (!account.IsAdmin && customerId != customer.Id)
             {
-                result.Errors.Add("403 Forbidden.");
+                result.Errors.Add(AccountResultsConstants.ERROR_PERMISSION_DENIED);
             }
             var section = await sectionRepo.FindByField("Slug", orderModel.Slug);
             if (!section.Any())
             {
-                result.Errors.Add("Ошибка создания заказа. Такого раздела не существует.");
+                result.Errors.Add(SectionResultConstants.ERROR_SECTION_NOT_EXIST);
             }
 
             if (result.Errors.Count > 0)
@@ -227,7 +229,7 @@ namespace ServiceAggregator.Controllers
             OrderResult result = new OrderResult{  Success = true };
             if (!Guid.TryParse(User.FindFirst("Id")?.Value, out userId))
             {
-                result.Errors.Add("Ошибка авторизации");
+                result.Errors.Add(AccountResultsConstants.ERROR_AUTHORISATION);
             }
 
 
@@ -242,24 +244,24 @@ namespace ServiceAggregator.Controllers
             OrderResult result = new OrderResult { Success = true };
             if (!Guid.TryParse(User.FindFirst("Id")?.Value, out userId))
             {
-                result.Errors.Add("Ошибка авторизации");
+                result.Errors.Add(AccountResultsConstants.ERROR_AUTHORISATION);
             }
 
             Order? order = await orderService.FindAsync(orderId);
             if (order == null)
             {
-                result.Errors.Add("Данного заказа не существует.");
+                result.Errors.Add(OrderResultConstants.ERROR_ORDER_NOT_EXIST);
             }
             else if (order.Status != OrderStatus.Open)
             {
-                result.Errors.Add("Нельзя обновить неоткрытый заказ.");
+                result.Errors.Add(OrderResultConstants.ERROR_UPDATING_NOT_OPEN_ORDER);
             }
 
             Account? account = await accountService.FindAsync(userId);
 
             if (account == null)
             {
-                result.Errors.Add("Ошибка авторизации");
+                result.Errors.Add(AccountResultsConstants.ERROR_AUTHORISATION);
                 result.Success = false;
                 return Json(result);
             }
@@ -269,18 +271,18 @@ namespace ServiceAggregator.Controllers
             if (customer == null)
             {
                 result.Success = false;
-                result.Errors.Add("вы забанены");
+                result.Errors.Add(CustomerResultConstants.ERROR_CUSTOMER_NOT_EXIST);
                 return Json(result);
             }
             if (orderModel.CustomerId != customer.Id && !account.IsAdmin)
             {
-                result.Errors.Add("403 Forbidden.");
+                result.Errors.Add(AccountResultsConstants.ERROR_PERMISSION_DENIED);
             }
 
             var section = await sectionRepo.FindByField("Slug", orderModel.Slug);
             if (!section.Any())
             {
-                result.Errors.Add("Данного раздела не существует.");
+                result.Errors.Add(SectionResultConstants.ERROR_SECTION_NOT_EXIST);
             }
 
             if (result.Errors.Count > 0)
@@ -319,11 +321,11 @@ namespace ServiceAggregator.Controllers
 
             if (order != null && order.Status != OrderStatus.InProgress)
             {
-                result.Errors.Add("Нельзя пометить сделанным заказ не в исполнении.");
+                result.Errors.Add(OrderResultConstants.ERROR_WRONG_MARKING_DONE_OPERATION);
             }
             else if (order == null)
             {
-                result.Errors.Add("Заказ не найден");
+                result.Errors.Add(OrderResultConstants.ERROR_ORDER_NOT_EXIST);
             }
 
             if (result.Errors.Count > 0)
@@ -349,11 +351,11 @@ namespace ServiceAggregator.Controllers
 
             if (order != null && (order.Status == OrderStatus.Done || order.Status == OrderStatus.Canceled))
             {
-                result.Errors.Add("Нельзя отменить выполненный или отменный заказ.");
+                result.Errors.Add(OrderResultConstants.ERROR_WRONG_CANCELING_OPERATION);
             }
             else if (order == null)
             {
-                result.Errors.Add("Заказ не найден.");
+                result.Errors.Add(OrderResultConstants.ERROR_ORDER_NOT_EXIST);
             }
 
             if (result.Errors.Count > 0)
@@ -367,6 +369,60 @@ namespace ServiceAggregator.Controllers
             }
 
             return Json(result);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> ApproveOrderResponse(Guid orderId, Guid responseId)
+        {
+            Guid userId;
+            var order = await orderService.FindAsync(orderId);
+            var response = await orderResponseService.FindAsync(responseId);
+
+
+            OrderResult orderResult = new OrderResult
+            {
+                Success = true,
+            };
+
+            if (!Guid.TryParse(User.FindFirst("Id")?.Value, out userId))
+            {
+                orderResult.Errors.Add(AccountResultsConstants.ERROR_AUTHORISATION);
+            }
+            var customer = await customerService.GetByAccountId(userId);
+            if (customer == null)
+            {
+                orderResult.Errors.Add(CustomerResultConstants.ERROR_CUSTOMER_NOT_EXIST);
+            }
+
+            if (order == null)
+            {
+                orderResult.Errors.Add(OrderResultConstants.ERROR_ORDER_NOT_EXIST);
+            }
+
+            if (response == null)
+            {
+                orderResult.Errors.Add(ResponseResultConstants.ERROR_RESPONSE_NOT_EXIST);
+
+            }
+
+            if (customer != null && order != null && customer.Id != order.CustomerId)
+            {
+                orderResult.Errors.Add(AccountResultsConstants.ERROR_PERMISSION_DENIED);
+            }
+
+            if (orderResult.Errors.Count > 0)
+            {
+                orderResult.Success = false;
+            }
+            else
+            {
+                order!.DoerId = response!.DoerId;
+                order.Status = OrderStatus.InProgress;
+                await orderService.UpdateAsync(order);
+            }
+
+            return Json(orderResult);
         }
     }
 }

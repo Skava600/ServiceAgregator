@@ -6,5 +6,6 @@ namespace ServiceAggregator.Services.DataServices.Interfaces
     {
         Task<Account?> GetAccountByCustomerId(Guid customerGuid);
         Task<Account?> Login(string email, string password);
+        Task Register(Account account);
     }
 }

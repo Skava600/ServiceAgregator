@@ -164,5 +164,27 @@ namespace ServiceAggregator.Repos
 
             return account;
         }
+
+        public async Task Register(Account account)
+        {
+            OpenConnection();
+
+            string commandText = "SELECT * FROM public.insert_account(" +
+                $"'{account.Id}'," +
+                $"'{account.Login}'," +
+                $"'{account.Password}'," +
+                $"'{account.Firstname}'," +
+                $"'{account.Lastname}'," +
+                $"'{account.Patronym}'," +
+                $"'{account.IsAdmin}'," +
+                $"'{account.PhoneNumber}'," +
+                $"'{account.Location}');";
+            using (NpgsqlCommand cmd = new NpgsqlCommand(commandText, _sqlConnection))
+            {
+                await cmd.ExecuteNonQueryAsync();
+            }
+
+            CloseConnection();
+        }
     }
 }

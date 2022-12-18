@@ -50,14 +50,14 @@ namespace ServiceAggregator.Controllers
             var doers = await doerService.FindByField("accountid", accountId.ToString());
             if (doers.Any())
             {
-                result.Errors.Add(ResponseResultConstants.ERROR_DOER_NOT_FOUND);
+                result.Errors.Add(DoerResultsConstants.ERROR_DOER_NOT_EXIST);
             }
 
             Doer doer = doers.First();
-            Order order = await orderDalService.FindAsync(model.OrderId);
+            Order? order = await orderDalService.FindAsync(model.OrderId);
             if (order == null)
             {
-                result.Errors.Add(ResponseResultConstants.ERROR_ORDER_NOT_FOUND);
+                result.Errors.Add(OrderResultConstants.ERROR_ORDER_NOT_EXIST);
             }
             if (result.Errors.Count > 0)
             {

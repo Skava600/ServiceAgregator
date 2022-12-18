@@ -14,10 +14,10 @@ namespace ServiceAggregator.Controllers
     [ApiController]
     public class WorkSectionsController : Controller
     {
-        private readonly IDataServiceBase<Section> sectionService;
-        private readonly IDataServiceBase<Category> categoryService;
+        private readonly ISectionDalDataService sectionService;
+        private readonly ICategoryDalDataService categoryService;
 
-        public WorkSectionsController(IDataServiceBase<Section> sectionService, IDataServiceBase<Category> categoryService)
+        public WorkSectionsController(ISectionDalDataService sectionService, ICategoryDalDataService categoryService)
         {
             this.sectionService = sectionService;
             this.categoryService = categoryService;

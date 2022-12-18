@@ -20,6 +20,7 @@ namespace ServiceAggregator.Services
             services.AddScoped<ICustomerReviewRepo, CustomerReviewRepo>();
             services.AddScoped<IDoerSectionRepo, DoerSectionRepo>();
             services.AddScoped<IDoerReviewRepo, DoerReviewRepo>();
+            services.AddScoped<IOrderResponseRepo, OrderResponseRepo>();
             return services;
         }
         public static IServiceCollection AddDataServices(
@@ -34,6 +35,7 @@ namespace ServiceAggregator.Services
             services.AddScoped<ICustomerReviewDalDataService, CustomerReviewDalDataService>();
             services.AddScoped<IDoerSectionDalDataService, DoerSectionDalDataService>();
             services.AddScoped<IDoerReviewDalDataService, DoerReviewDalDataService>();
+            services.AddScoped<IOrderResponseDalDataService, OrderResponseDalDataService>();
             return services;
         }
     }

@@ -16,7 +16,7 @@ namespace ServiceAggregator.Services.Dal
 
         public async Task<IEnumerable<DoerReview>> GetDoersReviews(Guid doerId)
         {
-            return await repo.GetCustomersReviews(doerId);
+            return await repo.GetDoersReviews(doerId);
         }
     }
 }

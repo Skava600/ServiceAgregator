@@ -1,5 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
-import { Checkbox, FormControlLabel, Grid, Paper } from "@mui/material";
+import {
+    Card,
+    Checkbox,
+    FormControlLabel,
+    Grid,
+    Paper,
+    Typography,
+} from "@mui/material";
 import TreeView from "@mui/lab/TreeView";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -7,6 +14,7 @@ import TreeItem from "@mui/lab/TreeItem";
 import { Page, ProfileCard } from "../../components/";
 import { getProfiles, getWorkSections } from "../../api";
 import { IWorkCategory, IWorkSection, IProfile } from "../../api/interfaces";
+import FaceIcon from "@mui/icons-material/Face";
 import "./profilesPage.less";
 
 const INITIAL_STATE = {
@@ -56,61 +64,61 @@ export const ProfilesPage = () => {
 
     return (
         <Page className="profile-page" navbarTabIndex={1}>
-            <Grid container spacing={2}>
-                <Grid item xs={6} sm={5} md={5} lg={3}>
-                    <div className="work-sections-tree">
-                        <TreeView
-                            defaultCollapseIcon={<ExpandMoreIcon />}
-                            defaultExpandIcon={<ChevronRightIcon />}
-                        >
-                            {workSections.map((category) => (
-                                <TreeItem
-                                    nodeId={category.name}
-                                    label={category.name}
-                                >
-                                    {category.sections.map(({ name, slug }) => {
-                                        const isSelected =
-                                            selectedSections.some(
-                                                (sect) => sect.slug === slug
-                                            );
-                                        return (
-                                            <TreeItem
-                                                nodeId={slug}
-                                                label={
-                                                    <FormControlLabel
-                                                        label={name}
-                                                        control={
-                                                            <Checkbox
-                                                                checked={
-                                                                    isSelected
-                                                                }
-                                                                onChange={() =>
-                                                                    handleAddSection(
-                                                                        {
-                                                                            name,
-                                                                            slug,
-                                                                        },
-                                                                        !isSelected
-                                                                    )
-                                                                }
-                                                            />
-                                                        }
-                                                    />
-                                                }
-                                            />
-                                        );
-                                    })}
-                                </TreeItem>
-                            ))}
-                        </TreeView>
-                    </div>
-                </Grid>
-                <Grid item xs={6} sm={7} md={7} lg={9}>
+            <div className="divider">
+                <div className="work-sections-tree">
+                    <TreeView
+                        defaultCollapseIcon={<ExpandMoreIcon />}
+                        defaultExpandIcon={<ChevronRightIcon />}
+                    >
+                        {workSections.map((category) => (
+                            <TreeItem
+                                nodeId={category.name}
+                                label={category.name}
+                            >
+                                {category.sections.map(({ name, slug }) => {
+                                    const isSelected = selectedSections.some(
+                                        (sect) => sect.slug === slug
+                                    );
+                                    return (
+                                        <TreeItem
+                                            nodeId={slug}
+                                            label={
+                                                <FormControlLabel
+                                                    label={name}
+                                                    control={
+                                                        <Checkbox
+                                                            checked={isSelected}
+                                                            onChange={() =>
+                                                                handleAddSection(
+                                                                    {
+                                                                        name,
+                                                                        slug,
+                                                                    },
+                                                                    !isSelected
+                                                                )
+                                                            }
+                                                        />
+                                                    }
+                                                />
+                                            }
+                                        />
+                                    );
+                                })}
+                            </TreeItem>
+                        ))}
+                    </TreeView>
+                </div>
+                <div className="right-side">
                     {profiles.map((profile) => (
                         <ProfileCard profile={profile} />
                     ))}
-                </Grid>
-            </Grid>
+                    {!profiles.length && (
+                        <Card className="no-profiles">
+                            <b>По вашему запросу пока что нет исполнителей</b>
+                        </Card>
+                    )}
+                </div>
+            </div>
         </Page>
     );
 };

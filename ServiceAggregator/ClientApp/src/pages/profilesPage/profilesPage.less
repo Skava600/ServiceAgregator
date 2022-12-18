@@ -1,21 +1,63 @@
 .profile-page{
-    padding:0 20px 0 0;
-
-    .work-sections-tree{
+    height: 100%;
+    width: 100%;
+    
+    .divider{
+        width: 100%;
         height: 100%;
-        width: fit-content;
-        max-width: 300px;
-        background-color: white;
-        border-radius: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
 
-        .section{
-            display: flex;
-            align-items: center;
+        .right-side{
+            padding:  0 20px;
+            height: 100%;
+            width: 85%;
+
+            .no-profiles{
+                padding: 40px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                overflow-wrap: break-word;
+                align-self: center;
+                justify-self: center;
+            }
         }
 
-        .MuiTreeItem-root .MuiTreeItem-content{
-            overflow-wrap: break-word;
-            box-sizing: border-box;
+        .work-sections-tree{
+            height: 100%;
+            width: 300px;
+            background-color: white;
+            border-radius: 0;
+
+            .section{
+                display: flex;
+                align-items: center;
+                padding-right: 5px;
+            }
+
+            .MuiTreeItem-root .MuiTreeItem-content{
+                overflow-wrap: break-word;
+                box-sizing: border-box;
+            }
         }
     }
+
+    @media screen and (max-width: 900px) {
+        .divider{
+            flex-direction: column;
+            align-items: center;
+            
+            .work-sections-tree{
+                width: 95%;
+                border-radius: 5px;
+            }
+
+            .right-side{
+                width: 100%;
+                box-sizing: border-box;
+            }
+        }
+      }
 }

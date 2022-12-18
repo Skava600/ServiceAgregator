@@ -1,11 +1,12 @@
 import {
     ROOT_ROUTE,
-    TASK_ROUTE,
     LOGIN_ROUTE,
     REGISTER_ROUTE,
     ACCOUNT_ROUTE,
     PROFILES_ROUTE,
+    PROFILE_ROUTE,
     TASKS_ROUTE,
+    TASK_ROUTE,
 } from "./pathes";
 import {
     MainPage,
@@ -13,7 +14,9 @@ import {
     RegisterPage,
     AccountPage,
     ProfilesPage,
+    ProfilePage,
     TasksPage,
+    TaskPage,
 } from "../pages";
 
 export const routes = [
@@ -30,8 +33,8 @@ export const routes = [
         element: <LoginPage />,
     },
     {
-        path: TASK_ROUTE + "/:id",
-        element: <div>s2</div>,
+        path: ACCOUNT_ROUTE,
+        element: <AccountPage />,
     },
     {
         path: PROFILES_ROUTE,
@@ -42,7 +45,11 @@ export const routes = [
         element: <TasksPage />,
     },
     {
-        path: ACCOUNT_ROUTE,
-        element: <AccountPage />,
+        path: PROFILE_ROUTE + "/:id",
+        element: <ProfilePage />,
+    },
+    {
+        path: TASK_ROUTE + "/:id",
+        element: <TaskPage />,
     },
 ];

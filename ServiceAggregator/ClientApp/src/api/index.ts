@@ -48,11 +48,14 @@ export const getWorkSections = () => {
 
 export const getProfiles = (slugs: string[]) => {
     const formData = getFormData(slugs);
-    console.log(formData);
 
     return appAxios({
         url: `${profilePath}/Get`,
         method: "POST",
         data: slugs,
     });
+};
+
+export const getProfile = (data: { id: string }) => {
+    return appAxios.get(`${profilePath}/Get`, { params: { id: data.id } });
 };

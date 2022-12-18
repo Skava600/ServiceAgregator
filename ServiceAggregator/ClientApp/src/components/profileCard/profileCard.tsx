@@ -9,6 +9,7 @@ import WorkIcon from "@mui/icons-material/Work";
 import "./profileCard.less";
 import { useEffect, useState } from "react";
 import { IProfile } from "../../api/interfaces";
+import { Link } from "react-router-dom";
 
 const reviewWordForms = ["отзыв", "отзыва", "отзывов"];
 const orderWordForms = ["заказ", "заказа", "заказов"];
@@ -54,36 +55,40 @@ export const ProfileCard = ({ profile }: TProps) => {
     }, []);
 
     return (
-        <Card className="profile-card">
-            {avatar}
-            <div className="profile-card-content">
-                <p className="profile-name">{profile.doerName}</p>
-                <p className="profile-description">{profile.doerDescription}</p>
-                <div className="profile-summary">
-                    <Rating value={5} size="small" />
-                    <span className="ratings-text">{`${styleSummaryItem(
-                        profile.reviewsCount,
-                        reviewWordForms
-                    )}, выполнил ${styleSummaryItem(
-                        profile.orderCount,
-                        orderWordForms
-                    )}`}</span>
-                    <div className="work-sections">
-                        <WorkIcon fontSize="small" />
-                        <span className="work-sections-text">
-                            {profile.sections[0].name}
-                            {profile.sections.length > 1 &&
-                                `
+        <Link to={`/profile/${profile.id}`} className="profile-link">
+            <Card className="profile-card">
+                {avatar}
+                <div className="profile-card-content">
+                    <p className="profile-name">{profile.doerName}</p>
+                    <p className="profile-description">
+                        {profile.doerDescription}
+                    </p>
+                    <div className="profile-summary">
+                        <Rating value={profile.rating} size="small" readOnly />
+                        <span className="ratings-text">{`${styleSummaryItem(
+                            profile.reviewsCount,
+                            reviewWordForms
+                        )}, выполнил ${styleSummaryItem(
+                            profile.orderCount,
+                            orderWordForms
+                        )}`}</span>
+                        <div className="work-sections">
+                            <WorkIcon fontSize="small" />
+                            <span className="work-sections-text">
+                                {profile.sections[0].name}
+                                {profile.sections.length > 1 &&
+                                    `
                                     +
                                     ${styleSummaryItem(
                                         profile.sections.length,
                                         sectionWordForms
                                     )}
                                 `}
-                        </span>
+                            </span>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </Card>
+            </Card>
+        </Link>
     );
 };

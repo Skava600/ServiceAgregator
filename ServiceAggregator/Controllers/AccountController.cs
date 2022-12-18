@@ -41,24 +41,67 @@ namespace ServiceAggregator.Controllers
         [HttpGet]
         public async Task<IActionResult> Info()
         {
+            AccountResult accountResult = new AccountResult { Success = true };
             Guid userId = Guid.Parse(User.FindFirst("Id")?.Value);
             var account = await accountService.FindAsync(userId);
-            AccountData accountData;
             if (account == null)
-                return Json(new AccountData { Success = false });
+            {
+                accountResult.Success = false;
+                accountResult.Errors.Add(AccountResultsConstants.ERROR_AUTHORISATION);
+                return Json(accountResult);
+            }    
 
 
             return Json(new AccountData(account));
         }
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAsync()
         {
+            AccountResult accountResult = new AccountResult { Success = true };
+            Guid userId = Guid.Parse(User.FindFirst("Id")?.Value);
+            var account = await accountService.FindAsync(userId);
+            if (account == null)
+            {
+                accountResult.Errors.Add(AccountResultsConstants.ERROR_AUTHORISATION);
+            }
+
+            if (account != null && account.IsAdmin)
+            {
+                accountResult.Errors.Add(AccountResultsConstants.ERROR_PERMISSION_DENIED);
+            }
+
+            if (accountResult.Errors.Count > 0)
+            {
+                accountResult.Success = false;
+                return Json(accountResult);
+            }
+
             return Json(await accountService.GetAllAsync());
         }
 
         [HttpGet("{id:Guid}")]
         public async Task<IActionResult> Get(Guid id)
         {
+            AccountResult accountResult = new AccountResult { Success = true };
+            Guid userId = Guid.Parse(User.FindFirst("Id")?.Value);
+            var account = await accountService.FindAsync(userId);
+            if (account == null)
+            {
+                accountResult.Errors.Add(AccountResultsConstants.ERROR_AUTHORISATION);
+            }
+
+            if (account != null && account.IsAdmin)
+            {
+                accountResult.Errors.Add(AccountResultsConstants.ERROR_PERMISSION_DENIED);
+            }
+
+            if (accountResult.Errors.Count > 0)
+            {
+                accountResult.Success = false;
+                return Json(accountResult);
+            }
+
             return Json(await accountService.FindAsync(id));
         }
 
@@ -74,11 +117,79 @@ namespace ServiceAggregator.Controllers
             throw new NotImplementedException();
         }
 
-        [HttpGet]
+        [HttpPost]
         [Authorize]
-        public async Task<IActionResult> UpdateAccount([FromForm] AccountModel account)
+        public async Task<IActionResult> UpdateAccountInfo([FromForm] AccountModel accountModel)
         {
-            throw new NotImplementedException();
+            AccountResult accountResult = new AccountResult { Success = true };
+            Guid userId = Guid.Parse(User.FindFirst("Id")?.Value);
+            var account = await accountService.FindAsync(userId);
+
+            if (account == null)
+            {
+                accountResult.Errors.Add(AccountResultsConstants.ERROR_AUTHORISATION);
+                accountResult.Success = false;
+            }
+            else
+            {
+                account.Firstname = accountModel.Firstname ?? account.Firstname;
+                account.Lastname = accountModel.Lastname ?? account.Lastname;
+                account.Location = accountModel.Location ?? account.Location;
+                account.Patronym = accountModel.Patronym ?? account.Patronym;
+                account.Location = accountModel.Location ?? account.Location;
+
+                await accountService.UpdateAsync(account);
+            }
+
+            return Json(accountResult);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> ChangeAccountPassword([FromForm] ChangePasswordModel model)
+        {
+            AccountResult accountResult = new AccountResult { Success = false };
+            Guid userId = Guid.Parse(User.FindFirst("Id")?.Value);
+            var account = await accountService.FindAsync(userId);
+            bool passwordValidated = true;
+            if (string.IsNullOrEmpty(model.OldPassword))
+            {
+                accountResult.Errors.Add(AccountResultsConstants.ERROR_OLD_PASSWORD_EMPTY);
+                passwordValidated = false;
+            }
+            if (string.IsNullOrEmpty(model.NewPassword))
+            {
+                accountResult.Errors.Add(AccountResultsConstants.ERROR_NEW_PASSWORD_EMPTY);
+                passwordValidated = false;
+            }
+            if (passwordValidated)
+            {
+                if (model.OldPassword == model.NewPassword)
+                {
+                    accountResult.Errors.Add("Пароли совпадают.");
+                }
+                else if (model.NewPassword.Length < 8)
+                {
+                    accountResult.Errors.Add("Слишком слабый пароль.");
+                }
+            }
+
+            if (account == null)
+            {
+                accountResult.Errors.Add(AccountResultsConstants.ERROR_AUTHORISATION);
+            }
+            else if (!account.Password.Equals(model.OldPassword))
+            {
+                accountResult.Errors.Add(AccountResultsConstants.ERROR_OLD_PASSWORD_INCORRECT);
+            }
+            else if (accountResult.Errors.Count == 0) 
+            {
+                account.Password = model.NewPassword;
+                await accountService.UpdateAsync(account);
+                accountResult.Success = true;
+            }
+
+            return Json(accountResult);
         }
 
         [HttpPost]
@@ -173,7 +284,7 @@ namespace ServiceAggregator.Controllers
 
             if (string.IsNullOrEmpty(registrationModel.Password))
             {
-                registrationResult.Errors.Add("Поле пароля пустое.");
+                registrationResult.Errors.Add(RegistrationResultConstants.ERROR_PASSWORD_EMPTY);
                 passwordValidated = false;
             }
             if (string.IsNullOrEmpty(registrationModel.PasswordConfirm))

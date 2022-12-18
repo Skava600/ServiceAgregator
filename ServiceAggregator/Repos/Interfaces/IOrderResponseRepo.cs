@@ -3,8 +3,7 @@ using TrialBalanceWebApp.Repos.Base;
 
 namespace ServiceAggregator.Repos.Interfaces
 {
-    public interface IDoerReviewRepo : IBaseRepo<DoerReview>
+    public interface IOrderResponseRepo :IBaseRepo<OrderResponse>
     {
-        public Task<IEnumerable<DoerReview>> GetDoersReviews(Guid doerId);
     }
 }

@@ -18,13 +18,15 @@ namespace ServiceAggregator.Controllers
         ISectionDalDataService sectionService;
         IDoerReviewDalDataService reviewService;
         ICustomerDalDataService customerService;
+        IDoerSectionDalDataService doerSectionService;
         IAccountDalDataService accountService;
         public DoerController(
             IDoerDalDataService doerService, 
             ISectionDalDataService sectionService, 
             IDoerReviewDalDataService reviewService, 
             ICustomerDalDataService customerService, 
-            IAccountDalDataService accountService) 
+            IAccountDalDataService accountService,
+            IDoerSectionDalDataService doerSectionService) 
         {
             this.doerService = doerService;
             this.reviewService = reviewService;
@@ -36,7 +38,7 @@ namespace ServiceAggregator.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task <IActionResult> CreateDoerAccount([FromForm] DoerModel model)
+        public async Task <IActionResult> CreateDoerAccount([FromForm] DoerModel model, [FromBody] string[] filters)
         {
             DoerResult result = new DoerResult { Success = true };
             Guid accountId = Guid.Parse(User.FindFirst("Id")?.Value);
@@ -55,16 +57,47 @@ namespace ServiceAggregator.Controllers
                 result.Errors.Add(DoerResultsConstants.ERROR_DOER_DESCRIPTION_NULL_OR_EMPTY);
             }
 
-            Doer doer = new Doer
+            if (result.Errors.Count > 0)
             {
-                AccountId = accountId,
-                DoerDescription = model.DoerDescription,
-                DoerName = model.DoerName,
-                Id = Guid.NewGuid(),
-                OrderCount = 0,
-            };
+                result.Success = false;
+            }
+            else
+            {
+                Doer doer = new Doer
+                {
+                    AccountId = accountId,
+                    DoerDescription = model.DoerDescription,
+                    DoerName = model.DoerName,
+                    Id = Guid.NewGuid(),
+                    OrderCount = 0,
+                };
+                Section? section;
+                int sectionCount = 0;
+                for(int i = 0; i < filters.Length; i++)
+                {
+                    section = (await sectionService.FindByField("slug", filters[i])).FirstOrDefault();
 
-            await doerService.AddAsync(doer);
+
+                    if (section != null)
+                    {
+                        await doerSectionService.AddAsync(new DoerSection
+                        {
+                            DoerId = doer.Id,
+                            Id = Guid.NewGuid(),
+                            SectionId = section.Id,
+                        });
+                        sectionCount++;
+                    }
+                    else if (sectionCount == 0 && i == filters.Length - 1)
+                    {
+                        result.Errors.Add(DoerResultsConstants.ERROR_SECTION_NOT_EXIST);
+                        result.Success = false;
+                        return Json(result);
+                    }
+                }
+
+                await doerService.AddAsync(doer);
+            }
             return Json(result);
         }
 

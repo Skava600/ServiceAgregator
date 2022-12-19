@@ -2,6 +2,8 @@ import appAxios from "./axios";
 
 const accountPath = "Account";
 const profilePath = "Doer";
+const tasksPath = "Orders";
+const responsesPath = "Response";
 
 const getFormData = (data: { [key: string]: any }) => {
     const formData = new FormData();
@@ -47,8 +49,6 @@ export const getWorkSections = () => {
 };
 
 export const getProfiles = (slugs: string[]) => {
-    const formData = getFormData(slugs);
-
     return appAxios({
         url: `${profilePath}/Get`,
         method: "POST",
@@ -58,4 +58,29 @@ export const getProfiles = (slugs: string[]) => {
 
 export const getProfile = (data: { id: string }) => {
     return appAxios.get(`${profilePath}/Get`, { params: { id: data.id } });
+};
+
+export const getTasks = ({
+    slugs,
+    isMyOrders,
+}: {
+    slugs: string[];
+    isMyOrders?: string;
+}) => {
+    return appAxios({
+        url: `${tasksPath}/GetPage`,
+        method: "POST",
+        data: slugs,
+        params: { myOrders: isMyOrders },
+    });
+};
+
+export const getTask = (data: { id: string }) => {
+    return appAxios.get(`${tasksPath}/Get/${data.id}`);
+};
+
+export const getResponses = (data: { id: string }) => {
+    return appAxios.get(`${responsesPath}`, {
+        params: { orderId: data.id },
+    });
 };

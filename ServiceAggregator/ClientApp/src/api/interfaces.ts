@@ -10,12 +10,45 @@ export interface IWorkCategory {
 }
 
 export interface IProfile {
+    id: string;
     doerDescription: string;
     doerName: string;
-    id: string;
     orderCount: number;
     reviewsCount: number;
     rating: number;
     reviews: any[];
     sections: IWorkSection[];
+}
+
+type TTaskStatus = "Open" | "Done" | "Canceled" | "InProgress";
+
+export interface ITask {
+    id: string;
+    header: string;
+    text: string;
+    location: string;
+    status: TTaskStatus;
+    expireDate: string;
+    price: number | null;
+    customer: {
+        id: string;
+        rating: number;
+        account: {
+            firstname: string;
+            lastname: string;
+            patronym: string;
+            phoneNumber: string;
+            location?: string;
+        };
+        reviews?: any;
+    };
+    section: IWorkSection;
+    orderResult: string;
+    responseCount: number;
+}
+
+export interface ITaskResponse {
+    message: string;
+    doer: IProfile;
+    isChosen: boolean;
 }

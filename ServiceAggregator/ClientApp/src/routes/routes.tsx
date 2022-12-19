@@ -22,7 +22,7 @@ import {
 export const routes = [
     {
         path: ROOT_ROUTE,
-        element: <MainPage />,
+        element: <TasksPage />,
     },
     {
         path: REGISTER_ROUTE,

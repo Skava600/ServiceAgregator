@@ -19,6 +19,8 @@
         "css-loader": "^6.7.3",
         "http-proxy-middleware": "^2.0.6",
         "merge": "^2.1.1",
+        "moment": "^2.29.4",
+        "moment-locales-webpack-plugin": "^1.2.0",
         "oidc-client": "^1.11.5",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",

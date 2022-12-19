@@ -1,20 +1,17 @@
-.profile-page{
-    height: 100%;
+.profiles-page{
+    flex: 1 0 auto;
+    display: flex;
     width: 100%;
     
     .divider{
         width: 100%;
-        height: 100%;
         display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
 
         .right-side{
-            padding:  0 20px;
-            height: 100%;
+            padding: 10px 20px;
             width: 85%;
 
-            .no-profiles{
+            .no-data{
                 padding: 40px;
                 display: flex;
                 justify-content: center;
@@ -24,39 +21,26 @@
                 justify-self: center;
             }
         }
-
-        .work-sections-tree{
-            height: 100%;
-            width: 300px;
-            background-color: white;
-            border-radius: 0;
-
-            .section{
-                display: flex;
-                align-items: center;
-                padding-right: 5px;
-            }
-
-            .MuiTreeItem-root .MuiTreeItem-content{
-                overflow-wrap: break-word;
-                box-sizing: border-box;
-            }
-        }
     }
 
     @media screen and (max-width: 900px) {
         .divider{
             flex-direction: column;
             align-items: center;
-            
-            .work-sections-tree{
-                width: 95%;
-                border-radius: 5px;
-            }
+            padding: 20px;
 
             .right-side{
                 width: 100%;
-                box-sizing: border-box;
+                padding: 0;
+
+                .progress-container{
+                    margin-top: 50px;
+                    padding-bottom: 60px;
+                }
+
+                .no-data{
+                    margin-top: 20px;
+                }
             }
         }
       }

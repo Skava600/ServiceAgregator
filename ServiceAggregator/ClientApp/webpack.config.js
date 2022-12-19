@@ -1,5 +1,6 @@
 const path = require("path");
 const process = require("process");
+const MomentLocalesPlugin = require("moment-locales-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
@@ -50,6 +51,9 @@ const config = {
     plugins: [
         new HtmlWebpackPlugin({
             template: path.join(__dirname, "src", "index.html"),
+        }),
+        new MomentLocalesPlugin({
+            localesToKeep: ["ru"],
         }),
     ],
     resolve: {

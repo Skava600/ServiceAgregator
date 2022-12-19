@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { Card, CardContent, Rating } from "@mui/material";
 import FaceIcon from "@mui/icons-material/Face";
 import Face2Icon from "@mui/icons-material/Face2";
@@ -6,10 +8,10 @@ import Face4Icon from "@mui/icons-material/Face4";
 import Face5Icon from "@mui/icons-material/Face5";
 import Face6Icon from "@mui/icons-material/Face6";
 import WorkIcon from "@mui/icons-material/Work";
-import "./profileCard.less";
-import { useEffect, useState } from "react";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import { IProfile } from "../../api/interfaces";
-import { Link } from "react-router-dom";
+import "./profileCard.less";
+import classNames from "classnames";
 
 const reviewWordForms = ["отзыв", "отзыва", "отзывов"];
 const orderWordForms = ["заказ", "заказа", "заказов"];
@@ -43,11 +45,21 @@ const AVATARS = [
 
 const getRandomAvatar = () => AVATARS[Math.floor(Math.random() * 6)];
 
+type TVariant = "short" | "full";
+
 type TProps = {
     profile: IProfile;
+    variant?: TVariant;
+    message?: string;
+    isChosen?: boolean;
 };
 
-export const ProfileCard = ({ profile }: TProps) => {
+export const ProfileCard = ({
+    profile,
+    variant = "full",
+    message,
+    isChosen,
+}: TProps) => {
     const [avatar, setAvatar] = useState<any>();
 
     useEffect(() => {
@@ -56,22 +68,32 @@ export const ProfileCard = ({ profile }: TProps) => {
 
     return (
         <Link to={`/profile/${profile.id}`} className="profile-link">
-            <Card className="profile-card">
-                {avatar}
-                <div className="profile-card-content">
-                    <p className="profile-name">{profile.doerName}</p>
-                    <p className="profile-description">
-                        {profile.doerDescription}
-                    </p>
-                    <div className="profile-summary">
-                        <Rating value={profile.rating} size="small" readOnly />
-                        <span className="ratings-text">{`${styleSummaryItem(
-                            profile.reviewsCount,
-                            reviewWordForms
-                        )}, выполнил ${styleSummaryItem(
-                            profile.orderCount,
-                            orderWordForms
-                        )}`}</span>
+            <Card className={classNames("profile-card", variant)}>
+                {isChosen && <CheckCircleOutlineIcon color="success" />}
+                <div className="profile-card-row">
+                    {avatar}
+                    <div className="profile-card-content">
+                        <p className="profile-name">{profile.doerName}</p>
+                        {variant === "full" && (
+                            <p className="profile-description">
+                                {profile.doerDescription}
+                            </p>
+                        )}
+                        {variant === "short" && (
+                            <p className="profile-message">{message}</p>
+                        )}
+                    </div>
+                </div>
+                <div className="profile-summary">
+                    <Rating value={profile.rating} size="small" readOnly />
+                    <span className="ratings-text">{`${styleSummaryItem(
+                        profile.reviewsCount,
+                        reviewWordForms
+                    )}, выполнил ${styleSummaryItem(
+                        profile.orderCount,
+                        orderWordForms
+                    )}`}</span>
+                    {variant === "full" && (
                         <div className="work-sections">
                             <WorkIcon fontSize="small" />
                             <span className="work-sections-text">
@@ -86,7 +108,7 @@ export const ProfileCard = ({ profile }: TProps) => {
                                 `}
                             </span>
                         </div>
-                    </div>
+                    )}
                 </div>
             </Card>
         </Link>

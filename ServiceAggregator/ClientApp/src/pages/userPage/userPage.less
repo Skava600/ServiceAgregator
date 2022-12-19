@@ -1,4 +1,4 @@
-.task-page{
+.profile-page{
     width:100%;
     padding: 20px;
     display: flex;
@@ -6,19 +6,13 @@
     justify-content: center;
     align-items: center;
 
-    .task-link{
-        max-width: 60%;
-        margin-left: 30px;
-    }
-    
-
     .first-row{
         width: 100%;
         display: flex;
         align-items: flex-start;
         justify-content: center;
 
-        .task-header{ 
+        .profile-header{ 
             margin-left: 40px;
             width: 55%;
             padding:20px 20px 20px 30px;
@@ -26,7 +20,7 @@
             justify-content: center;
             align-items: center;
             
-            .task-summary{
+            .profile-summary{
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
@@ -37,31 +31,27 @@
                 }
             }
             
-            .task-summary-right{
+            .profile-summary-right{
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
             }
         }   
 
-        .task-rating{
-            max-width: 30%;
+        .profile-rating{
             padding: 20px;
 
-            .task-avatar{
+            .profile-avatar{
                 font-size: 120px;
             } 
 
-            .task-summary{
+            .profile-summary{
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
 
                 .item{
-                    text-align: center;
-                    width: 100%;
-                    word-break: break-all;
                     margin-top: 10px;
                 }
             }
@@ -74,7 +64,6 @@
         margin-top: 20px;
 
         .rest-header{
-            color:white;
             font-size: 24px;
         }
 
@@ -115,13 +104,12 @@
 }
 
 @media screen and (max-width:800px) {
-    .task-page{ 
+    .profile-page{ 
             .first-row{
             flex-direction: column;
             align-items: center;
 
-            .task-rating, .task-header, .task-link { 
-                max-width: 80%;
+            .profile-rating, .profile-header{ 
                 width: 80%;
                 margin: 20px 0 0 0;
             }
@@ -129,11 +117,7 @@
 
         .rest{
             padding:20px 20px 20px 30px;
-            width: 100%;
-
-            .review{
-                margin-top: 10px;
-            }
+            width: 80%;
         }
     }
 }

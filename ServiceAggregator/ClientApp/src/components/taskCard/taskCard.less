@@ -1,0 +1,147 @@
+
+.task-link {
+    text-decoration: none
+}
+
+.task-card.short{
+    .task-card-content{ 
+        margin-left: 0;
+    }
+}
+
+.task-link .task-card{
+    width: 100%;
+    padding: 15px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+
+    .task-card-row {width: 100%;
+        display: flex;
+        
+        .avatar{
+            font-size: 100px;
+        }
+
+        .task-card-content{ 
+            margin-left: 30px;
+            padding-top: 20px;
+
+            .name{
+                font-size: 20px;
+                font-weight: 500;
+            }
+
+            .description{
+                margin-top: 10px;
+                display: block;
+                font-size: 16px;
+            }
+        }
+    }
+    
+    .task-summary{
+        align-self: stretch;
+        margin-top: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: grey;
+         
+        .info{
+            margin: 0 10px 0 5px;
+            font-style: 14px;
+            font-weight: 400;
+            color: grey;
+            word-break: keep-all;
+        }
+
+    }
+
+    .task-card-price-container{
+        margin-left: auto;
+        padding-top: 20px;
+        
+        display: flex;
+        align-items: flex-end;
+        flex-direction: column;
+
+        .price{
+            font-size: 24px;
+            font-weight: 500;
+        }
+
+        .status{
+            margin-top: 10px;
+            font-size: 14px;
+            font-weight: 300;
+        }
+    }
+}
+
+.task-link + .task-link .task-card{
+    margin-top: 15px;
+}
+
+@media screen and (max-width: 900px) {
+    .task-link .task-card{
+        margin-top: 30px;
+    }
+}
+
+@media screen and (max-width: 1100px) {
+    .task-link .task-card{ 
+        padding-bottom: 20px;
+        
+        
+        
+        .task-summary{
+            align-self: center;
+        }
+
+        .task-card-row{
+            flex-direction: column;
+
+            .avatar{
+                display: none;
+            }
+
+            .task-card-content{
+                margin: 0;
+
+                .name{
+                    display: block;
+                    max-height: 100px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+                
+                .description{
+                    display: block;
+                    max-height: 100px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    font-size: 16px;
+                }
+            }
+
+            .task-card-price-container{
+                margin-left: 0;
+                flex-direction: row;
+                justify-content: space-around;
+
+                .price{
+                    font-size: 18px;
+                    font-weight: 500;
+                }
+
+                .status{
+                    margin: 0;
+                    font-size: 14px;
+                    font-weight: 300;
+                }
+            }
+        }
+    }
+}

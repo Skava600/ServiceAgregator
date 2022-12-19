@@ -32,7 +32,7 @@ const INITIAL_STATE = {
     profile: {} as IProfile,
 };
 
-export const ProfilePage = () => {
+export const UserPage = () => {
     const { id } = useParams();
     const [isLoading, setIsLoading] = useState(INITIAL_STATE.isLoading);
     const [profile, setProfile] = useState(INITIAL_STATE.profile);

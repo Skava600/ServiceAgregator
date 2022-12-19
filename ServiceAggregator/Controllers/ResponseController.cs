@@ -55,6 +55,12 @@ namespace ServiceAggregator.Controllers
             }
 
             Doer doer = doers.First();
+
+            var responses = await orderResponseDalService.FindByField("orderid", model.OrderId.ToString());
+            if (responses.Where(r => r.DoerId == doer.Id).Any())
+            {
+                result.Errors.Add(ResponseResultConstants.ERROR_ALREADY_APPLIED);
+            }
             Order? order = await orderDalService.FindAsync(model.OrderId);
             if (order == null)
             {

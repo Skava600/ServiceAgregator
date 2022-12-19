@@ -43,11 +43,9 @@ namespace ServiceAggregator.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetPage(int? page, [FromBody]string[] filters, bool myOrders = false)
+        public async Task<IActionResult> GetPage([FromBody]string[] filters, bool myOrders = false)
         {
             OrderData orderData = new OrderData { OrderResult = new OrderResult { Success = true } };
-            if (page == null)
-                page = 1;
 
             Guid userId;
             if (!Guid.TryParse(User.FindFirst("Id")?.Value, out userId) && myOrders)
@@ -81,8 +79,6 @@ namespace ServiceAggregator.Controllers
                         orders.RemoveAll(o => Array.IndexOf(filters, currentSection.Slug) == -1);
                 }
             }      
-          
-            orders.Skip(((int)page - 1) * 50).Take(50);
          
             Section? section;
             foreach (var order in orders)

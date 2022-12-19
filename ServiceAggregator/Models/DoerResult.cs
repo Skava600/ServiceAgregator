@@ -13,6 +13,7 @@
         public const string ERROR_DOER_DESCRIPTION_NULL_OR_EMPTY = "Поле описания исполнителя пустое";
         public const string ERROR_SECTION_NOT_EXIST = "Данного раздела не существует.";
         public const string ERROR_DOER_NOT_EXIST = "Данный аккаунт исполнителя не найден.";
+        public const string ERROR_DOER_BANNED = "Ваш профиль исполнителя забанен. Причина бана: ";
     }
 
 }

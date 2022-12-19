@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using ServiceAggregator.Entities;
 using ServiceAggregator.Models;
+using ServiceAggregator.Services.DataServices.Dal;
 using ServiceAggregator.Services.DataServices.Interfaces;
 
 namespace ServiceAggregator.Controllers
@@ -11,13 +13,15 @@ namespace ServiceAggregator.Controllers
     public class ResponseController : Controller
     {
         private IDoerDalDataService doerService;
+        private IBannedDoerDalDataService bannedDoerDalDataService;
         private IOrderDalDataService orderDalService;
         private IOrderResponseDalDataService orderResponseDalService;
-        public ResponseController(IDoerDalDataService doerService, IOrderDalDataService orderDalService, IOrderResponseDalDataService orderResponseDalService)
+        public ResponseController(IDoerDalDataService doerService, IOrderDalDataService orderDalService, IOrderResponseDalDataService orderResponseDalService, IBannedDoerDalDataService bannedDoerDalDataService)
         {
             this.doerService = doerService;
             this.orderDalService = orderDalService;
             this.orderResponseDalService = orderResponseDalService;
+            this.bannedDoerDalDataService = bannedDoerDalDataService;
         }
         [HttpGet]
         public async Task<IActionResult> GetOrdersResponses(Guid orderId)
@@ -29,7 +33,8 @@ namespace ServiceAggregator.Controllers
             foreach(var response in responses)
             {
                 doer = await doerService.FindAsync(response.DoerId);
-                if (doer != null)
+                
+                if (doer != null && !(await bannedDoerDalDataService.FindByField("doerid", doer.Id.ToString())).Any())
                     responseDatas.Add(new ResponseData
                     {
                         Message = response.Message,
@@ -52,10 +57,15 @@ namespace ServiceAggregator.Controllers
             {
                 result.Errors.Add(DoerResultsConstants.ERROR_DOER_NOT_EXIST);
             }
-
             Doer doer = doers.First();
 
-            var responses = await orderResponseDalService.FindByField("orderid", model.OrderId.ToString());
+            var bannedDoer = (await bannedDoerDalDataService.FindByField("doerid", doer.Id.ToString())).FirstOrDefault();
+            if (bannedDoer != null)
+            {
+                result.Errors.Add(DoerResultsConstants.ERROR_DOER_BANNED + bannedDoer.BanReason);
+            }
+
+                var responses = await orderResponseDalService.FindByField("orderid", model.OrderId.ToString());
             if (responses.Where(r => r.DoerId == doer.Id).Any())
             {
                 result.Errors.Add(ResponseResultConstants.ERROR_ALREADY_APPLIED);

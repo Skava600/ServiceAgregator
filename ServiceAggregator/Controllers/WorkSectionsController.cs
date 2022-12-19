@@ -1,11 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using ServiceAggregator.Data;
-using ServiceAggregator.Entities;
+﻿using Microsoft.AspNetCore.Mvc;
 using ServiceAggregator.Models;
-using ServiceAggregator.Options;
-using ServiceAggregator.Repos;
 using ServiceAggregator.Services.DataServices.Interfaces;
 
 namespace ServiceAggregator.Controllers

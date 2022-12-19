@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using ServiceAggregator.Entities;
 using ServiceAggregator.Models;
 using ServiceAggregator.Services.DataServices.Interfaces;

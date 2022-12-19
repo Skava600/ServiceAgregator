@@ -15,9 +15,8 @@ namespace ServiceAggregator.Services.DataServices.Dal
             repo = mainRepo;
         }
 
-        public Task<IEnumerable<CustomerReview>> GetCustomersReviews(Guid customerId)
+        public async Task<IEnumerable<CustomerReview>> GetCustomersReviews(Guid customerId)
         {
-            throw new NotImplementedException();
-        }
+            return await repo.GetCustomersReviews(customerId);
     }
 }

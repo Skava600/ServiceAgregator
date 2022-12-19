@@ -1,16 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json.Linq;
-using ServiceAggregator.Data;
 using ServiceAggregator.Entities;
 using ServiceAggregator.Models;
-using ServiceAggregator.Options;
-using ServiceAggregator.Repos;
 using ServiceAggregator.Repos.Interfaces;
 using ServiceAggregator.Services.DataServices.Interfaces;
-using System.Linq;
-using static ServiceAggregator.Models.OrderData;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

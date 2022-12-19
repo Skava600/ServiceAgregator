@@ -34,6 +34,7 @@ namespace ServiceAggregator.Controllers
                     responseDatas.Add(new ResponseData
                     {
                         Message = response.Message,
+                        IsChosen = response.IsChosen,
                         Doer = new DoerData { Id = doer.Id, DoerName = doer.DoerName, OrderCount = doer.OrderCount },
                     });
             }
@@ -70,6 +71,7 @@ namespace ServiceAggregator.Controllers
                     OrderId = model.OrderId,
                     Id = Guid.NewGuid(),
                     Message = model.Message,
+                    IsChosen = false,
                     DoerId = doer.Id,
                 };
 

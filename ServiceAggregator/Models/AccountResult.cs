@@ -12,7 +12,6 @@
         public const string ERROR_PERMISSION_DENIED = "Нарушение привиллегий";
         public const string ERROR_OLD_PASSWORD_INCORRECT = "Старый пароль указан неверно.";
         public const string ERROR_OLD_PASSWORD_EMPTY = "Поле старого пароля пустое";
-
         public const string ERROR_NEW_PASSWORD_EMPTY = "Поле нового пароля пустое";
     }
 }

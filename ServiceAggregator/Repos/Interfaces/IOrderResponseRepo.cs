@@ -5,5 +5,6 @@ namespace ServiceAggregator.Repos.Interfaces
 {
     public interface IOrderResponseRepo :IBaseRepo<OrderResponse>
     {
+        public Task<int> GetCountOfResponsesInOrder(Guid orderId);
     }
 }

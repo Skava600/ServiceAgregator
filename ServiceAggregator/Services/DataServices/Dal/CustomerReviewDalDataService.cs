@@ -18,5 +18,6 @@ namespace ServiceAggregator.Services.DataServices.Dal
         public async Task<IEnumerable<CustomerReview>> GetCustomersReviews(Guid customerId)
         {
             return await repo.GetCustomersReviews(customerId);
+        }
     }
 }

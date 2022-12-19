@@ -35,7 +35,7 @@ namespace ServiceAggregator.Controllers
         [Authorize (Roles ="Admin")]
         public async Task<IActionResult> BanAccount(Guid id, [FromBody] string banReason)
         {
-            if((await _bannedAccountDalDataService.FindByField("accountid", id.ToString())).Any())
+            if((await _bannedAccountDalDataService.FindAsync(id)) != null)
             {
                 return Json(Results.BadRequest("Пользователь уже наказан."));
             }
@@ -48,8 +48,7 @@ namespace ServiceAggregator.Controllers
 
             await _bannedAccountDalDataService.AddAsync(new Entities.BannedAccount
             {
-                Id = Guid.NewGuid(),
-                AccountId = id,
+                Id = id,
                 BanReason = banReason
             });
 
@@ -61,7 +60,7 @@ namespace ServiceAggregator.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UnBanAccount(Guid id)
         {
-            var bannedAccount = (await _bannedAccountDalDataService.FindByField("accountid", id.ToString())).FirstOrDefault();
+            var bannedAccount = (await _bannedAccountDalDataService.FindAsync(id));
 
             if (bannedAccount == null)
             {
@@ -77,7 +76,7 @@ namespace ServiceAggregator.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> BanDoer(Guid doer_id, [FromBody] string banReason)
         {
-            if ((await _bannedDoerDalDataService.FindByField("doerid", doer_id.ToString())).Any())
+            if ((await _bannedDoerDalDataService.FindAsync(doer_id)) != null)
             {
                 return Json(Results.BadRequest("Пользователь уже наказан."));
             }
@@ -91,7 +90,6 @@ namespace ServiceAggregator.Controllers
             await _bannedDoerDalDataService.AddAsync(new Entities.BannedDoer
             {
                 Id = Guid.NewGuid(),
-                DoerId = doer_id,
                 BanReason = banReason
             });
 
@@ -102,7 +100,7 @@ namespace ServiceAggregator.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UnBanDoer(Guid id)
         {
-            var bannedAccount = (await _bannedDoerDalDataService.FindByField("doerid", id.ToString())).FirstOrDefault();
+            var bannedAccount = await _bannedDoerDalDataService.FindAsync(id);
 
             if (bannedAccount == null)
             {

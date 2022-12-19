@@ -11,10 +11,13 @@ import {
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { ProfileInfo, Page } from "../../components";
+import { useAppSelector } from "../../state/store";
+import { getUser } from "../../state/selectors/userSelectors";
 import "./accountPage.less";
 
 export const AccountPage = () => {
     const [expanded, setExpanded] = useState<string | false>("panel1");
+    const user = useAppSelector(getUser);
 
     const handleChange = (panel: string) => (_: any, isExpanded: boolean) => {
         setExpanded(isExpanded ? panel : false);
@@ -87,17 +90,7 @@ export const AccountPage = () => {
                     </Accordion>
                 </Grid>
                 <Grid item xs={12}>
-                    <ProfileInfo
-                        user={{
-                            firstName: "Кирилл",
-                            lastName: "Яблонский",
-                            patronym: "Дмитриевич",
-                            email: "blackshark564@gmail.com",
-                            phoneNubmer: "+375447010025",
-                            location: "Минск",
-                            password: "1234",
-                        }}
-                    />
+                    <ProfileInfo user={user!} />
                 </Grid>
             </Grid>
         </Page>

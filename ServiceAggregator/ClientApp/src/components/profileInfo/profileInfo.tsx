@@ -16,6 +16,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import EditIcon from "@mui/icons-material/Edit";
 import "./profileInfo.less";
+import { IUser } from "../../api/interfaces";
 
 const INITIAL_STATE = {
     passwordConfirmation: { value: "1234", isError: false },
@@ -25,34 +26,26 @@ const INITIAL_STATE = {
 };
 
 type TProps = {
-    user: {
-        firstName: string;
-        lastName: string;
-        patronym: string;
-        email: string;
-        phoneNubmer: string;
-        location: string;
-        password: string;
-    };
+    user: IUser;
 };
 
 export const ProfileInfo = ({ user }: TProps) => {
     const [isEditMode, setIsEditMode] = useState(false);
     const [firstName, setFirstName] = useState({
-        value: user.firstName,
+        value: user.firstname,
         isError: false,
     });
     const [lastName, setLastName] = useState({
-        value: user.lastName,
+        value: user.lastname,
         isError: false,
     });
     const [patronym, setPatronym] = useState({
         value: user.patronym,
         isError: false,
     });
-    const [email, setEmail] = useState({ value: user.email, isError: false });
-    const [phoneNubmer, setPhoneNubmer] = useState({
-        value: user.phoneNubmer,
+    const [email, setEmail] = useState({ value: user.login, isError: false });
+    const [phonenumber, setPhoneNubmer] = useState({
+        value: user.phonenumber,
         isError: false,
     });
     const [location, setLocation] = useState({
@@ -60,11 +53,11 @@ export const ProfileInfo = ({ user }: TProps) => {
         isError: false,
     });
     const [password, setPassword] = useState({
-        value: user.password,
+        value: "",
         isError: false,
     });
     const [passwordConfirmation, setPasswordConfirmation] = useState({
-        value: user.password,
+        value: "",
         isError: false,
     });
     const [isPassVisible, setIsPassVisible] = useState(
@@ -77,14 +70,14 @@ export const ProfileInfo = ({ user }: TProps) => {
 
     const resetUserInfo = () => {
         setIsEditMode(false);
-        setFirstName((v) => ({ ...v, value: user.firstName }));
-        setLastName((v) => ({ ...v, value: user.lastName }));
+        setFirstName((v) => ({ ...v, value: user.firstname }));
+        setLastName((v) => ({ ...v, value: user.lastname }));
         setPatronym((v) => ({ ...v, value: user.patronym }));
-        setEmail((v) => ({ ...v, value: user.email }));
-        setPhoneNubmer((v) => ({ ...v, value: user.phoneNubmer }));
+        setEmail((v) => ({ ...v, value: user.login }));
+        setPhoneNubmer((v) => ({ ...v, value: user.phonenumber }));
         setLocation((v) => ({ ...v, value: user.location }));
-        setPassword((v) => ({ ...v, value: user.password }));
-        setPasswordConfirmation((v) => ({ ...v, value: user.password }));
+        setPassword((v) => ({ ...v, value: "" }));
+        setPasswordConfirmation((v) => ({ ...v, value: "" }));
     };
 
     const validateUser = () => {
@@ -94,7 +87,7 @@ export const ProfileInfo = ({ user }: TProps) => {
             !lastName.value ||
             !patronym.value ||
             !email.value ||
-            !phoneNubmer.value ||
+            !phonenumber.value ||
             !password.value ||
             !passwordConfirmation.value
         ) {
@@ -114,7 +107,7 @@ export const ProfileInfo = ({ user }: TProps) => {
         setLastName((value) => ({ ...value, isError: !lastName.value }));
         setPatronym((value) => ({ ...value, isError: !patronym.value }));
         setEmail((value) => ({ ...value, isError: !email.value }));
-        setPhoneNubmer((value) => ({ ...value, isError: !phoneNubmer.value }));
+        setPhoneNubmer((value) => ({ ...value, isError: !phonenumber.value }));
         setPassword((value) => ({ ...value, isError: !password.value }));
         setPasswordConfirmation((value) => ({
             ...value,
@@ -196,7 +189,7 @@ export const ProfileInfo = ({ user }: TProps) => {
                         <Grid item xs={12} md={4} lg={3}>
                             <TextField
                                 size="small"
-                                value={phoneNubmer.value}
+                                value={phonenumber.value}
                                 onChange={(e: any) =>
                                     setPhoneNubmer((prevValue) => ({
                                         ...prevValue,
@@ -206,7 +199,7 @@ export const ProfileInfo = ({ user }: TProps) => {
                                 className="account-info-value-input"
                                 variant="outlined"
                                 label="Номер Телефона"
-                                error={phoneNubmer.isError}
+                                error={phonenumber.isError}
                             />
                         </Grid>
                         <Grid item xs={12} md={4} lg={3}>
@@ -344,13 +337,13 @@ export const ProfileInfo = ({ user }: TProps) => {
                         <Grid item xs={12} sm={6} md={4} lg={3}>
                             <b>Фамилия:</b>
                             <div className="account-info-value">
-                                {user.lastName}
+                                {user.lastname}
                             </div>
                         </Grid>
                         <Grid item xs={12} sm={6} md={4} lg={3}>
                             <b>Имя:</b>
                             <div className="account-info-value">
-                                {user.firstName}
+                                {user.firstname}
                             </div>
                         </Grid>
                         <Grid item xs={12} sm={6} md={4} lg={3}>
@@ -362,25 +355,19 @@ export const ProfileInfo = ({ user }: TProps) => {
                         <Grid item xs={12} sm={6} md={4} lg={3}>
                             <b>Email:</b>
                             <div className="account-info-value">
-                                {user.email}
+                                {user.login}
                             </div>
                         </Grid>
                         <Grid item xs={12} sm={6} md={4} lg={3}>
                             <b>Номер телефона:</b>
                             <div className="account-info-value">
-                                {user.phoneNubmer}
+                                {user.phonenumber}
                             </div>
                         </Grid>
                         <Grid item xs={12} sm={6} md={4} lg={3}>
                             <b>Город:</b>
                             <div className="account-info-value">
                                 {user.location}
-                            </div>
-                        </Grid>
-                        <Grid item xs={12} sm={6} md={4} lg={3}>
-                            <b>Пароль:</b>
-                            <div className="account-info-value">
-                                {user.password}
                             </div>
                         </Grid>
                     </Grid>

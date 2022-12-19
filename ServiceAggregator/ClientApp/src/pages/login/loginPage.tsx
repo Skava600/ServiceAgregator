@@ -13,8 +13,12 @@ import CloseIcon from "@mui/icons-material/Close";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
+import { getAccountInfo, loginUser } from "../../api";
 import "./loginPage.less";
-import { loginUser } from "../../api";
+import { useAppDispatch } from "../../state/store";
+import { loginSuccess } from "../../state/slices/authSlice";
+import { userInfo } from "os";
+import { Link } from "react-router-dom";
 
 const INITIAL_STATE = {
     email: { value: "blackshark564@gmail.com", isError: false },
@@ -30,6 +34,8 @@ export const LoginPage = () => {
         INITIAL_STATE.isPassVisible
     );
     const [errors, setErrors] = useState(INITIAL_STATE.errors);
+
+    const dispatch = useAppDispatch();
 
     const navigate = useNavigate();
 
@@ -58,11 +64,35 @@ export const LoginPage = () => {
             Email: email.value,
             Password: password.value,
         }).then(({ data }) => {
-            const { statusCode } = data;
-            if (statusCode === 401) {
-                setErrors(["Неверный логин или пароль"]);
+            const { success, errors } = data;
+            if (!success && success !== undefined) {
+                setErrors(errors);
             } else {
                 navigate("/");
+                const token = data;
+                getAccountInfo(token).then(({ data }) => {
+                    const {
+                        firstname,
+                        lastname,
+                        location,
+                        login,
+                        patronym,
+                        phonenumber,
+                    } = data;
+                    dispatch(
+                        loginSuccess({
+                            user: {
+                                firstname,
+                                lastname,
+                                location,
+                                login,
+                                patronym,
+                                phonenumber,
+                            },
+                            token,
+                        })
+                    );
+                });
             }
         });
     };
@@ -139,7 +169,9 @@ export const LoginPage = () => {
                         {errors.map((err) => (
                             <div className="error">
                                 <PriorityHighIcon />
-                                <Typography color="red">{err}</Typography>
+                                <Typography color="red" sx={{ width: "100%" }}>
+                                    {err}
+                                </Typography>
                             </div>
                         ))}
                     </Stack>
@@ -151,6 +183,14 @@ export const LoginPage = () => {
                         <Button variant="contained" onClick={handleLogin}>
                             Войти
                         </Button>
+                    </Stack>
+                    <Stack spacing={5} direction="row" className="actions">
+                        <Typography color="white" sx={{ width: "100%" }}>
+                            Нет аккаунта?
+                        </Typography>
+                        <Typography color="white" sx={{ width: "100%" }}>
+                            <Link to="/register">Зарегистрируйтесь</Link>
+                        </Typography>
                     </Stack>
                 </Paper>
             </div>

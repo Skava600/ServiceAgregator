@@ -29,7 +29,9 @@ export const registerUser = async (data: {
         url: `${accountPath}/Register`,
         method: "POST",
         data: formData,
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
     });
 };
 
@@ -82,5 +84,21 @@ export const getTask = (data: { id: string }) => {
 export const getResponses = (data: { id: string }) => {
     return appAxios.get(`${responsesPath}`, {
         params: { orderId: data.id },
+    });
+};
+
+export const getAccountInfo = (token: string) => {
+    return appAxios.get(`${accountPath}/Info`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+export const logoutAccount = (token: string) => {
+    return appAxios.get(`${accountPath}/Logout`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
     });
 };

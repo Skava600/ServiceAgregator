@@ -4,6 +4,15 @@ export interface IWorkSection {
     categoryName?: string;
 }
 
+export interface IUser {
+    firstname: string;
+    lastname: string;
+    patronym: string;
+    phonenumber: string;
+    location: string;
+    login: string;
+}
+
 export interface IWorkCategory {
     name: string;
     sections: IWorkSection[];

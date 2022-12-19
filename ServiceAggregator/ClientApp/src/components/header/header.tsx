@@ -12,11 +12,17 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router";
 import "./header.less";
+import { logoutAccount } from "../../api";
+import { useAppDispatch, useAppSelector } from "../../state/store";
+import { getToken } from "../../state/selectors/userSelectors";
+import { logout } from "../../state/slices/authSlice";
 
 export const Header = () => {
+    const token = useAppSelector(getToken);
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
     const contRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
@@ -29,11 +35,17 @@ export const Header = () => {
     const handleHomeClick = () => {
         navigate("/");
     };
+
     const handleAccountClick = () => {
         navigate("/account");
     };
+
+    const handleLoginClick = () => {
+        navigate("/login");
+    };
+
     const handleLogoutClick = () => {
-        navigate("/");
+        dispatch(logout());
     };
 
     const open = Boolean(anchorEl);
@@ -60,19 +72,30 @@ export const Header = () => {
                     }}
                     container={contRef.current}
                 >
-                    <MenuItem onClick={handleAccountClick}>
-                        <ListItemIcon>
-                            <AccountCircleIcon />
-                        </ListItemIcon>
-                        Аккаунт
-                    </MenuItem>
-                    <Divider />
-                    <MenuItem onClick={handleLogoutClick}>
-                        <ListItemIcon>
-                            <LogoutIcon />
-                        </ListItemIcon>
-                        Выйти
-                    </MenuItem>
+                    {token ? (
+                        <>
+                            <MenuItem onClick={handleAccountClick}>
+                                <ListItemIcon>
+                                    <AccountCircleIcon />
+                                </ListItemIcon>
+                                Аккаунт
+                            </MenuItem>
+                            <Divider />
+                            <MenuItem onClick={handleLogoutClick}>
+                                <ListItemIcon>
+                                    <LogoutIcon />
+                                </ListItemIcon>
+                                Выйти
+                            </MenuItem>
+                        </>
+                    ) : (
+                        <MenuItem onClick={handleLoginClick}>
+                            <ListItemIcon>
+                                <LogoutIcon />
+                            </ListItemIcon>
+                            Войти
+                        </MenuItem>
+                    )}
                 </Popover>
             </Toolbar>
         </AppBar>

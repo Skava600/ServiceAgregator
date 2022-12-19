@@ -102,9 +102,9 @@ export const RegisterPage = () => {
             Password: password.value,
             PasswordConfirm: password.value,
         }).then(({ data }) => {
-            const { success, errorCodes } = data;
+            const { success, errors } = data;
             if (!success) {
-                setErrors((prevValue) => [...prevValue, ...errorCodes]);
+                setErrors((prevValue) => [...errors]);
             } else {
                 navigate("/login");
             }
@@ -186,6 +186,7 @@ export const RegisterPage = () => {
                         variant="outlined"
                         label="Email *"
                         error={email.isError}
+                        type="email"
                     />
                     <TextField
                         size="small"

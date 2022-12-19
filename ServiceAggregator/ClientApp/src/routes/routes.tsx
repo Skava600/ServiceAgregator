@@ -19,6 +19,13 @@ import {
     TaskPage,
 } from "../pages";
 
+export const authorizedRoutes = [
+    {
+        path: ACCOUNT_ROUTE,
+        element: <AccountPage />,
+    },
+];
+
 export const routes = [
     {
         path: ROOT_ROUTE,
@@ -31,10 +38,6 @@ export const routes = [
     {
         path: LOGIN_ROUTE,
         element: <LoginPage />,
-    },
-    {
-        path: ACCOUNT_ROUTE,
-        element: <AccountPage />,
     },
     {
         path: PROFILES_ROUTE,

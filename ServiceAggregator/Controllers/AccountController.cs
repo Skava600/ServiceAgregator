@@ -186,8 +186,8 @@ namespace ServiceAggregator.Controllers
                 accountResult.Errors.Add(AccountResultsConstants.ERROR_INCORRECT_AUTHENTICATION_DATA);
                 return Json(accountResult);
             }
-            var bannedAccount = await bannedAccountService.FindByField("accountid", account.Id.ToString());
-            if (bannedAccount.Any())
+            var bannedAccount = await bannedAccountService.FindAsync(account.Id);
+            if (bannedAccount != null)
             {
                 accountResult.Errors.Add(AccountResultsConstants.ERROR_ACCOUNT_BANNED + bannedAccount.First().BanReason);
                 return Json(accountResult);

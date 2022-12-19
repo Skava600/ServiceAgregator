@@ -189,7 +189,7 @@ namespace ServiceAggregator.Controllers
             var bannedAccount = await bannedAccountService.FindAsync(account.Id);
             if (bannedAccount != null)
             {
-                accountResult.Errors.Add(AccountResultsConstants.ERROR_ACCOUNT_BANNED + bannedAccount.First().BanReason);
+                accountResult.Errors.Add(AccountResultsConstants.ERROR_ACCOUNT_BANNED + bannedAccount.BanReason);
                 return Json(accountResult);
             }
 

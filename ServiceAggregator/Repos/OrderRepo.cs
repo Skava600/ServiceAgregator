@@ -38,10 +38,6 @@ namespace ServiceAggregator.Repos
             CloseConnection();
         }
 
-        public override Task<int> Delete(Order entity)
-        {
-            throw new NotImplementedException();
-        }
 
 
         public override async Task<IEnumerable<Order>> GetAll()
@@ -63,10 +59,11 @@ namespace ServiceAggregator.Repos
                             Text = reader.GetString(2),
                             Location = reader.GetString(3),
                             ExpireDate = reader.GetDateTime(4),
-                            Price = reader.GetDouble(5),
+                            Price = reader.IsDBNull(5)? null: reader.GetDouble(5),
                             CustomerId = reader.GetGuid(6),
                             SectionId = reader.GetGuid(7),
                             StatusId = reader.GetInt32(8),
+                            DoerId = reader.IsDBNull(9) ? null : reader.GetGuid(9),
                         });
                     }
                 }

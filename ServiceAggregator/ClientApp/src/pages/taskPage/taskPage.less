@@ -1,0 +1,139 @@
+.task-page{
+    width:100%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    .task-link{
+        max-width: 60%;
+        margin-left: 30px;
+    }
+    
+
+    .first-row{
+        width: 100%;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+
+        .task-header{ 
+            margin-left: 40px;
+            width: 55%;
+            padding:20px 20px 20px 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+            .task-summary{
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+
+                .item{
+                    margin-top: 10px;
+                }
+            }
+            
+            .task-summary-right{
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+        }   
+
+        .task-rating{
+            max-width: 30%;
+            padding: 20px;
+
+            .task-avatar{
+                font-size: 120px;
+            } 
+
+            .task-summary{
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+
+                .item{
+                    text-align: center;
+                    width: 100%;
+                    word-break: break-all;
+                    margin-top: 10px;
+                }
+            }
+        }
+    }
+
+    .rest{
+        width: 90%;
+        padding: 20px;
+        margin-top: 20px;
+
+        .rest-header{
+            color:white;
+            font-size: 24px;
+        }
+
+        .category{
+            margin: 15px 15px 0;
+            display: flex;
+            flex-direction: column;
+            font-style: 18px;
+            font-weight: 600;
+
+            .category-list{
+                list-style: none;
+                padding: 0;
+                padding-left: 12px;
+                margin: 5px 0 0 0;
+
+                .section{
+                    display: block;
+                    margin-left: 12px;
+                    font-size: 14px;
+                    font-weight: 400;
+                }
+            }
+        }
+
+        .review{
+            margin-top: 20px;
+            display:flex;
+            flex-direction: column;
+
+            .review-header{
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+    }
+}
+
+@media screen and (max-width:800px) {
+    .task-page{ 
+            .first-row{
+            flex-direction: column;
+            align-items: center;
+
+            .task-rating, .task-header, .task-link { 
+                max-width: 80%;
+                width: 80%;
+                margin: 20px 0 0 0;
+            }
+        }
+
+        .rest{
+            padding:20px 20px 20px 30px;
+            width: 100%;
+
+            .review{
+                margin-top: 10px;
+            }
+        }
+    }
+}

@@ -1,0 +1,75 @@
+.login-page{
+    width:100%;
+    height:100%;
+    padding: 40px;
+    background-color: white;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    .login-header{
+        display: flex;
+        justify-content: space-between;
+
+        .form-title{
+            color:white;
+            text-decoration: underline;
+            text-shadow:  rgba(148,187,233,1) 5px 0 10px,rgba(238,174,202,1) 1px 0 10px, #222222 0 0 10px;
+        }
+    }
+
+    .content{
+        min-width: 330px;
+        height: fit-content;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 5px;
+        background: rgb(238,174,202);
+        background: radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(198,180,216,1) 56%, rgba(148,187,233,1) 100%);
+
+        .error{
+            display: flex;
+            .MuiSvgIcon-root{
+                color:red;
+            }
+        }
+
+
+        .form-title{
+            align-self: flex-start; 
+            margin-bottom: 15px;
+            display: block;
+            color:white;
+            text-shadow:  rgba(148,187,233,1) 5px 0 10px,rgba(238,174,202,1) 1px 0 10px, #222222 0 0 10px;
+        }
+
+        .form-input{
+            margin-top: 15px;
+            width: 90%;
+            color:white;
+
+            label{
+                color:white;
+            }
+
+            input{
+                color:white;
+                // text-shadow:  rgba(148,187,233,1) 5px 0 10px,rgba(238,174,202,1) 1px 0 10px, #222222 0 0 10px;
+            }
+        }
+
+        .actions{
+            width:100%;
+            margin-top: 30px;
+            
+        }
+    }
+}

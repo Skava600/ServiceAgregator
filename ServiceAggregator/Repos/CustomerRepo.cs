@@ -15,20 +15,14 @@ namespace ServiceAggregator.Repos
         {
         }
 
-        public override Task<int> Delete(Customer entity)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<Customer?> GetByAccountId(Guid id)
         {
             OpenConnection();
 
             Customer? customer = null;
-            using (NpgsqlCommand cmd = new NpgsqlCommand("public.get_customer_by_account_id", _sqlConnection))
+            using (NpgsqlCommand cmd = new NpgsqlCommand("SELECT * FROM public.get_customer_by_account_id(" +
+                $"'{id}');", _sqlConnection))
             {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("a_id", id);
                 using (var reader = await cmd.ExecuteReaderAsync())
                 {
                     while (reader.Read())

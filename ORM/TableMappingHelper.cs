@@ -26,9 +26,12 @@ internal static class TableMappingHelper
         var properties = type.GetProperties();
         foreach (var property in properties)
         {
-            string value = data[property.Name.ToUpper()];
-            object parsed = MapTypes(property.PropertyType, value);
-            property.SetValue(instance, parsed);
+            if (!property.PropertyType.IsEnum)
+            {
+                string value = data[property.Name.ToUpper()];
+                object parsed = MapTypes(property.PropertyType, value);
+                property.SetValue(instance, parsed);
+            }
         }
 
         return instance;
@@ -47,6 +50,10 @@ internal static class TableMappingHelper
         if (type == typeof(double))
         {
             return double.Parse(value);
+        }
+        if (type == typeof(double?))
+        {
+            return string.IsNullOrEmpty(value) ? null: double.Parse(value);
         }
         if (type == typeof(Guid?))
         {

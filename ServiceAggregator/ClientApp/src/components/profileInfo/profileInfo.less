@@ -1,0 +1,46 @@
+.profile-info-card{
+    width: 100%;
+    padding: 25px 20px 20px;
+    box-sizing: border-box;
+
+    .account-info-header{
+        display: flex;
+        justify-content: space-between;
+
+        .account-info-title {
+            display: block;
+            width: fit-content;
+        }
+    }
+
+    .account-info{
+        margin-top: 5px;
+
+        .account-info-value{
+            margin-top: 5px;
+            padding: 10px;
+            border: 1px #cbcbcb solid;
+            border-radius: 5px;
+            overflow-wrap: break-word;
+        }
+
+        .account-info-value-input {
+            width: 100%;
+        }
+    }
+    
+    .errors{
+        margin-top: 20px;
+        .error{
+            display: flex;
+
+            .MuiSvgIcon-root{
+                color:red;
+            }
+        }
+    }
+}
+
+.profile-info-card+.profile-info-card{
+    margin-top: 20px;
+}

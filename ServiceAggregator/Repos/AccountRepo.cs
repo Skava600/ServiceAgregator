@@ -18,11 +18,11 @@ namespace ServiceAggregator.Repos
         {
         }
       
-        public override Task<int> Delete(Account entity)
+        public override Task<int> Delete(Guid id)
         {
             OpenConnection();
             string sql = "SELECT public.deleteaccount(" +
-                $"{entity.Id});";
+                $"{id});";
 
             Task<int> task;
             using (NpgsqlCommand cmd = new NpgsqlCommand(sql, _sqlConnection))
@@ -40,10 +40,9 @@ namespace ServiceAggregator.Repos
             OpenConnection();
             
             Account? account = null;
-            using (NpgsqlCommand cmd = new NpgsqlCommand("public.getaccount", _sqlConnection))
+            using (NpgsqlCommand cmd = new NpgsqlCommand("SELECT * FROM public.getaccount(" +
+                $"'{id}');", _sqlConnection))
             {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("a_id", id);
                 using(var reader = await cmd.ExecuteReaderAsync())
                 {
                     while (reader.Read())
@@ -107,11 +106,11 @@ namespace ServiceAggregator.Repos
             OpenConnection();
 
             Account? account = null;
-            using (NpgsqlCommand cmd = new NpgsqlCommand("public.loginaccount", _sqlConnection))
+            string commandText = "SELECT * FROM public.loginaccount(" +
+                $"'{email}'," +
+                $"'{password}');";
+            using (NpgsqlCommand cmd = new NpgsqlCommand(commandText, _sqlConnection))
             {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("email", email);
-                cmd.Parameters.AddWithValue("pass", password);
                 using (var reader = await cmd.ExecuteReaderAsync())
                 {
                     while (reader.Read())
@@ -142,10 +141,9 @@ namespace ServiceAggregator.Repos
             OpenConnection();
 
             Account? account = null;
-            using (NpgsqlCommand cmd = new NpgsqlCommand("public.get_account_by_customer", _sqlConnection))
+            using (NpgsqlCommand cmd = new NpgsqlCommand("SELECT * FROM public.get_account_by_customer(" +
+                $"'{id}');", _sqlConnection))
             {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("id", id);
                 using (var reader = await cmd.ExecuteReaderAsync())
                 {
                     while (reader.Read())
@@ -165,6 +163,28 @@ namespace ServiceAggregator.Repos
             CloseConnection();
 
             return account;
+        }
+
+        public async Task Register(Account account)
+        {
+            OpenConnection();
+
+            string commandText = "SELECT * FROM public.insert_account(" +
+                $"'{account.Id}'," +
+                $"'{account.Login}'," +
+                $"'{account.Password}'," +
+                $"'{account.Firstname}'," +
+                $"'{account.Lastname}'," +
+                $"'{account.Patronym}'," +
+                $"'{account.IsAdmin}'," +
+                $"'{account.PhoneNumber}'," +
+                $"'{account.Location}');";
+            using (NpgsqlCommand cmd = new NpgsqlCommand(commandText, _sqlConnection))
+            {
+                await cmd.ExecuteNonQueryAsync();
+            }
+
+            CloseConnection();
         }
     }
 }

@@ -1,0 +1,123 @@
+
+.profile-link {
+    text-decoration: none
+}
+.profile-link .profile-card.short{
+    margin-top: 5px;
+    width: 100%;
+
+    .profile-message{
+        word-break: break-all;
+        margin-top: 10px;
+        font-size: 16px;
+    }
+}
+
+.profile-link .profile-card{
+    width: 100%;
+    padding: 15px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    box-sizing: border-box;
+
+    .profile-card-row {
+        display: flex;
+        .avatar{
+            font-size: 100px;
+        }
+
+        .profile-card-content{ 
+            margin-right: auto;
+            margin-left: 30px;
+
+            .profile-name{
+                font-size: 18px;
+                font-weight: 500;
+            }
+
+
+            .profile-description{
+                font-size: 16px;
+            }
+        }
+    }
+    
+    .profile-summary{
+        margin: 10px 0 0 130px;
+        height: 20px;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+
+
+        .ratings-text{
+            display: block;
+            margin-left: 10px;
+            font-size: 14px;
+            color:grey;
+            
+            &:hover{
+                text-decoration: underline;
+            }
+        }
+         
+        .work-sections{
+            display: block;
+            margin-left: 10px;
+            font-size: 14px;
+            color:grey;
+            display: flex;
+
+            .work-sections-text
+            {
+                display: block;
+                margin-left: 5px;
+                align-self: center;
+            }
+            
+            &:hover{
+                text-decoration: underline;
+            }
+        }
+    }
+}
+
+.profile-link + .profile-link .profile-card{
+    margin-top: 15px;
+}
+
+@media screen and (max-width: 900px) {
+    .profile-link .profile-card{
+        margin-top: 30px;
+    }
+}
+
+@media screen and (max-width: 1100px) {
+    .profile-link .profile-card{ 
+        padding-bottom: 20px;
+
+        .avatar{
+            display: none;
+        }
+
+      .profile-card-row .profile-card-content{
+            margin-left: 0px;
+        }
+
+        .profile-description{
+            max-height: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 16px;
+        }
+
+        .profile-summary{
+            padding-bottom: 30px;
+            margin: 30px 0 0 0;
+        }
+    }
+}
+
+

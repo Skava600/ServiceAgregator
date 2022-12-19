@@ -8,15 +8,23 @@ import {
     IconButton,
     InputAdornment,
     Typography,
-    Card,
     Grid,
     Divider,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import EditIcon from "@mui/icons-material/Edit";
-import "./profileInfo.less";
+import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
 import { IUser } from "../../api/interfaces";
+import { getToken } from "../../state/selectors/userSelectors";
+import { useAppDispatch, useAppSelector } from "../../state/store";
+import {
+    getAccountInfo,
+    updateAccountInfo,
+    updateAccountPassword,
+} from "../../api";
+import "./profileInfo.less";
+import { setUser } from "../../state/slices/authSlice";
 
 const INITIAL_STATE = {
     passwordConfirmation: { value: "1234", isError: false },
@@ -31,11 +39,11 @@ type TProps = {
 
 export const ProfileInfo = ({ user }: TProps) => {
     const [isEditMode, setIsEditMode] = useState(false);
-    const [firstName, setFirstName] = useState({
+    const [firstname, setFirstName] = useState({
         value: user.firstname,
         isError: false,
     });
-    const [lastName, setLastName] = useState({
+    const [lastname, setLastName] = useState({
         value: user.lastname,
         isError: false,
     });
@@ -45,7 +53,7 @@ export const ProfileInfo = ({ user }: TProps) => {
     });
     const [email, setEmail] = useState({ value: user.login, isError: false });
     const [phonenumber, setPhoneNubmer] = useState({
-        value: user.phonenumber,
+        value: user.phoneNumber,
         isError: false,
     });
     const [location, setLocation] = useState({
@@ -67,6 +75,8 @@ export const ProfileInfo = ({ user }: TProps) => {
         INITIAL_STATE.isPass2Visible
     );
     const [errors, setErrors] = useState(INITIAL_STATE.errors);
+    const [passwordErrors, setPasswordErrors] = useState(INITIAL_STATE.errors);
+    const dispatch = useAppDispatch();
 
     const resetUserInfo = () => {
         setIsEditMode(false);
@@ -74,45 +84,39 @@ export const ProfileInfo = ({ user }: TProps) => {
         setLastName((v) => ({ ...v, value: user.lastname }));
         setPatronym((v) => ({ ...v, value: user.patronym }));
         setEmail((v) => ({ ...v, value: user.login }));
-        setPhoneNubmer((v) => ({ ...v, value: user.phonenumber }));
+        setPhoneNubmer((v) => ({ ...v, value: user.phoneNumber }));
         setLocation((v) => ({ ...v, value: user.location }));
         setPassword((v) => ({ ...v, value: "" }));
         setPasswordConfirmation((v) => ({ ...v, value: "" }));
     };
+    const token = useAppSelector(getToken);
 
     const validateUser = () => {
         let validationMsgs = [];
         if (
-            !firstName.value ||
-            !lastName.value ||
+            !firstname.value ||
+            !lastname.value ||
             !patronym.value ||
             !email.value ||
-            !phonenumber.value ||
-            !password.value ||
-            !passwordConfirmation.value
+            !phonenumber.value
         ) {
             validationMsgs.push("Не заполнены обязательные поля");
         }
 
-        if (password.value !== passwordConfirmation.value) {
-            validationMsgs.push("Пароли не совпадают");
-            setPassword((value) => ({ ...value, isError: true }));
-            setPasswordConfirmation((value) => ({
-                ...value,
-                isError: true,
-            }));
-        }
+        // if (password.value !== passwordConfirmation.value) {
+        //     validationMsgs.push("Пароли не совпадают");
+        //     setPassword((value) => ({ ...value, isError: true }));
+        //     setPasswordConfirmation((value) => ({
+        //         ...value,
+        //         isError: true,
+        //     }));
+        // }
 
-        setFirstName((value) => ({ ...value, isError: !firstName.value }));
-        setLastName((value) => ({ ...value, isError: !lastName.value }));
+        setFirstName((value) => ({ ...value, isError: !firstname.value }));
+        setLastName((value) => ({ ...value, isError: !lastname.value }));
         setPatronym((value) => ({ ...value, isError: !patronym.value }));
         setEmail((value) => ({ ...value, isError: !email.value }));
         setPhoneNubmer((value) => ({ ...value, isError: !phonenumber.value }));
-        setPassword((value) => ({ ...value, isError: !password.value }));
-        setPasswordConfirmation((value) => ({
-            ...value,
-            isError: !passwordConfirmation.value,
-        }));
 
         return validationMsgs;
     };
@@ -121,103 +125,260 @@ export const ProfileInfo = ({ user }: TProps) => {
         const errorMsgs = validateUser();
 
         setErrors(errorMsgs);
+
         if (errorMsgs.length) return;
+
+        updateAccountInfo(
+            {
+                firstname: firstname.value,
+                lastname: lastname.value,
+                patronym: patronym.value,
+                phoneNumber: phonenumber.value,
+                location: location.value,
+            },
+            token!
+        ).then(({ data }) => {
+            if (!data.success) {
+                setPasswordErrors(data.errors);
+                return;
+            }
+
+            getAccountInfo(token!).then(({ data }) => {
+                return dispatch(setUser({ user: data as IUser }));
+                setIsEditMode(false);
+            });
+        });
+    };
+
+    const validatePasswords = () => {
+        let validationMsgs = [];
+        if (!password.value || !passwordConfirmation.value) {
+            validationMsgs.push("Заполните оба поля паролей");
+
+            setPassword((value) => ({ ...value, isError: !password.value }));
+            setPasswordConfirmation((value) => ({
+                ...value,
+                isError: !passwordConfirmation.value,
+            }));
+        }
+
+        return validationMsgs;
+    };
+
+    const handleChangePassword = () => {
+        const errorMsgs = validatePasswords();
+
+        setPasswordErrors(errorMsgs);
+
+        if (errorMsgs.length) return;
+
+        updateAccountPassword(
+            {
+                oldPassword: password.value,
+                newPassword: passwordConfirmation.value,
+            },
+            token!
+        ).then(({ data }) => {
+            if (!data.success) {
+                setPasswordErrors(data.errors);
+                return;
+            }
+
+            setIsEditMode(false);
+        });
     };
 
     return (
-        <Paper className="profile-info-card">
-            {isEditMode ? (
-                <>
+        <>
+            <Paper className="profile-info-card">
+                {isEditMode ? (
+                    <>
+                        <div className="account-info-header">
+                            <h1 className="account-info-title">
+                                Изменить информацию об аккаунте
+                            </h1>
+                            <IconButton onClick={resetUserInfo}>
+                                <EditIcon />
+                            </IconButton>
+                        </div>
+                        <Divider />
+                        <Grid container spacing={2} className="account-info">
+                            <Grid item xs={12} md={4} lg={3}>
+                                <TextField
+                                    size="small"
+                                    value={lastname.value}
+                                    onChange={(e: any) =>
+                                        setLastName((prevValue) => ({
+                                            ...prevValue,
+                                            value: e.target.value,
+                                        }))
+                                    }
+                                    className="account-info-value-input"
+                                    variant="outlined"
+                                    label="Фамилия"
+                                    error={lastname.isError}
+                                />
+                            </Grid>
+                            <Grid item xs={12} md={4} lg={3}>
+                                <TextField
+                                    size="small"
+                                    value={firstname.value}
+                                    onChange={(e: any) =>
+                                        setFirstName((prevValue) => ({
+                                            ...prevValue,
+                                            value: e.target.value,
+                                        }))
+                                    }
+                                    className="account-info-value-input"
+                                    variant="outlined"
+                                    label="Имя"
+                                    error={firstname.isError}
+                                />
+                            </Grid>
+                            <Grid item xs={12} md={4} lg={3}>
+                                <TextField
+                                    size="small"
+                                    value={patronym.value}
+                                    onChange={(e: any) =>
+                                        setPatronym((prevValue) => ({
+                                            ...prevValue,
+                                            value: e.target.value,
+                                        }))
+                                    }
+                                    className="account-info-value-input"
+                                    variant="outlined"
+                                    label="Отчество"
+                                    error={patronym.isError}
+                                />
+                            </Grid>
+                            <Grid item xs={12} md={4} lg={3}>
+                                <TextField
+                                    size="small"
+                                    value={phonenumber.value}
+                                    onChange={(e: any) =>
+                                        setPhoneNubmer((prevValue) => ({
+                                            ...prevValue,
+                                            value: e.target.value,
+                                        }))
+                                    }
+                                    className="account-info-value-input"
+                                    variant="outlined"
+                                    label="Номер Телефона"
+                                    error={phonenumber.isError}
+                                />
+                            </Grid>
+                            <Grid item xs={12} md={4} lg={3}>
+                                <TextField
+                                    size="small"
+                                    value={location.value}
+                                    onChange={(e: any) =>
+                                        setLocation((prevValue) => ({
+                                            ...prevValue,
+                                            value: e.target.value,
+                                        }))
+                                    }
+                                    className="account-info-value-input"
+                                    variant="outlined"
+                                    label="Город"
+                                    error={location.isError}
+                                />
+                            </Grid>
+
+                            <Grid item xs={12} md={4} lg={3}>
+                                <Stack direction="row" spacing={5}>
+                                    <Button
+                                        variant="outlined"
+                                        onClick={resetUserInfo}
+                                    >
+                                        Отмена
+                                    </Button>
+                                    <Button
+                                        variant="contained"
+                                        onClick={handleConfirmChanges}
+                                    >
+                                        Сохранить
+                                    </Button>
+                                </Stack>
+                            </Grid>
+                        </Grid>
+                        <Stack
+                            spacing={1}
+                            direction="column"
+                            className="errors"
+                            sx={{ marginTop: 10 }}
+                        >
+                            {errors.map((err) => (
+                                <div className="error">
+                                    <PriorityHighIcon />
+                                    <Typography
+                                        color="red"
+                                        sx={{ width: "100%" }}
+                                    >
+                                        {err}
+                                    </Typography>
+                                </div>
+                            ))}
+                        </Stack>
+                    </>
+                ) : (
+                    <>
+                        <div className="account-info-header">
+                            <h1 className="account-info-title">
+                                Информация об аккаунте
+                            </h1>
+                            <IconButton onClick={() => setIsEditMode(true)}>
+                                <EditIcon />
+                            </IconButton>
+                        </div>
+                        <Divider />
+                        <Grid container spacing={2} className="account-info">
+                            <Grid item xs={12} sm={6} md={4} lg={3}>
+                                <b>Фамилия:</b>
+                                <div className="account-info-value">
+                                    {user.lastname}
+                                </div>
+                            </Grid>
+                            <Grid item xs={12} sm={6} md={4} lg={3}>
+                                <b>Имя:</b>
+                                <div className="account-info-value">
+                                    {user.firstname}
+                                </div>
+                            </Grid>
+                            <Grid item xs={12} sm={6} md={4} lg={3}>
+                                <b>Отчество:</b>
+                                <div className="account-info-value">
+                                    {user.patronym}
+                                </div>
+                            </Grid>
+                            <Grid item xs={12} sm={6} md={4} lg={3}>
+                                <b>Email:</b>
+                                <div className="account-info-value">
+                                    {user.login}
+                                </div>
+                            </Grid>
+                            <Grid item xs={12} sm={6} md={4} lg={3}>
+                                <b>Номер телефона:</b>
+                                <div className="account-info-value">
+                                    {user.phoneNumber}
+                                </div>
+                            </Grid>
+                            <Grid item xs={12} sm={6} md={4} lg={3}>
+                                <b>Город:</b>
+                                <div className="account-info-value">
+                                    {user.location}
+                                </div>
+                            </Grid>
+                        </Grid>
+                    </>
+                )}
+            </Paper>
+            {isEditMode && (
+                <Paper className="profile-info-card">
                     <div className="account-info-header">
-                        <h1 className="account-info-title">
-                            Изменить информацию об аккаунте
-                        </h1>
-                        <IconButton onClick={resetUserInfo}>
-                            <EditIcon />
-                        </IconButton>
+                        <h1 className="account-info-title">Изменить пароль</h1>
                     </div>
                     <Divider />
                     <Grid container spacing={2} className="account-info">
-                        <Grid item xs={12} md={4} lg={3}>
-                            <TextField
-                                size="small"
-                                value={lastName.value}
-                                onChange={(e: any) =>
-                                    setLastName((prevValue) => ({
-                                        ...prevValue,
-                                        value: e.target.value,
-                                    }))
-                                }
-                                className="account-info-value-input"
-                                variant="outlined"
-                                label="Фамилия"
-                                error={lastName.isError}
-                            />
-                        </Grid>
-                        <Grid item xs={12} md={4} lg={3}>
-                            <TextField
-                                size="small"
-                                value={firstName.value}
-                                onChange={(e: any) =>
-                                    setFirstName((prevValue) => ({
-                                        ...prevValue,
-                                        value: e.target.value,
-                                    }))
-                                }
-                                className="account-info-value-input"
-                                variant="outlined"
-                                label="Имя"
-                                error={firstName.isError}
-                            />
-                        </Grid>
-                        <Grid item xs={12} md={4} lg={3}>
-                            <TextField
-                                size="small"
-                                value={patronym.value}
-                                onChange={(e: any) =>
-                                    setPatronym((prevValue) => ({
-                                        ...prevValue,
-                                        value: e.target.value,
-                                    }))
-                                }
-                                className="account-info-value-input"
-                                variant="outlined"
-                                label="Отчество"
-                                error={patronym.isError}
-                            />
-                        </Grid>
-                        <Grid item xs={12} md={4} lg={3}>
-                            <TextField
-                                size="small"
-                                value={phonenumber.value}
-                                onChange={(e: any) =>
-                                    setPhoneNubmer((prevValue) => ({
-                                        ...prevValue,
-                                        value: e.target.value,
-                                    }))
-                                }
-                                className="account-info-value-input"
-                                variant="outlined"
-                                label="Номер Телефона"
-                                error={phonenumber.isError}
-                            />
-                        </Grid>
-                        <Grid item xs={12} md={4} lg={3}>
-                            <TextField
-                                size="small"
-                                value={location.value}
-                                onChange={(e: any) =>
-                                    setLocation((prevValue) => ({
-                                        ...prevValue,
-                                        value: e.target.value,
-                                    }))
-                                }
-                                className="account-info-value-input"
-                                variant="outlined"
-                                label="Город"
-                                error={location.isError}
-                            />
-                        </Grid>
                         <Grid item xs={12} md={4} lg={3}>
                             <TextField
                                 size="small"
@@ -230,7 +391,7 @@ export const ProfileInfo = ({ user }: TProps) => {
                                 }
                                 className="account-info-value-input"
                                 variant="outlined"
-                                label="Пароль"
+                                label="Старый Пароль"
                                 error={password.isError}
                                 type={isPassVisible ? "" : "password"}
                                 InputProps={{
@@ -273,7 +434,7 @@ export const ProfileInfo = ({ user }: TProps) => {
                                 }
                                 className="account-info-value-input"
                                 variant="outlined"
-                                label="Подтверждение Пароля"
+                                label="Новый Пароль"
                                 error={passwordConfirmation.isError}
                                 type={isPass2Visible ? "" : "password"}
                                 InputProps={{
@@ -314,65 +475,30 @@ export const ProfileInfo = ({ user }: TProps) => {
                                 </Button>
                                 <Button
                                     variant="contained"
-                                    onClick={handleConfirmChanges}
+                                    onClick={handleChangePassword}
                                 >
                                     Сохранить
                                 </Button>
                             </Stack>
                         </Grid>
                     </Grid>
-                </>
-            ) : (
-                <>
-                    <div className="account-info-header">
-                        <h1 className="account-info-title">
-                            Информация об аккаунте
-                        </h1>
-                        <IconButton onClick={() => setIsEditMode(true)}>
-                            <EditIcon />
-                        </IconButton>
-                    </div>
-                    <Divider />
-                    <Grid container spacing={2} className="account-info">
-                        <Grid item xs={12} sm={6} md={4} lg={3}>
-                            <b>Фамилия:</b>
-                            <div className="account-info-value">
-                                {user.lastname}
+                    <Stack
+                        spacing={1}
+                        direction="column"
+                        className="errors"
+                        sx={{ marginTop: 10 }}
+                    >
+                        {passwordErrors.map((err) => (
+                            <div className="error">
+                                <PriorityHighIcon />
+                                <Typography color="red" sx={{ width: "100%" }}>
+                                    {err}
+                                </Typography>
                             </div>
-                        </Grid>
-                        <Grid item xs={12} sm={6} md={4} lg={3}>
-                            <b>Имя:</b>
-                            <div className="account-info-value">
-                                {user.firstname}
-                            </div>
-                        </Grid>
-                        <Grid item xs={12} sm={6} md={4} lg={3}>
-                            <b>Отчество:</b>
-                            <div className="account-info-value">
-                                {user.patronym}
-                            </div>
-                        </Grid>
-                        <Grid item xs={12} sm={6} md={4} lg={3}>
-                            <b>Email:</b>
-                            <div className="account-info-value">
-                                {user.login}
-                            </div>
-                        </Grid>
-                        <Grid item xs={12} sm={6} md={4} lg={3}>
-                            <b>Номер телефона:</b>
-                            <div className="account-info-value">
-                                {user.phonenumber}
-                            </div>
-                        </Grid>
-                        <Grid item xs={12} sm={6} md={4} lg={3}>
-                            <b>Город:</b>
-                            <div className="account-info-value">
-                                {user.location}
-                            </div>
-                        </Grid>
-                    </Grid>
-                </>
+                        ))}
+                    </Stack>
+                </Paper>
             )}
-        </Paper>
+        </>
     );
 };

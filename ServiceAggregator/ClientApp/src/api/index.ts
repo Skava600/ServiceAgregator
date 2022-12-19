@@ -1,4 +1,5 @@
 import appAxios from "./axios";
+import { IUser } from "./interfaces";
 
 const accountPath = "Account";
 const profilePath = "Doer";
@@ -87,6 +88,14 @@ export const getResponses = (data: { id: string }) => {
     });
 };
 
+export const logoutAccount = (token: string) => {
+    return appAxios.get(`${accountPath}/Logout`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
 export const getAccountInfo = (token: string) => {
     return appAxios.get(`${accountPath}/Info`, {
         headers: {
@@ -95,8 +104,29 @@ export const getAccountInfo = (token: string) => {
     });
 };
 
-export const logoutAccount = (token: string) => {
-    return appAxios.get(`${accountPath}/Logout`, {
+export const updateAccountInfo = (user: Partial<IUser>, token: string) => {
+    const formData = getFormData(user);
+
+    return appAxios({
+        url: `${accountPath}/UpdateAccountInfo`,
+        method: "POST",
+        data: formData,
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+export const updateAccountPassword = (
+    passwords: { oldPassword: string; newPassword: string },
+    token: string
+) => {
+    const formData = getFormData(passwords);
+
+    return appAxios({
+        url: `${accountPath}/ChangeAccountPassword`,
+        method: "POST",
+        data: formData,
         headers: {
             Authorization: `Bearer ${token}`,
         },

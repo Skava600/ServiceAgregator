@@ -46,6 +46,7 @@ export const Header = () => {
 
     const handleLogoutClick = () => {
         dispatch(logout());
+        handleHomeClick();
     };
 
     const open = Boolean(anchorEl);

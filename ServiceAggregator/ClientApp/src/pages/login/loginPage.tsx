@@ -19,10 +19,11 @@ import { useAppDispatch } from "../../state/store";
 import { loginSuccess } from "../../state/slices/authSlice";
 import { userInfo } from "os";
 import { Link } from "react-router-dom";
+import { IUser } from "../../api/interfaces";
 
 const INITIAL_STATE = {
     email: { value: "blackshark564@gmail.com", isError: false },
-    password: { value: "1234", isError: false },
+    password: { value: "12341234", isError: false },
     isPassVisible: false,
     errors: [] as string[],
 };
@@ -68,30 +69,15 @@ export const LoginPage = () => {
             if (!success && success !== undefined) {
                 setErrors(errors);
             } else {
-                navigate("/");
                 const token = data;
                 getAccountInfo(token).then(({ data }) => {
-                    const {
-                        firstname,
-                        lastname,
-                        location,
-                        login,
-                        patronym,
-                        phonenumber,
-                    } = data;
                     dispatch(
                         loginSuccess({
-                            user: {
-                                firstname,
-                                lastname,
-                                location,
-                                login,
-                                patronym,
-                                phonenumber,
-                            },
+                            user: data as IUser,
                             token,
                         })
                     );
+                    navigate("/");
                 });
             }
         });

@@ -13,11 +13,22 @@ namespace ServiceAggregator.Controllers
 
         IBannedAccountDalDataService _bannedAccountDalDataService;
         IAccountDalDataService _accountDalDataService;
+        IBannedDoerDalDataService _bannedDoerDalDataService;
+        IBannedCustomerDalDataSerivce _bannedCustomerDalDataService;
+        IDeletedOrderDalDataService _deletedOrderDalDataService;
 
-        public BanController(IBannedAccountDalDataService bannedAccountDalDataService, IAccountDalDataService accountDal)
+        public BanController(
+            IBannedAccountDalDataService bannedAccountDalDataService, 
+            IAccountDalDataService accountDal,
+            IDeletedOrderDalDataService deletedOrderDalaDataService,
+            IBannedCustomerDalDataSerivce bannedCustomerDalDalaSerivce,
+            IBannedDoerDalDataService bannedDoerDalDaltaService)
         {
             _bannedAccountDalDataService = bannedAccountDalDataService;
             _accountDalDataService = accountDal;
+            _deletedOrderDalDataService = deletedOrderDalaDataService;
+            _bannedCustomerDalDataService = bannedCustomerDalDalaSerivce;
+            _bannedDoerDalDataService = bannedDoerDalDaltaService;
         }
 
         [HttpPost]
@@ -45,6 +56,7 @@ namespace ServiceAggregator.Controllers
             return Json(Ok());
         }
 
+
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UnBanAccount(Guid id)
@@ -60,5 +72,47 @@ namespace ServiceAggregator.Controllers
 
             return Json(Ok());
         }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> BanDoer(Guid doer_id, [FromBody] string banReason)
+        {
+            if ((await _bannedDoerDalDataService.FindByField("doerid", doer_id.ToString())).Any())
+            {
+                return Json(Results.BadRequest("Пользователь уже наказан."));
+            }
+
+            if ((await _bannedDoerDalDataService.FindAsync(doer_id)) == null)
+            {
+                return Json(Results.BadRequest("Исполнитель не найден."));
+            }
+
+
+            await _bannedDoerDalDataService.AddAsync(new Entities.BannedDoer
+            {
+                Id = Guid.NewGuid(),
+                DoerId = doer_id,
+                BanReason = banReason
+            });
+
+            return Json(Ok());
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UnBanDoer(Guid id)
+        {
+            var bannedAccount = (await _bannedDoerDalDataService.FindByField("doerid", id.ToString())).FirstOrDefault();
+
+            if (bannedAccount == null)
+            {
+                return Json(Results.BadRequest("Пользователь не забанен."));
+            }
+
+            await _bannedDoerDalDataService.DeleteAsync(bannedAccount.Id);
+
+            return Json(Ok());
+        }
+
     }
 }

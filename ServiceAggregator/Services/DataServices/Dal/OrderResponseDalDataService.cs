@@ -9,8 +9,15 @@ namespace ServiceAggregator.Services.DataServices.Dal
 {
     public class OrderResponseDalDataService : DalDataServiceBase<OrderResponse, OrderResponseDalDataService>, IOrderResponseDalDataService
     {
+        IOrderResponseRepo orderRepo;
         public OrderResponseDalDataService(IOrderResponseRepo mainRepo, IAppLogging<OrderResponseDalDataService> appLogging) : base(mainRepo, appLogging)
         {
+            orderRepo = mainRepo;
+        }
+
+        public async Task<int> GetCountOfResponsesInOrder(Guid orderId)
+        {
+            return await orderRepo.GetCountOfResponsesInOrder(orderId);
         }
     }
 }

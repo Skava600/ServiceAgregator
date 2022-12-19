@@ -9,7 +9,8 @@ namespace ServiceAggregator.Models
         {
             get
             {
-                return Reviews.Sum(r => r.Grade) / Reviews.Count;
+                var rate = (double)Reviews.Sum(r => r.Grade) / Reviews.Count;
+                return double.IsNaN(rate) ? 0: rate;
             }
         }
         public AccountData Account { get; set; }

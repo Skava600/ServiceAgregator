@@ -95,6 +95,7 @@ namespace ServiceAggregator.Controllers
                         Location = order.Location,
                         ExpireDate = order.ExpireDate,
                         Status = order.Status.ToString(),
+                        ResponseCount = await orderResponseService.GetCountOfResponsesInOrder(order.Id),
                         Section = new SectionData
                         {
                             Name = section.Name,

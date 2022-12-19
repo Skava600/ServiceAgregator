@@ -34,6 +34,7 @@ namespace ServiceAggregator.Controllers
                     responseDatas.Add(new ResponseData
                     {
                         Message = response.Message,
+                        IsChosen = response.IsChosen,
                         Doer = new DoerData { Id = doer.Id, DoerName = doer.DoerName, OrderCount = doer.OrderCount },
                     });
             }
@@ -54,6 +55,12 @@ namespace ServiceAggregator.Controllers
             }
 
             Doer doer = doers.First();
+
+            var responses = await orderResponseDalService.FindByField("orderid", model.OrderId.ToString());
+            if (responses.Where(r => r.DoerId == doer.Id).Any())
+            {
+                result.Errors.Add(ResponseResultConstants.ERROR_ALREADY_APPLIED);
+            }
             Order? order = await orderDalService.FindAsync(model.OrderId);
             if (order == null)
             {
@@ -70,6 +77,7 @@ namespace ServiceAggregator.Controllers
                     OrderId = model.OrderId,
                     Id = Guid.NewGuid(),
                     Message = model.Message,
+                    IsChosen = false,
                     DoerId = doer.Id,
                 };
 

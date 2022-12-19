@@ -7,5 +7,6 @@ namespace ServiceAggregator.Entities
         public string Message { get; set; }
         public Guid OrderId { get; set; }
         public Guid DoerId { get; set; }
+        public bool IsChosen { get; set; }
     }
 }

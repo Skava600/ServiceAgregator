@@ -30,7 +30,7 @@ public class DbTable<T> where T : DbInstance, new()
 
     public async Task<T> GetByIdAsync(Guid id)
     {
-        return (await this.GetByField("Id", id.ToString())).First();
+        return (await this.GetByField("Id", id.ToString())).FirstOrDefault();
     }
     
     public async Task UpdateByIdAsync(Guid id, T instance)

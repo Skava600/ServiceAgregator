@@ -1,25 +1,17 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.ObjectPool;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using ServiceAggregator.Entities;
-using ServiceAggregator.Entities.Base;
 using ServiceAggregator.Models;
 using ServiceAggregator.Options;
-using ServiceAggregator.Repos;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using System;
+using ServiceAggregator.Services.DataServices.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Text;
-using ServiceAggregator.Data;
-using ServiceAggregator.Repos.Interfaces;
 using System.Text.RegularExpressions;
-using System.Net.Mail;
-using ServiceAggregator.Services.DataServices.Dal;
-using ServiceAggregator.Services.DataServices.Interfaces;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -30,11 +22,13 @@ namespace ServiceAggregator.Controllers
     public class AccountController : Controller
     {
         private readonly IAccountDalDataService accountService;
+        private readonly IBannedAccountDalDataService bannedAccountService;
         MyOptions options;
-        public AccountController(IOptions<MyOptions> optionsAccessor, IAccountDalDataService accountDalDataService)
+        public AccountController(IOptions<MyOptions> optionsAccessor, IAccountDalDataService accountDalDataService, IBannedAccountDalDataService bannedAccountService)
         {
             this.accountService = accountDalDataService;
             options = optionsAccessor.Value;
+            this.bannedAccountService = bannedAccountService;
         }
 
         [Authorize]
@@ -54,6 +48,7 @@ namespace ServiceAggregator.Controllers
 
             return Json(new AccountData(account));
         }
+
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> GetAsync()
@@ -195,22 +190,31 @@ namespace ServiceAggregator.Controllers
         [HttpPost]
         public async Task<IActionResult> Login([FromForm] LoginModel loginModel)
         {
-            
+            AccountResult accountResult = new AccountResult { Success = false };
             Account? account = await accountService.Login(loginModel.Email, loginModel.Password);
             if (account == null)
             {
-                return Json(Results.Unauthorized());
+                accountResult.Errors.Add(AccountResultsConstants.ERROR_INCORRECT_AUTHENTICATION_DATA);
+                return Json(accountResult);
             }
-            var claims = new[] {
+            var bannedAccount = await bannedAccountService.FindByField("accountid", account.Id.ToString());
+            if (bannedAccount.Any())
+            {
+                accountResult.Errors.Add(AccountResultsConstants.ERROR_ACCOUNT_BANNED + bannedAccount.First().BanReason);
+                return Json(accountResult);
+            }
+
+            string[] roles = account.IsAdmin ? new string[] { "Admin" } : new string[] { "User" };
+            var claims = new List<Claim> {
                         new Claim(JwtRegisteredClaimNames.Sub, options.Subject),
                         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                         new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
                         new Claim(ClaimTypes.NameIdentifier, account.Login),
                         new Claim("Id", account.Id.ToString()),
-                        new Claim("IsAdmin", account.IsAdmin.ToString()),
                         new Claim("Login", account.Login)
                     };
-
+            Claim roleClaim = account.IsAdmin ? new Claim(ClaimTypes.Role, "Admin") : new Claim(ClaimTypes.Role, "User");
+            claims.Add(roleClaim);
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Key));
             var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var token = new JwtSecurityToken(

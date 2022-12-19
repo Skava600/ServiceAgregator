@@ -100,17 +100,6 @@ namespace ServiceAggregator.Controllers
             return Json(await accountService.FindAsync(id));
         }
 
-        // DELETE api/<ФController>/5
-        [HttpDelete("{id:int}")]
-        public void Delete(int id)
-        {
-        }
-        [HttpGet]
-        [Authorize]
-        public async Task<IActionResult> Logout()
-        {
-            throw new NotImplementedException();
-        }
 
         [HttpPost]
         [Authorize]
@@ -132,7 +121,7 @@ namespace ServiceAggregator.Controllers
                 account.Location = accountModel.Location ?? account.Location;
                 account.Patronym = accountModel.Patronym ?? account.Patronym;
                 account.Location = accountModel.Location ?? account.Location;
-
+                account.PhoneNumber = accountModel.PhoneNumber ?? account.PhoneNumber;
                 await accountService.UpdateAsync(account);
             }
 
@@ -346,10 +335,5 @@ namespace ServiceAggregator.Controllers
             return Json(registrationResult);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Confirm(string email, string code)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

@@ -10,6 +10,7 @@ namespace ServiceAggregator.Models
         public string Patronym { get; set; }
         public string PhoneNumber { get; set; }
         public string? Location { get; set; }
+        public bool IsAdmin { get; set; }
         public AccountData(Account account)
         {
             Login = account.Login;
@@ -17,6 +18,7 @@ namespace ServiceAggregator.Models
             Lastname = account.Lastname;
             Patronym = account.Patronym;
             Location = account.Location;
+            IsAdmin = account.IsAdmin;
             PhoneNumber = account.PhoneNumber;
         }
 

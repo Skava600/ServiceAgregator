@@ -22,7 +22,7 @@ namespace ServiceAggregator.Repos
             using (NpgsqlCommand cmd = new NpgsqlCommand("SELECT * FROM public.get_count_of_order_responses(" +
                 $"'{orderId }');", _sqlConnection))
             {
-                count = (int)await cmd.ExecuteScalarAsync()!;
+                count = (int)(await cmd.ExecuteScalarAsync() ?? 0);
             }
 
             CloseConnection();

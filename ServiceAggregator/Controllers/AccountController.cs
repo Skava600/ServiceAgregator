@@ -198,9 +198,7 @@ namespace ServiceAggregator.Controllers
                         new Claim(JwtRegisteredClaimNames.Sub, options.Subject),
                         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                         new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
-                        new Claim(ClaimTypes.NameIdentifier, account.Login),
-                        new Claim("Id", account.Id.ToString()),
-                        new Claim("Login", account.Login)
+                        new Claim("Id", account.Id.ToString())
                     };
             Claim roleClaim = account.IsAdmin ? new Claim(ClaimTypes.Role, "Admin") : new Claim(ClaimTypes.Role, "User");
             claims.Add(roleClaim);

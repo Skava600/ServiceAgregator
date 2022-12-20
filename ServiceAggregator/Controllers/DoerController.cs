@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ServiceAggregator.Entities;
 using ServiceAggregator.Models;
+using ServiceAggregator.Repos;
 using ServiceAggregator.Services.DataServices.Interfaces;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -19,6 +20,9 @@ namespace ServiceAggregator.Controllers
         IDoerSectionDalDataService doerSectionService;
         IAccountDalDataService accountService;
         ICategoryDalDataService categoryService;
+        IBannedDoerDalDataService bannedDoerDalDataService;
+        IOrderDalDataService orderDalDataService;
+        IOrderResponseDalDataService orderResponseDalDataService;
         public DoerController(
             IDoerDalDataService doerService, 
             ISectionDalDataService sectionService, 
@@ -26,7 +30,10 @@ namespace ServiceAggregator.Controllers
             ICustomerDalDataService customerService, 
             IAccountDalDataService accountService,
             IDoerSectionDalDataService doerSectionService,
-            ICategoryDalDataService categoryService) 
+            ICategoryDalDataService categoryService,
+            IBannedDoerDalDataService bannedDoerDalDataService,
+            IOrderDalDataService orderDalDataService,
+            IOrderResponseDalDataService orderResponseDalDataService) 
         {
             this.doerService = doerService;
             this.reviewService = reviewService;
@@ -35,6 +42,9 @@ namespace ServiceAggregator.Controllers
             this.accountService = accountService;
             this.doerSectionService = doerSectionService;
             this.categoryService = categoryService;
+            this.bannedDoerDalDataService = bannedDoerDalDataService;
+            this.orderDalDataService = orderDalDataService;
+            this.orderResponseDalDataService = orderResponseDalDataService;
         }
 
 
@@ -180,6 +190,62 @@ namespace ServiceAggregator.Controllers
             }
 
             return Json(result);
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> GetDoersOrders()
+        {
+
+            DoerResult result = new DoerResult { Success = false };
+            Guid accountId = Guid.Parse(User.FindFirst("Id")?.Value);
+
+            Doer? doer = (await doerService.FindByField("accountid", accountId.ToString())).FirstOrDefault();
+
+            if (doer == null)
+            {
+                result.Errors.Add(DoerResultsConstants.ERROR_DOER_NOT_EXIST);
+                return Json(result);
+            }
+
+            var bannedDoer = (await bannedDoerDalDataService.FindAsync(doer.Id));
+            if (bannedDoer != null)
+            {
+                result.Errors.Add(DoerResultsConstants.ERROR_DOER_BANNED);
+                return Json(result);
+            }
+
+            var orders = await orderDalDataService.FindByField("doerid", doer.Id.ToString());
+
+            List<OrderData> orderDatas = new List<OrderData>();
+            Section? section;
+            OrderData orderData;
+            foreach (var order in orders)
+            {
+                section = await sectionService.FindAsync(order.SectionId);
+                if (section != null)
+                {
+                    orderData = new OrderData
+                    {
+                        Id = order.Id,
+                        Header = order.Header,
+                        Text = order.Text,
+                        Price = order.Price,
+                        Location = order.Location,
+                        ExpireDate = order.ExpireDate,
+                        Status = order.Status.ToString(),
+                        ResponseCount = await orderResponseDalDataService.GetCountOfResponsesInOrder(order.Id),
+                        Section = new SectionData
+                        {
+                            Name = section.Name,
+                            Slug = section.Slug,
+                        }
+                    };
+                    orderDatas.Add(orderData);
+                };
+            }
+
+            return Json(orderDatas);
         }
 
         // PUT api/<ValuesController>/5

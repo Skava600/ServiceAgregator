@@ -51,7 +51,7 @@ namespace ServiceAggregator.Controllers
             AccountData accountData = new AccountData(account);
             var doer = (await doerDalService.FindByField("accountid", userId.ToString())).FirstOrDefault();
             accountData.DoerId = doer == null ? null : doer.Id;
-            return Json(new AccountData(account));
+            return Json(accountData);
         }
 
         [HttpGet]

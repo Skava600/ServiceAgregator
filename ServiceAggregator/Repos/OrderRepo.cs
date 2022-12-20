@@ -17,15 +17,15 @@ namespace ServiceAggregator.Repos
 
         public async Task CreateOrder(Order order)
         {
-
+            string? price = order.Price.HasValue ? $"'{order.Price}'" : "NULL";
             OpenConnection();
             string sql = "SELECT public.createorder(" +
                 $"'{order.Id}'," +
                 $"'{order.Header}'," +
                 $"'{order.Text}'," +
                 $"'{order.Location}'," +
-                 $"'{order.ExpireDate}'," +
-                 $"'{order.Price}'," +
+                 $"'{order.ExpireDate.ToString("yyyy-MM-dd")}'," +
+                 $"{price}," +
                 $"'{order.CustomerId}'," +
                 $"'{order.SectionId}'," +
                 $"'{order.StatusId}');";

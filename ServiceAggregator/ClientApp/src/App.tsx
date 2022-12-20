@@ -1,19 +1,27 @@
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { useCookies } from "react-cookie";
 import { ErrorPage } from "./pages";
 import { authorizedRoutes, routes } from "./routes/routes";
 import { getUser } from "./state/selectors/userSelectors";
-import { useAppSelector } from "./state/store";
+import { useAppDispatch, useAppSelector } from "./state/store";
+import { getAccountInfo } from "./api";
+import { loginSuccess } from "./state/slices/authSlice";
 
 export const App = () => {
     const user = useAppSelector(getUser);
-    const navigate = useNavigate();
+    const dispatch = useAppDispatch();
+    const [cookies] = useCookies(["jwt"]);
 
     useEffect(() => {
-        if (!user) {
-            // navigate("/login");
+        if (cookies.jwt) {
+            getAccountInfo(cookies.jwt as string).then(({ data }) =>
+                dispatch(
+                    loginSuccess({ user: data, token: cookies.jwt as string })
+                )
+            );
         }
-    }, [navigate, user]);
+    }, [dispatch, cookies]);
 
     return (
         <Routes>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Typography,
     Paper,
@@ -7,17 +7,37 @@ import {
     AccordionSummary,
     AccordionDetails,
     Grid,
+    Card,
 } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { ProfileInfo, Page } from "../../components";
+import { ProfileInfo, Page, TaskCard } from "../../components";
 import { useAppSelector } from "../../state/store";
-import { getUser } from "../../state/selectors/userSelectors";
+import { getToken, getUser } from "../../state/selectors/userSelectors";
+import { getTasks } from "../../api";
+import { ITask } from "../../api/interfaces";
 import "./accountPage.less";
 
+const INITIAL_STATE = {
+    expanded: "panel1",
+    myTasks: [] as ITask[],
+    myOrders: [] as ITask[],
+};
+
 export const AccountPage = () => {
-    const [expanded, setExpanded] = useState<string | false>("panel1");
+    const [expanded, setExpanded] = useState<string | false>(
+        INITIAL_STATE.expanded
+    );
+    const [myTasks, setMyTasks] = useState(INITIAL_STATE.myTasks);
+    const [myOrders, setMyOrders] = useState(INITIAL_STATE.myOrders);
     const user = useAppSelector(getUser);
+    const token = useAppSelector(getToken);
+
+    useEffect(() => {
+        getTasks({ slugs: [], isMyOrders: true, token }).then(({ data }) =>
+            setMyTasks(data)
+        );
+    }, [token]);
 
     const handleChange = (panel: string) => (_: any, isExpanded: boolean) => {
         setExpanded(isExpanded ? panel : false);
@@ -56,11 +76,14 @@ export const AccountPage = () => {
                         </AccordionSummary>
                         <Divider />
                         <AccordionDetails>
-                            <Typography>
-                                Nulla facilisi. Phasellus sollicitudin nulla et
-                                quam mattis feugiat. Aliquam eget maximus est,
-                                id dignissim quam.
-                            </Typography>
+                            {myTasks.map((task) => (
+                                <TaskCard task={task} />
+                            ))}
+                            {!myTasks.length && (
+                                <Card className="no-data">
+                                    <b>Вы не разместили ни одного заказа...</b>
+                                </Card>
+                            )}
                         </AccordionDetails>
                     </Accordion>
                     <Accordion

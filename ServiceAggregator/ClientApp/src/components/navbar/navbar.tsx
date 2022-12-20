@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Button, Stack, Tab, Tabs } from "@mui/material";
 import "./navbar.less";
 import { useAppSelector } from "../../state/store";
-import { getIsSignedIn } from "../../state/selectors/userSelectors";
+import { getIsSignedIn, getUser } from "../../state/selectors/userSelectors";
 
 type LinkTabProps = {
     label: string;
@@ -22,7 +22,11 @@ type TProps = {
 };
 
 export const AppNavbar = ({ tabIndex }: TProps) => {
+    const user = useAppSelector(getUser);
     const isSignedIn = useAppSelector(getIsSignedIn);
+
+    //@ts-ignore
+    const accountHasProfile = !!user?.doerId;
     return (
         <div className="app-navbar">
             <Tabs
@@ -34,10 +38,26 @@ export const AppNavbar = ({ tabIndex }: TProps) => {
                 <LinkTab label="Исполнители" href="/profiles" />
                 <div className="actions">
                     <Stack spacing={1} direction="row">
-                        {tabIndex !== 0 && (
-                            <Link to={isSignedIn ? "/create-task" : "/login"}>
+                        {tabIndex !== 0 && !accountHasProfile && (
+                            <Link
+                                to={isSignedIn ? "/create-profile" : "/login"}
+                            >
                                 <Button variant="outlined" size="small">
                                     Стать исполнителем
+                                </Button>
+                            </Link>
+                        )}
+                        {tabIndex !== 0 && accountHasProfile && (
+                            <Link
+                                to={
+                                    isSignedIn
+                                        ? //@ts-ignore
+                                          `/edit-profile/${user.doerId}`
+                                        : "/login"
+                                }
+                            >
+                                <Button variant="outlined" size="small">
+                                    Профиль исполнителя
                                 </Button>
                             </Link>
                         )}

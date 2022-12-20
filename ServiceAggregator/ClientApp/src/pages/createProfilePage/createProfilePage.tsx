@@ -12,15 +12,20 @@ import {
     Typography,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider/LocalizationProvider";
-import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
-import { createTask, getWorkSections } from "../../api";
+import {
+    createProfile,
+    createTask,
+    getTask,
+    getWorkSections,
+    updateTask,
+} from "../../api";
 import { IWorkCategory, IWorkSection } from "../../api/interfaces";
-import { Errors, Page } from "../../components";
+import { Page } from "../../components";
 import { getToken } from "../../state/selectors/userSelectors";
 import { useAppSelector } from "../../state/store";
-import "./createTaskPage.less";
+import { Errors } from "../../components/";
+import "./createProfilePage.less";
 
 const INITIAL_STATE = {
     header: "",
@@ -28,18 +33,17 @@ const INITIAL_STATE = {
     location: "",
     expireDate: "",
     price: null,
-    slug: null,
+    sections: [],
     slugsToChoose: [] as IWorkSection[],
     errors: [] as string[],
 };
 
-export const CreateTaskPage = () => {
+export const CreateProfilePage = () => {
     const [header, setHeader] = useState(INITIAL_STATE.header);
     const [text, setText] = useState(INITIAL_STATE.text);
-    const [location, setLocation] = useState(INITIAL_STATE.location);
-    const [expireDate, setExpireDate] = useState(INITIAL_STATE.expireDate);
-    const [price, setPrice] = useState<number | null>(INITIAL_STATE.price);
-    const [slug, setSlug] = useState<IWorkSection | null>(INITIAL_STATE.slug);
+    const [sections, setSections] = useState<IWorkSection[]>(
+        INITIAL_STATE.sections
+    );
     const [slugsToChoose, setSlugsToChoose] = useState(
         INITIAL_STATE.slugsToChoose
     );
@@ -69,30 +73,24 @@ export const CreateTaskPage = () => {
         setText(value);
     };
 
-    const handleLocationChange = (value: string) => {
-        setLocation(value);
-    };
+    const handleSlugChange = (section: IWorkSection) => {
+        const index = sections?.findIndex((s) => s.slug === section.slug);
+        const exists = index !== -1;
 
-    const handleExpireDateChange = (date: any) => {
-        setExpireDate(date.toString());
-    };
-
-    const handlePriceChange = (value: string) => {
-        if (+value <= 0 || isNaN(+value)) {
+        if (!exists) {
+            setSections((v) => [...v, section]);
             return;
+        } else {
+            const _sections = [...sections];
+            _sections.splice(index, 1);
+            setSections(_sections);
         }
-
-        setPrice(+value);
-    };
-
-    const handleSlugChange = (value: IWorkSection | null) => {
-        setSlug(value);
     };
 
     const validateData = () => {
         let validationMsgs = [];
 
-        if (!header || !text || !location || !expireDate || !slug) {
+        if (!header || !text || !sections.length) {
             validationMsgs.push("Не все поля заполнены");
         }
 
@@ -104,28 +102,17 @@ export const CreateTaskPage = () => {
 
         setErrors(errorMsgs);
 
-        console.log({
-            header,
-            text,
-            location,
-            expireDate,
-            price,
-            slug: slug?.slug!,
-        });
-
         if (errorMsgs.length) return;
 
-        createTask(
-            {
-                header,
-                text,
-                location,
-                expireDate: moment(expireDate).add(4, "hours").utc().format(),
-                price,
-                slug: slug?.slug!,
-            },
+        createProfile(
+            { header, text },
+            sections.map(({ slug }) => slug),
             token!
-        ).then(() => navigate("/account"));
+        ).then(({ data }) => {
+            if (!data.success) {
+                setErrors(data.errors);
+            }
+        });
     };
 
     const handleCancel = () => {
@@ -137,7 +124,9 @@ export const CreateTaskPage = () => {
             <Page className="edit-task-page">
                 <Paper className="task-paper">
                     <Stack spacing={4}>
-                        <Typography variant="h2">Создать заказ</Typography>
+                        <Typography variant="h2">
+                            Создать профиль исполнителя
+                        </Typography>
 
                         <TextField
                             sx={{ width: "100%" }}
@@ -155,40 +144,8 @@ export const CreateTaskPage = () => {
                             label="Описание"
                         />
 
-                        <TextField
-                            sx={{ width: "100%" }}
-                            value={location}
-                            onChange={(e) =>
-                                handleLocationChange(e.target.value)
-                            }
-                            label="Место"
-                        />
-
-                        <TextField
-                            sx={{ width: "100%" }}
-                            value={price}
-                            onChange={(e) => handlePriceChange(e.target.value)}
-                            label="Цена вопроса"
-                            InputProps={{
-                                inputProps: { min: 0 },
-                                endAdornment: <span>рублей</span>,
-                            }}
-                            helperText="Оставьте поле пустым, чтобы пометить цену как Договорная"
-                        />
-
-                        <MobileDatePicker
-                            label="Дата"
-                            inputFormat="MM/DD/YYYY"
-                            value={expireDate}
-                            onChange={handleExpireDateChange}
-                            renderInput={(params) => (
-                                <TextField {...params} sx={{ width: "100%" }} />
-                            )}
-                        />
-
                         <Autocomplete
-                            value={slug}
-                            onChange={(_, value) => handleSlugChange(value)}
+                            onChange={(_, value) => handleSlugChange(value!)}
                             disablePortal
                             options={slugsToChoose}
                             sx={{ width: "100%" }}
@@ -202,6 +159,8 @@ export const CreateTaskPage = () => {
                                 );
                             }}
                         />
+
+                        <Stack>{sections.map(({ name }) => name)}</Stack>
 
                         <Errors errors={errors} />
 

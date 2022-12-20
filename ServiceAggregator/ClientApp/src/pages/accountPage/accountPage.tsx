@@ -77,7 +77,7 @@ export const AccountPage = () => {
                         <Divider />
                         <AccordionDetails>
                             {myTasks.map((task) => (
-                                <TaskCard task={task} />
+                                <TaskCard task={task} isMine />
                             ))}
                             {!myTasks.length && (
                                 <Card className="no-data">
@@ -86,31 +86,31 @@ export const AccountPage = () => {
                             )}
                         </AccordionDetails>
                     </Accordion>
-                    <Accordion
-                        expanded={expanded === "panel2"}
-                        onChange={handleChange("panel2")}
-                    >
-                        <AccordionSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-controls="panel2bh-content"
-                            id="panel2bh-header"
+                    {/* <Accordion
+                            expanded={expanded === "panel2"}
+                            onChange={handleChange("panel2")}
                         >
-                            <Typography sx={{ width: "33%", flexShrink: 0 }}>
-                                Запросы работ
-                            </Typography>
-                            <Typography sx={{ color: "text.secondary" }}>
-                                Отклики на ваши заявки
-                            </Typography>
-                        </AccordionSummary>
-                        <Divider />
-                        <AccordionDetails>
-                            <Typography>
-                                Donec placerat, lectus sed mattis semper, neque
-                                lectus feugiat lectus, varius pulvinar diam eros
-                                in elit. Pellentesque convallis laoreet laoreet.
-                            </Typography>
-                        </AccordionDetails>
-                    </Accordion>
+                            <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls="panel2bh-content"
+                                id="panel2bh-header"
+                            >
+                                <Typography sx={{ width: "33%", flexShrink: 0 }}>
+                                    Запросы работ
+                                </Typography>
+                                <Typography sx={{ color: "text.secondary" }}>
+                                    Отклики на ваши заявки
+                                </Typography>
+                            </AccordionSummary>
+                            <Divider />
+                            <AccordionDetails>
+                                <Typography>
+                                    Donec placerat, lectus sed mattis semper, neque
+                                    lectus feugiat lectus, varius pulvinar diam eros
+                                    in elit. Pellentesque convallis laoreet laoreet.
+                                </Typography>
+                            </AccordionDetails>
+                        </Accordion> */}
                 </Grid>
                 <Grid item xs={12}>
                     <ProfileInfo user={user!} />

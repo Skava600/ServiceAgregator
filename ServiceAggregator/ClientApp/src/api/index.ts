@@ -1,5 +1,5 @@
 import appAxios from "./axios";
-import { IUser } from "./interfaces";
+import { ITask, IUser } from "./interfaces";
 
 const accountPath = "Account";
 const profilePath = "Doer";
@@ -179,6 +179,27 @@ export const updateTask = (
         method: "PUT",
         data: formData,
         params: { orderId: id },
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+export const createProfile = (
+    data: Pick<ITask, "header" | "text">,
+    slugs: string[],
+    token: string
+) => {
+    const formData = getFormData({
+        doerName: data.header,
+        doerDescription: data.text,
+        filters: slugs,
+    });
+
+    return appAxios({
+        url: `${profilePath}/CreateDoerAccount`,
+        method: "POST",
+        data: formData,
         headers: {
             Authorization: `Bearer ${token}`,
         },

@@ -3,6 +3,7 @@ import {
     LOGIN_ROUTE,
     REGISTER_ROUTE,
     ACCOUNT_ROUTE,
+    CREATE_PROFILE_ROUTE,
     EDIT_PROFILE_ROUTE,
     PROFILES_ROUTE,
     PROFILE_ROUTE,
@@ -17,6 +18,7 @@ import {
     RegisterPage,
     AccountPage,
     ProfilesPage,
+    CreateProfilePage,
     ProfilePage,
     EditTaskPage,
     CreateTaskPage,
@@ -36,6 +38,10 @@ export const authorizedRoutes = [
     {
         path: CREATE_TASK_ROUTE,
         element: <CreateTaskPage />,
+    },
+    {
+        path: CREATE_PROFILE_ROUTE,
+        element: <CreateProfilePage />,
     },
 ];
 

@@ -12,15 +12,14 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router";
 import { useCookies } from "react-cookie";
-import "./header.less";
-import { logoutAccount } from "../../api";
 import { useAppDispatch, useAppSelector } from "../../state/store";
 import { getToken } from "../../state/selectors/userSelectors";
 import { logout } from "../../state/slices/authSlice";
+import "./header.less";
 
 export const Header = () => {
     const token = useAppSelector(getToken);
-    const [jwt, setJwt] = useCookies(["jwt"]);
+    const [cookies, setCookies] = useCookies(["jwt"]);
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
     const contRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
@@ -49,7 +48,7 @@ export const Header = () => {
     const handleLogoutClick = () => {
         dispatch(logout());
         handleHomeClick();
-        setJwt("jwt", "", { path: "/", expires: new Date(0) });
+        setCookies("jwt", "", { path: "/", expires: new Date(0) });
     };
 
     const open = Boolean(anchorEl);

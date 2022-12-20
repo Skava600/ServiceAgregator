@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import moment from "moment";
 import { Link } from "react-router-dom";
-import { Card, Rating } from "@mui/material";
+import { Card, IconButton, Rating } from "@mui/material";
 import FaceIcon from "@mui/icons-material/Face";
 import Face2Icon from "@mui/icons-material/Face2";
 import Face3Icon from "@mui/icons-material/Face3";
@@ -10,6 +10,7 @@ import Face5Icon from "@mui/icons-material/Face5";
 import Face6Icon from "@mui/icons-material/Face6";
 import WorkIcon from "@mui/icons-material/Work";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
+import EditIcon from "@mui/icons-material/Edit";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import { ITask } from "../../api/interfaces";
 import "./taskCard.less";
@@ -30,6 +31,7 @@ type TVariant = "short" | "full";
 type TProps = {
     task: ITask;
     variant?: TVariant;
+    isMine?: boolean;
 };
 
 const STATUSES = {
@@ -39,7 +41,11 @@ const STATUSES = {
     InProgress: "Подтверждён",
 };
 
-export const TaskCard = ({ task, variant = "full" }: TProps) => {
+export const TaskCard = ({
+    task,
+    variant = "full",
+    isMine = false,
+}: TProps) => {
     const [avatar, setAvatar] = useState<any>();
 
     useEffect(() => {
@@ -49,6 +55,13 @@ export const TaskCard = ({ task, variant = "full" }: TProps) => {
     return (
         <Link to={`/task/${task.id}`} className="task-link">
             <Card className="task-card">
+                {isMine && (
+                    <Link to={`/edit-task/${task.id}`}>
+                        <IconButton>
+                            <EditIcon />
+                        </IconButton>
+                    </Link>
+                )}
                 <div className="task-card-row">
                     {variant === "full" && avatar}
                     <div className="task-card-content">

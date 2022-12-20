@@ -17,7 +17,7 @@ import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
 import { createTask, getTask, getWorkSections, updateTask } from "../../api";
 import { IWorkCategory, IWorkSection } from "../../api/interfaces";
-import { Page } from "../../components";
+import { Errors, Page } from "../../components";
 import { getToken } from "../../state/selectors/userSelectors";
 import { useAppSelector } from "../../state/store";
 import "./editTaskPage.less";
@@ -124,12 +124,19 @@ export const EditTaskPage = () => {
                 header,
                 text,
                 location,
-                expireDate: moment(expireDate).utc().format(),
+                expireDate: moment(expireDate).add(4, "hours").utc().format(),
                 price,
                 slug: slug?.slug!,
             },
             token!
-        ).then(({ data }) => console.log(data));
+        ).then(({ data }) => {
+            if (data.success) {
+                navigate("/account");
+                return;
+            }
+
+            setErrors(data.errors);
+        });
     };
 
     const handleCancel = () => {
@@ -211,24 +218,7 @@ export const EditTaskPage = () => {
                             }}
                         />
 
-                        <Stack
-                            spacing={1}
-                            direction="column"
-                            display="flex"
-                            sx={{ marginTop: 10 }}
-                        >
-                            {errors.map((err) => (
-                                <div className="error">
-                                    <PriorityHighIcon />
-                                    <Typography
-                                        color="red"
-                                        sx={{ width: "100%" }}
-                                    >
-                                        {err}
-                                    </Typography>
-                                </div>
-                            ))}
-                        </Stack>
+                        <Errors errors={errors} />
 
                         <Stack
                             direction="row"

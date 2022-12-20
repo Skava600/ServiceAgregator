@@ -3,6 +3,7 @@ export { MainPage } from "./main/mainPage";
 export { RegisterPage } from "./login/registerPage";
 export { LoginPage } from "./login/loginPage";
 export { AccountPage } from "./accountPage/accountPage";
+export { CreateProfilePage } from "./createProfilePage/createProfilePage";
 // export { EditProfilePage } from "./editProfilePage/editProfilePage";
 export { ProfilesPage } from "./profilesPage/profilesPage";
 export { ProfilePage } from "./profilePage/profilePage";

@@ -296,15 +296,10 @@ namespace ServiceAggregator.Controllers
                 doer!.DoerName = doerModel.DoerName;
                 doer.DoerDescription = doerModel.DoerDescription;
                 await doerService.UpdateAsync(doer);
+                doerResult.Success = true;
             }
 
             return Json(doerResult);
-        }
-
-        // DELETE api/<ValuesController>/5
-        [HttpDelete("{id}")]
-        public void Delete(Guid id)
-        {
         }
     }
 }

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import {
     TextField,
     Paper,
@@ -23,8 +22,8 @@ import {
     updateAccountInfo,
     updateAccountPassword,
 } from "../../api";
-import "./profileInfo.less";
 import { setUser } from "../../state/slices/authSlice";
+import "./profileInfo.less";
 
 const INITIAL_STATE = {
     passwordConfirmation: { value: "1234", isError: false },

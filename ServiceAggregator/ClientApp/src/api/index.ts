@@ -66,15 +66,20 @@ export const getProfile = (data: { id: string }) => {
 export const getTasks = ({
     slugs,
     isMyOrders,
+    token,
 }: {
     slugs: string[];
-    isMyOrders?: string;
+    isMyOrders?: boolean;
+    token?: string | null;
 }) => {
     return appAxios({
         url: `${tasksPath}/GetPage`,
         method: "POST",
         data: slugs,
         params: { myOrders: isMyOrders },
+        headers: {
+            Authorization: `Bearer ${token || ""}`,
+        },
     });
 };
 
@@ -127,6 +132,53 @@ export const updateAccountPassword = (
         url: `${accountPath}/ChangeAccountPassword`,
         method: "POST",
         data: formData,
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+export const createTask = (
+    data: {
+        header: string;
+        text: string;
+        location: string;
+        expireDate: string;
+        price: number | null;
+        slug: string;
+    },
+    token: string
+) => {
+    const formData = getFormData(data);
+
+    return appAxios({
+        url: `${tasksPath}/MakeOrder`,
+        method: "POST",
+        data: formData,
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+export const updateTask = (
+    id: string,
+    data: {
+        header: string;
+        text: string;
+        location: string;
+        expireDate: string;
+        price: number | null;
+        slug: string;
+    },
+    token: string
+) => {
+    const formData = getFormData(data);
+
+    return appAxios({
+        url: `${tasksPath}/UpdateOrder`,
+        method: "PUT",
+        data: formData,
+        params: { orderId: id },
         headers: {
             Authorization: `Bearer ${token}`,
         },

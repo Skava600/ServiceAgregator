@@ -50,14 +50,14 @@ namespace ServiceAggregator.Controllers
         [Authorize]
         public async Task<IActionResult> ApplyForOrder([FromForm] ResponseModel model)
         {
-            ResponseResult result = new ResponseResult { Success = true };
+            ResponseResult result = new ResponseResult { Success = false };
             Guid accountId = Guid.Parse(User.FindFirst("Id")?.Value);
-            var doers = await doerService.FindByField("accountid", accountId.ToString());
-            if (!doers.Any())
+            var doer = (await doerService.FindByField("accountid", accountId.ToString())).FirstOrDefault();
+            if (doer == null)
             {
                 result.Errors.Add(DoerResultsConstants.ERROR_DOER_NOT_EXIST);
+                return Json(result);
             }
-            Doer doer = doers.First();
 
             var bannedDoer = (await bannedDoerDalDataService.FindByField("doerid", doer.Id.ToString())).FirstOrDefault();
             if (bannedDoer != null)
@@ -75,11 +75,7 @@ namespace ServiceAggregator.Controllers
             {
                 result.Errors.Add(OrderResultConstants.ERROR_ORDER_NOT_EXIST);
             }
-            if (result.Errors.Count > 0)
-            {
-                result.Success = false;
-            }
-            else
+            if (result.Errors.Count == 0)
             {
                 OrderResponse orderResponse = new OrderResponse
                 {
@@ -91,6 +87,7 @@ namespace ServiceAggregator.Controllers
                 };
 
                 await orderResponseDalService.AddAsync(orderResponse);
+                result.Success = true;
             }
 
             return Json(result);

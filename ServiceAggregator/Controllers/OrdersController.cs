@@ -229,7 +229,7 @@ namespace ServiceAggregator.Controllers
                 result.Errors.Add(AccountResultsConstants.ERROR_AUTHORISATION);
             }
 
-
+                    
             return Json(result);
         }
 

@@ -25,6 +25,7 @@ namespace ServiceAggregator.Services.DataServices
             services.AddScoped<IBannedCustomerRepo, BannedCustomerRepo>();
             services.AddScoped<IBannedDoerRepo, BannedDoerRepo>();
             services.AddScoped<IDeletedOrderRepo, DeletedOrderRepo>();
+            services.AddScoped<ISubscriberRepo, SubscriberRepo>();
             return services;
         }
         public static IServiceCollection AddDataServices(
@@ -44,6 +45,7 @@ namespace ServiceAggregator.Services.DataServices
             services.AddScoped<IBannedCustomerDalDataSerivce, BannedCustomerDalDataService>();
             services.AddScoped<IBannedDoerDalDataService, BannedDoerDalDataService>();
             services.AddScoped<IDeletedOrderDalDataService, DeletedOrderDalDataService>();
+            services.AddScoped<ISubscriberDalDataService, SubscriberDalDataServiceBase>();
             return services;
         }
     }

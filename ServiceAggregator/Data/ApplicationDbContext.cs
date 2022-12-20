@@ -8,15 +8,18 @@ namespace ServiceAggregator.Data
     {
         public DbTable<Account> Accounts { get; set; }
         public DbTable<Doer> Doers { get; set; }
-        public DbTable<DoerWorkSection> DoerWorkSections { get; set; }
+        public DbTable<DoerSection> DoerSections { get; set; }
         public DbTable<Customer> Customers { get; set; }
         public DbTable<CustomerReview> CustomerReviews { get; set; }
         public DbTable<DoerReview> DoerReviews { get; set; }
         public DbTable<Order> Orders { get; set; }    
         public DbTable<Section> Sections { get; set; }
         public DbTable<Category> Categorys { get; set; }
-        public DbTable<OrderResponse> Responses { get; set; }
-
+        public DbTable<OrderResponse> OrderResponses { get; set; }
+        public DbTable<BannedCustomer> BannedCustomers { get; set; }
+        public DbTable<BannedDoer> BannedDoers { get; set; }
+        public DbTable<DeletedOrder> DeletedOrders { get; set; }
+        public DbTable<BannedAccount> BannedAccounts { get; set; }
         public ApplicationDbContext(string connectionString)
        : base(connectionString)
         {

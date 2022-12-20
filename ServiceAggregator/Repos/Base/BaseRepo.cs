@@ -66,7 +66,7 @@ namespace TrialBalanceWebApp.Repos.Base
         public virtual async Task<IEnumerable<T>> GetAll() => await Table.ReadAll();
         public virtual async  Task<T?> Find(Guid id) => await Table.GetByIdAsync(id);
         public virtual async Task Update(T entity) => await Table.UpdateByIdAsync(entity.Id, entity);
-        public abstract Task Delete(T entity);
+        public virtual async Task Delete(Guid id) => await Table.DeleteById(id);
 
         public virtual async Task Add(T entity)
         {

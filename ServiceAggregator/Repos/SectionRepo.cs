@@ -15,11 +15,6 @@ namespace ServiceAggregator.Repos
         public SectionRepo(IOptions<MyOptions> optionsAccessor, ApplicationDbContext context) : base(optionsAccessor, context)
         {
         }
-        public override Task<int> Delete(Section entity)
-        {
-            throw new NotImplementedException();
-        }
-
 
         public override async Task<IEnumerable<Section>> GetAll()
         {
@@ -62,10 +57,9 @@ namespace ServiceAggregator.Repos
             OpenConnection();
 
             Section? workSection = null;
-            using (NpgsqlCommand cmd = new NpgsqlCommand("public.get_section_by_id", _sqlConnection))
+            using (NpgsqlCommand cmd = new NpgsqlCommand("SELECT * FROM public.get_section_by_id(" +
+                $"'{id}');", _sqlConnection))
             {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("w_id", id);
                 using (var reader = await cmd.ExecuteReaderAsync())
                 {
                     while (reader.Read())
@@ -86,5 +80,33 @@ namespace ServiceAggregator.Repos
             return workSection;
         }
 
+        public async Task<IEnumerable<Section>> GetSectionsByDoerIdAsync(Guid doerId)
+        {
+            OpenConnection();
+
+            string commandText = "SELECT * FROM public.get_sections_by_doer_id(" +
+                $"'{doerId}');";
+            List<Section> workSections = new List<Section>();
+            using (NpgsqlCommand cmd = new NpgsqlCommand(commandText, _sqlConnection))
+            {
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (reader.Read())
+                    {
+                        workSections.Add(new Section
+                        {
+                            Id = reader.GetGuid(0),
+                            Name = reader.GetString(1),
+                            Slug = reader.GetString(2),
+                            CategoryId = reader.GetGuid(3),
+                        });
+                    }
+                }
+            }
+
+            CloseConnection();
+
+            return workSections;
+        }
     }
 }

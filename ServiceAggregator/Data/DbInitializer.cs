@@ -9,8 +9,8 @@ using ServiceAggregator.Models;
 using ServiceAggregator.Options;
 using ServiceAggregator.Repos;
 using ServiceAggregator.Repos.Interfaces;
-using ServiceAggregator.Services.Dal;
-using ServiceAggregator.Services.Interfaces;
+using ServiceAggregator.Services.DataServices.Dal;
+using ServiceAggregator.Services.DataServices.Interfaces;
 using System.Text;
 using System.Text.Json;
 
@@ -20,12 +20,10 @@ namespace ServiceAggregator.Data
     {
         private IAccountDalDataService accountService;
         private ICustomerDalDataService customerService;
-        private IDataServiceBase<Section> sectionService;
-        private IDataServiceBase<Category> categoryService;
-        public DbInitializer(IOptions<MyOptions> optionsAccessor, ApplicationDbContext context, IDataServiceBase<Section> sectionService, IDataServiceBase<Category> categoryService, IAccountDalDataService accountService, ICustomerDalDataService customerService)
+        private ISectionDalDataService sectionService;
+        private ICategoryDalDataService categoryService;
+        public DbInitializer(IOptions<MyOptions> optionsAccessor, ApplicationDbContext context, ISectionDalDataService sectionService, ICategoryDalDataService categoryService, IAccountDalDataService accountService, ICustomerDalDataService customerService)
         {
-            var connString = optionsAccessor.Value.ConnectionString;
-
             this.accountService = accountService;
             this.sectionService = sectionService;
             this.categoryService = categoryService;

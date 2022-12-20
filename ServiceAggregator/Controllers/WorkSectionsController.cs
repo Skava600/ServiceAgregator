@@ -1,12 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using ServiceAggregator.Data;
-using ServiceAggregator.Entities;
+﻿using Microsoft.AspNetCore.Mvc;
 using ServiceAggregator.Models;
-using ServiceAggregator.Options;
-using ServiceAggregator.Repos;
-using ServiceAggregator.Services.Interfaces;
+using ServiceAggregator.Services.DataServices.Interfaces;
 
 namespace ServiceAggregator.Controllers
 {
@@ -14,10 +8,10 @@ namespace ServiceAggregator.Controllers
     [ApiController]
     public class WorkSectionsController : Controller
     {
-        private readonly IDataServiceBase<Section> sectionService;
-        private readonly IDataServiceBase<Category> categoryService;
+        private readonly ISectionDalDataService sectionService;
+        private readonly ICategoryDalDataService categoryService;
 
-        public WorkSectionsController(IDataServiceBase<Section> sectionService, IDataServiceBase<Category> categoryService)
+        public WorkSectionsController(ISectionDalDataService sectionService, ICategoryDalDataService categoryService)
         {
             this.sectionService = sectionService;
             this.categoryService = categoryService;

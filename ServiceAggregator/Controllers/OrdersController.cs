@@ -1,16 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json.Linq;
-using ServiceAggregator.Data;
 using ServiceAggregator.Entities;
 using ServiceAggregator.Models;
-using ServiceAggregator.Options;
-using ServiceAggregator.Repos;
 using ServiceAggregator.Repos.Interfaces;
-using ServiceAggregator.Services.Interfaces;
-using System.Linq;
-using static ServiceAggregator.Models.OrderData;
+using ServiceAggregator.Services.DataServices.Interfaces;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -24,27 +17,34 @@ namespace ServiceAggregator.Controllers
         private ICustomerDalDataService customerService;
         private ISectionRepo sectionRepo;
         private IAccountDalDataService accountService;
-        
-        public OrdersController(IOrderDalDataService orderService,IAccountDalDataService accountService, ISectionRepo sectionRepo, ICustomerDalDataService customerService)
+        private IOrderResponseDalDataService orderResponseService;
+        private IDoerDalDataService doerDalDataService;
+        public OrdersController(
+            IOrderDalDataService orderService,
+            IAccountDalDataService accountService,
+            ISectionRepo sectionRepo, 
+            ICustomerDalDataService customerService, 
+            IOrderResponseDalDataService orderResponseDal,
+            IDoerDalDataService doerService)
         {
             this.orderService = orderService;
             this.accountService = accountService;
             this.customerService = customerService;
             this.sectionRepo = sectionRepo;
+            this.orderResponseService = orderResponseDal;
+            this.doerDalDataService = doerService;
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetPage(int? page, [FromBody]string[] filters, bool myOrders = false)
+        public async Task<IActionResult> GetPage([FromBody]string[] filters, bool myOrders = false)
         {
             OrderData orderData = new OrderData { OrderResult = new OrderResult { Success = true } };
-            if (page == null)
-                page = 1;
 
             Guid userId;
             if (!Guid.TryParse(User.FindFirst("Id")?.Value, out userId) && myOrders)
             {
                 orderData.OrderResult.Success = false;
-                orderData.OrderResult.ErrorCodes.Add(OrderDataConstants.ERROR_USER_UNAUTHORIZED);
+                orderData.OrderResult.Errors.Add(AccountResultsConstants.ERROR_AUTHORISATION);
                 return Json(new List<OrderData> {orderData });
             }
             Customer? customer = await customerService.GetByAccountId(userId);
@@ -58,7 +58,7 @@ namespace ServiceAggregator.Controllers
             else if (customer == null && myOrders)
             {
                 orderData.OrderResult.Success = false;
-                orderData.OrderResult.ErrorCodes.Add(OrderDataConstants.ERROR_NO_SUCH_CUSTOMER);
+                orderData.OrderResult.Errors.Add(CustomerResultConstants.ERROR_CUSTOMER_NOT_EXIST);
                 return Json(new List<OrderData> { orderData });
             }
 
@@ -72,38 +72,31 @@ namespace ServiceAggregator.Controllers
                         orders.RemoveAll(o => Array.IndexOf(filters, currentSection.Slug) == -1);
                 }
             }      
-          
-            orders.Skip(((int)page - 1) * 50).Take(50);
          
             Section? section;
             foreach (var order in orders)
             {
-                orderData = new OrderData
-                {
-                    Id = order.Id,
-                    Header       = order.Header,
-                    Text         = order.Text,
-                    Price        = order.Price,
-                    Location     = order.Location,
-                    ExpireDate = order.ExpireDate,
-                    Status = order.Status.ToString(),
-                 };
-
                 section = await sectionRepo.Find(order.SectionId);
-                if (section == null)
+                if (section != null)
                 {
-                    orderData.OrderResult.Success = false;
-                    orderData.OrderResult.ErrorCodes.Add(OrderDataConstants.ERROR_NO_SUCH_SECTION);
-                }
-                else
-                {
-                    orderData.Section = new SectionData
+                    orderData = new OrderData
                     {
-                        Name = section.Name,
-                        Slug = section.Slug,
+                        Id = order.Id,
+                        Header = order.Header,
+                        Text = order.Text,
+                        Price = order.Price,
+                        Location = order.Location,
+                        ExpireDate = order.ExpireDate,
+                        Status = order.Status.ToString(),
+                        ResponseCount = await orderResponseService.GetCountOfResponsesInOrder(order.Id),
+                        Section = new SectionData
+                        {
+                            Name = section.Name,
+                            Slug = section.Slug,
+                        }
                     };
                     ordersData.Add(orderData);
-                }
+                };           
             } 
             return Json(ordersData); 
              
@@ -118,7 +111,7 @@ namespace ServiceAggregator.Controllers
            
             if (order == null)
             {
-                orderData.OrderResult.ErrorCodes.Add(OrderDataConstants.ERROR_WRONG_ORDER_ID);
+                orderData.OrderResult.Errors.Add(OrderResultConstants.ERROR_ORDER_NOT_EXIST);
                 orderData.OrderResult.Success = false;
                 return Json(orderData);
             }
@@ -126,14 +119,14 @@ namespace ServiceAggregator.Controllers
             Section? section = await sectionRepo.Find(order.SectionId);
             if (customersAccount == null)
             {
-                orderData.OrderResult.ErrorCodes.Add(OrderDataConstants.ERROR_NO_SUCH_CUSTOMER);
+                orderData.OrderResult.Errors.Add(CustomerResultConstants.ERROR_CUSTOMER_NOT_EXIST);
             }
             if (section == null)
             {
-                orderData.OrderResult.ErrorCodes.Add(OrderDataConstants.ERROR_NO_SUCH_SECTION);
+                orderData.OrderResult.Errors.Add(SectionResultConstants.ERROR_SECTION_NOT_EXIST);
             }
 
-            if (orderData.OrderResult.ErrorCodes.Count > 0)
+            if (orderData.OrderResult.Errors.Count > 0)
             {
                 orderData.OrderResult.Success = false;
             }
@@ -173,7 +166,7 @@ namespace ServiceAggregator.Controllers
             OrderResult result = new OrderResult { Success = true  };
             if (!Guid.TryParse(User.FindFirst("Id")?.Value, out userId))
             {
-                result.ErrorCodes.Add(OrderDataConstants.ERROR_USER_UNAUTHORIZED);
+                result.Errors.Add(AccountResultsConstants.ERROR_AUTHORISATION);
             }
 
             
@@ -181,7 +174,7 @@ namespace ServiceAggregator.Controllers
             if ( customer == null )
             {
                 result.Success = false;
-                result.ErrorCodes.Add(OrderDataConstants.ERROR_NO_SUCH_CUSTOMER);
+                result.Errors.Add(CustomerResultConstants.ERROR_CUSTOMER_NOT_EXIST);
                 return Json(result);
             }
 
@@ -190,15 +183,15 @@ namespace ServiceAggregator.Controllers
             Account account = (await accountService.FindAsync(userId))!;
             if (!account.IsAdmin && customerId != customer.Id)
             {
-                result.ErrorCodes.Add(OrderDataConstants.ERROR_WRONG_PRIVILEGES);
+                result.Errors.Add(AccountResultsConstants.ERROR_PERMISSION_DENIED);
             }
             var section = await sectionRepo.FindByField("Slug", orderModel.Slug);
             if (!section.Any())
             {
-                result.ErrorCodes.Add(OrderDataConstants.ERROR_NO_SUCH_SECTION);
+                result.Errors.Add(SectionResultConstants.ERROR_SECTION_NOT_EXIST);
             }
 
-            if (result.ErrorCodes.Count > 0)
+            if (result.Errors.Count > 0)
             {
                 result.Success = false;
             }
@@ -233,14 +226,14 @@ namespace ServiceAggregator.Controllers
             OrderResult result = new OrderResult{  Success = true };
             if (!Guid.TryParse(User.FindFirst("Id")?.Value, out userId))
             {
-                result.ErrorCodes.Add(OrderDataConstants.ERROR_USER_UNAUTHORIZED);
+                result.Errors.Add(AccountResultsConstants.ERROR_AUTHORISATION);
             }
 
 
             return Json(result);
         }
 
-        [HttpPost]
+        [HttpPut]
         [Authorize]
         public async Task<IActionResult> UpdateOrder(Guid orderId, [FromForm] OrderModel orderModel)
         {
@@ -248,24 +241,24 @@ namespace ServiceAggregator.Controllers
             OrderResult result = new OrderResult { Success = true };
             if (!Guid.TryParse(User.FindFirst("Id")?.Value, out userId))
             {
-                result.ErrorCodes.Add(OrderDataConstants.ERROR_USER_UNAUTHORIZED);
+                result.Errors.Add(AccountResultsConstants.ERROR_AUTHORISATION);
             }
 
             Order? order = await orderService.FindAsync(orderId);
             if (order == null)
             {
-                result.ErrorCodes.Add(OrderDataConstants.ERROR_WRONG_ORDER_ID);
+                result.Errors.Add(OrderResultConstants.ERROR_ORDER_NOT_EXIST);
             }
             else if (order.Status != OrderStatus.Open)
             {
-                result.ErrorCodes.Add(OrderDataConstants.ERROR_WRONG_OPERATION);
+                result.Errors.Add(OrderResultConstants.ERROR_UPDATING_NOT_OPEN_ORDER);
             }
 
             Account? account = await accountService.FindAsync(userId);
 
             if (account == null)
             {
-                result.ErrorCodes.Add(OrderDataConstants.ERROR_USER_UNAUTHORIZED);
+                result.Errors.Add(AccountResultsConstants.ERROR_AUTHORISATION);
                 result.Success = false;
                 return Json(result);
             }
@@ -275,21 +268,21 @@ namespace ServiceAggregator.Controllers
             if (customer == null)
             {
                 result.Success = false;
-                result.ErrorCodes.Add(OrderDataConstants.ERROR_NO_SUCH_CUSTOMER);
+                result.Errors.Add(CustomerResultConstants.ERROR_CUSTOMER_NOT_EXIST);
                 return Json(result);
             }
             if (orderModel.CustomerId != customer.Id && !account.IsAdmin)
             {
-                result.ErrorCodes.Add(OrderDataConstants.ERROR_WRONG_PRIVILEGES);
+                result.Errors.Add(AccountResultsConstants.ERROR_PERMISSION_DENIED);
             }
 
             var section = await sectionRepo.FindByField("Slug", orderModel.Slug);
             if (!section.Any())
             {
-                result.ErrorCodes.Add(OrderDataConstants.ERROR_NO_SUCH_SECTION);
+                result.Errors.Add(SectionResultConstants.ERROR_SECTION_NOT_EXIST);
             }
 
-            if (result.ErrorCodes.Count > 0)
+            if (result.Errors.Count > 0)
             {
                 result.Success = false;
             }
@@ -322,24 +315,35 @@ namespace ServiceAggregator.Controllers
             Order? order = await orderService.FindAsync(id);
             OrderResult result = new OrderResult { Success = true };
 
-
             if (order != null && order.Status != OrderStatus.InProgress)
             {
-                result.ErrorCodes.Add(OrderDataConstants.ERROR_WRONG_OPERATION);
+                result.Errors.Add(OrderResultConstants.ERROR_WRONG_MARKING_DONE_OPERATION);
             }
             else if (order == null)
             {
-                result.ErrorCodes.Add(OrderDataConstants.ERROR_WRONG_ORDER_ID);
+                result.Errors.Add(OrderResultConstants.ERROR_ORDER_NOT_EXIST);
             }
-
-            if (result.ErrorCodes.Count > 0)
+            Doer? doer = null;
+            if (order != null && !order.DoerId.HasValue)
+            {
+                result.Errors.Add(OrderResultConstants.ERROR_NO_CUSTOMER_MAKING_ORDER);
+                doer = await doerDalDataService.FindAsync(order.DoerId!.Value);
+            }
+            
+            if (doer == null)
+            {
+                result.Errors.Add(OrderResultConstants.ERROR_NO_CUSTOMER_MAKING_ORDER);
+            }
+            if (result.Errors.Count > 0)
             {
                 result.Success = false;
             }
             else
             {
                 order!.Status = OrderStatus.Done;
+                doer!.OrderCount++;
                 await orderService.UpdateAsync(order);
+                await doerDalDataService.UpdateAsync(doer);
             }
 
             return Json(result);
@@ -355,14 +359,14 @@ namespace ServiceAggregator.Controllers
 
             if (order != null && (order.Status == OrderStatus.Done || order.Status == OrderStatus.Canceled))
             {
-                result.ErrorCodes.Add(OrderDataConstants.ERROR_WRONG_OPERATION);
+                result.Errors.Add(OrderResultConstants.ERROR_WRONG_CANCELING_OPERATION);
             }
             else if (order == null)
             {
-                result.ErrorCodes.Add(OrderDataConstants.ERROR_WRONG_ORDER_ID);
+                result.Errors.Add(OrderResultConstants.ERROR_ORDER_NOT_EXIST);
             }
 
-            if (result.ErrorCodes.Count > 0)
+            if (result.Errors.Count > 0)
             {
                 result.Success = false;
             }
@@ -373,6 +377,60 @@ namespace ServiceAggregator.Controllers
             }
 
             return Json(result);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> ApproveOrderResponse(Guid orderId, Guid responseId)
+        {
+            Guid userId;
+            var order = await orderService.FindAsync(orderId);
+            var response = await orderResponseService.FindAsync(responseId);
+
+
+            OrderResult orderResult = new OrderResult
+            {
+                Success = true,
+            };
+
+            if (!Guid.TryParse(User.FindFirst("Id")?.Value, out userId))
+            {
+                orderResult.Errors.Add(AccountResultsConstants.ERROR_AUTHORISATION);
+            }
+            var customer = await customerService.GetByAccountId(userId);
+            if (customer == null)
+            {
+                orderResult.Errors.Add(CustomerResultConstants.ERROR_CUSTOMER_NOT_EXIST);
+            }
+
+            if (order == null)
+            {
+                orderResult.Errors.Add(OrderResultConstants.ERROR_ORDER_NOT_EXIST);
+            }
+
+            if (response == null)
+            {
+                orderResult.Errors.Add(ResponseResultConstants.ERROR_RESPONSE_NOT_EXIST);
+
+            }
+
+            if (customer != null && order != null && customer.Id != order.CustomerId)
+            {
+                orderResult.Errors.Add(AccountResultsConstants.ERROR_PERMISSION_DENIED);
+            }
+
+            if (orderResult.Errors.Count > 0)
+            {
+                orderResult.Success = false;
+            }
+            else
+            {
+                order!.DoerId = response!.DoerId;
+                order.Status = OrderStatus.InProgress;
+                await orderService.UpdateAsync(order);
+            }
+
+            return Json(orderResult);
         }
     }
 }

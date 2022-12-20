@@ -7,7 +7,9 @@ using ServiceAggregator.Options;
 using ServiceAggregator.Services.DataServices;
 using System.Configuration;
 using System.Text;
+using Stripe;
 using TrialBalanceWebApp.Services.Logging.Configuration;
+using ServiceAggregator.Services.JWT;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,53 +37,9 @@ builder.Services.AddDataServices();
 
 builder.Services.AddScoped<ApplicationDbContext>(conn => new ApplicationDbContext(builder.Configuration.GetConnectionString("DataAccessPostgreSqlProviderNeon")));
 
-var openApiSecurityScheme = new OpenApiSecurityScheme
-{
-    Name = "Authorization",
-    Type = SecuritySchemeType.Http,
-    Scheme = "Bearer",
-    BearerFormat = "JWT",
-    In = ParameterLocation.Header,
-    Description = "Enter a bearer token (JWT):",
-};
 
-var openApiSecurityRequirement = new OpenApiSecurityRequirement
-{
-    {
-        new OpenApiSecurityScheme
-        {
-            Reference = new OpenApiReference
-            {
-                Type = ReferenceType.SecurityScheme,
-                Id = "Bearer",
-            },
-        },
-        Array.Empty<string>()
-    },
-};
+builder.Services.AddJwt();
 
-var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(name: MyAllowSpecificOrigins,
-                      policy =>
-                      {
-                          policy.WithOrigins("https://localhost:44492")
-                          .WithMethods("PUT", "DELETE", "GET", "POST", "UPDATE")
-                          .AllowAnyHeader()
-                          .AllowAnyMethod();
-
-                      });
-});
-
-builder.Services.AddSwaggerGen(
-    options =>
-    {
-        options.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
-        options.AddSecurityDefinition("Bearer", openApiSecurityScheme);
-        options.AddSecurityRequirement(openApiSecurityRequirement);
-        options.EnableAnnotations();
-    });
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 builder.Services.AddOptions();
 
@@ -95,7 +53,7 @@ builder.Services.Configure<MyOptions>(myOptions =>
 });
 
 var app = builder.Build();
-
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 app.UseSwagger();
 app.UseSwaggerUI(c =>

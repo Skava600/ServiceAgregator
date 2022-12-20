@@ -4,6 +4,7 @@ using ServiceAggregator.Entities;
 using ServiceAggregator.Models;
 using ServiceAggregator.Repos;
 using ServiceAggregator.Services.DataServices.Interfaces;
+using Stripe.Issuing;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -249,16 +250,58 @@ namespace ServiceAggregator.Controllers
         }
 
         // PUT api/<ValuesController>/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(Guid id, [FromForm] DoerModel doerModel)
+        [HttpPut]
+        [Authorize]
+        public async Task<IActionResult> Put([FromForm] DoerModel doerModel)
         {
-            throw new NotImplementedException();
-        }
+            DoerResult doerResult = new DoerResult { Success = false };
 
-        // DELETE api/<ValuesController>/5
-        [HttpDelete("{id}")]
-        public void Delete(Guid id)
-        {
+
+            Doer? doer = (await doerService.FindByField("accountid", User.FindFirst("Id")?.Value)).FirstOrDefault();
+
+            if (doer == null)
+            {
+                doerResult.Errors.Add(DoerResultsConstants.ERROR_DOER_NOT_EXIST);
+            }
+
+            if (string.IsNullOrEmpty(doerModel.DoerName) || string.IsNullOrWhiteSpace(doerModel.DoerName))
+            {
+                doerResult.Errors.Add(DoerResultsConstants.ERROR_DOER_NAME_NULL_OR_EMPTY);
+            }
+
+            if (string.IsNullOrEmpty(doerModel.DoerDescription) || string.IsNullOrWhiteSpace(doerModel.DoerDescription))
+            {
+                doerResult.Errors.Add(DoerResultsConstants.ERROR_DOER_DESCRIPTION_NULL_OR_EMPTY);
+            }
+
+            Section? section;
+            List<Section> sections = new List<Section>();
+            for (int i = 0; i < doerModel.Filters.Count; i++)
+            {
+                section = (await sectionService.FindByField("slug", doerModel.Filters[i])).FirstOrDefault();
+
+                if (section != null)
+                {
+                    sections.Add(section);
+                }
+            }
+
+            if (!sections.Any())
+            {
+                doerResult.Errors.Add(DoerResultsConstants.ERROR_SECTION_NOT_EXIST);
+            }
+
+            if (doerResult.Errors.Count == 0)
+            {
+                await doerSectionService.DeleteDoerSectionsByDoerId(doer.Id);
+                sections.ForEach(async s => await doerSectionService.AddAsync(new DoerSection { Id = Guid.NewGuid(), DoerId = doer.Id,  SectionId = s.Id}));
+                doer!.DoerName = doerModel.DoerName;
+                doer.DoerDescription = doerModel.DoerDescription;
+                await doerService.UpdateAsync(doer);
+                doerResult.Success = true;
+            }
+
+            return Json(doerResult);
         }
     }
 }

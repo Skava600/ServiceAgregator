@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
+using Npgsql;
 using ServiceAggregator.Data;
 using ServiceAggregator.Entities;
 using ServiceAggregator.Options;
@@ -13,5 +14,18 @@ namespace ServiceAggregator.Repos
         {
         }
 
+        public async Task DeleteDoerSectionsByDoerId(Guid doerId)
+        {
+            OpenConnection();
+
+            string commandText = "SELECT public.delete_doersections_by_id(" +
+                $"'{doerId}');";
+            using (NpgsqlCommand cmd = new NpgsqlCommand(commandText, _sqlConnection))
+            {
+                await cmd.ExecuteNonQueryAsync();
+            }
+
+            CloseConnection();
+        }
     }
 }

@@ -3,8 +3,7 @@ using TrialBalanceWebApp.Repos.Base;
 
 namespace ServiceAggregator.Repos.Interfaces
 {
-    public interface IDoerSectionRepo : IBaseRepo<DoerSection>
+    public interface ISubscriberRepo : IBaseRepo<Subscriber>
     {
-        public Task DeleteDoerSectionsByDoerId(Guid doerId );
     }
 }

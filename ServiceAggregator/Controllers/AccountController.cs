@@ -23,12 +23,14 @@ namespace ServiceAggregator.Controllers
     {
         private readonly IAccountDalDataService accountService;
         private readonly IBannedAccountDalDataService bannedAccountService;
+        private readonly IDoerDalDataService doerDalService;
         MyOptions options;
-        public AccountController(IOptions<MyOptions> optionsAccessor, IAccountDalDataService accountDalDataService, IBannedAccountDalDataService bannedAccountService)
+        public AccountController(IOptions<MyOptions> optionsAccessor, IAccountDalDataService accountDalDataService, IBannedAccountDalDataService bannedAccountService, IDoerDalDataService doerDalDataService)
         {
             this.accountService = accountDalDataService;
             options = optionsAccessor.Value;
             this.bannedAccountService = bannedAccountService;
+            this.doerDalService = doerDalDataService;
         }
 
         [Authorize]
@@ -43,9 +45,12 @@ namespace ServiceAggregator.Controllers
                 accountResult.Success = false;
                 accountResult.Errors.Add(AccountResultsConstants.ERROR_AUTHORISATION);
                 return Json(accountResult);
-            }    
+            }
 
 
+            AccountData accountData = new AccountData(account);
+            var doer = (await doerDalService.FindByField("accountid", userId.ToString())).FirstOrDefault();
+            accountData.DoerId = doer == null ? null : doer.Id;
             return Json(new AccountData(account));
         }
 

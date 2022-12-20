@@ -6,3 +6,8 @@ const selectAuth = (state: RootState) => state.auth;
 export const getUser = createSelector([selectAuth], (auth) => auth.user);
 
 export const getToken = createSelector([selectAuth], (auth) => auth.token);
+
+export const getIsSignedIn = createSelector(
+    [selectAuth],
+    (auth) => !!auth.token && !!auth.user
+);

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useCookies } from "react-cookie";
 import {
     TextField,
     Paper,
@@ -15,11 +16,10 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
 import { getAccountInfo, loginUser } from "../../api";
 import "./loginPage.less";
+import { IUser } from "../../api/interfaces";
 import { useAppDispatch } from "../../state/store";
 import { loginSuccess } from "../../state/slices/authSlice";
-import { userInfo } from "os";
 import { Link } from "react-router-dom";
-import { IUser } from "../../api/interfaces";
 
 const INITIAL_STATE = {
     email: { value: "blackshark564@gmail.com", isError: false },
@@ -29,6 +29,7 @@ const INITIAL_STATE = {
 };
 
 export const LoginPage = () => {
+    const [cookies, setCookie] = useCookies(["jwt"]);
     const [email, setEmail] = useState(INITIAL_STATE.email);
     const [password, setPassword] = useState(INITIAL_STATE.password);
     const [isPassVisible, setIsPassVisible] = useState(
@@ -77,6 +78,10 @@ export const LoginPage = () => {
                             token,
                         })
                     );
+                    setCookie("jwt", token, {
+                        secure: true,
+                        expires: new Date(Date.now() + 3600 * 1000),
+                    });
                     navigate("/");
                 });
             }

@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
-import { Button, Divider, Stack, Tab, Tabs } from "@mui/material";
+import { Button, Stack, Tab, Tabs } from "@mui/material";
 import "./navbar.less";
+import { useAppSelector } from "../../state/store";
+import { getIsSignedIn } from "../../state/selectors/userSelectors";
 
 type LinkTabProps = {
     label: string;
@@ -20,6 +22,7 @@ type TProps = {
 };
 
 export const AppNavbar = ({ tabIndex }: TProps) => {
+    const isSignedIn = useAppSelector(getIsSignedIn);
     return (
         <div className="app-navbar">
             <Tabs
@@ -31,15 +34,19 @@ export const AppNavbar = ({ tabIndex }: TProps) => {
                 <LinkTab label="Исполнители" href="/profiles" />
                 <div className="actions">
                     <Stack spacing={1} direction="row">
-                        {tabIndex !== 1 && (
-                            <Button variant="outlined" size="small">
-                                Стать исполнителем
-                            </Button>
-                        )}
                         {tabIndex !== 0 && (
-                            <Button variant="contained" size="small">
-                                Разместить заказ
-                            </Button>
+                            <Link to={isSignedIn ? "/create-task" : "/login"}>
+                                <Button variant="outlined" size="small">
+                                    Стать исполнителем
+                                </Button>
+                            </Link>
+                        )}
+                        {tabIndex !== 1 && (
+                            <Link to={isSignedIn ? "/create-task" : "/login"}>
+                                <Button variant="outlined" size="small">
+                                    Разместить заказ
+                                </Button>
+                            </Link>
                         )}
                     </Stack>
                 </div>

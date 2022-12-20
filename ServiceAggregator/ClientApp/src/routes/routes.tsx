@@ -3,8 +3,11 @@ import {
     LOGIN_ROUTE,
     REGISTER_ROUTE,
     ACCOUNT_ROUTE,
+    EDIT_PROFILE_ROUTE,
     PROFILES_ROUTE,
     PROFILE_ROUTE,
+    CREATE_TASK_ROUTE,
+    EDIT_TASK_ROUTE,
     TASKS_ROUTE,
     TASK_ROUTE,
 } from "./pathes";
@@ -15,6 +18,8 @@ import {
     AccountPage,
     ProfilesPage,
     ProfilePage,
+    EditTaskPage,
+    CreateTaskPage,
     TasksPage,
     TaskPage,
 } from "../pages";
@@ -23,6 +28,14 @@ export const authorizedRoutes = [
     {
         path: ACCOUNT_ROUTE,
         element: <AccountPage />,
+    },
+    {
+        path: EDIT_TASK_ROUTE + "/:id",
+        element: <EditTaskPage />,
+    },
+    {
+        path: CREATE_TASK_ROUTE,
+        element: <CreateTaskPage />,
     },
 ];
 

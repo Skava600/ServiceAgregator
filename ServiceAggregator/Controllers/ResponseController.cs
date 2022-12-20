@@ -34,7 +34,7 @@ namespace ServiceAggregator.Controllers
             {
                 doer = await doerService.FindAsync(response.DoerId);
                 
-                if (doer != null && !(await bannedDoerDalDataService.FindByField("doerid", doer.Id.ToString())).Any())
+                if (doer != null && (await bannedDoerDalDataService.FindAsync(doer.Id)) == null) 
                     responseDatas.Add(new ResponseData
                     {
                         Message = response.Message,

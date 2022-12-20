@@ -250,12 +250,14 @@ namespace ServiceAggregator.Controllers
         }
 
         // PUT api/<ValuesController>/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(Guid id, [FromForm] DoerModel doerModel)
+        [HttpPut]
+        [Authorize]
+        public async Task<IActionResult> Put([FromForm] DoerModel doerModel)
         {
             DoerResult doerResult = new DoerResult { Success = false };
 
-            Doer? doer = await doerService.FindAsync(id);
+
+            Doer? doer = (await doerService.FindByField("accountid", User.FindFirst("Id")?.Value)).FirstOrDefault();
 
             if (doer == null)
             {
@@ -291,8 +293,8 @@ namespace ServiceAggregator.Controllers
 
             if (doerResult.Errors.Count == 0)
             {
-                await doerSectionService.DeleteDoerSectionsByDoerId(id);
-                sections.ForEach(async s => await doerSectionService.AddAsync(new DoerSection { Id = Guid.NewGuid(), DoerId = id,  SectionId = s.Id}));
+                await doerSectionService.DeleteDoerSectionsByDoerId(doer.Id);
+                sections.ForEach(async s => await doerSectionService.AddAsync(new DoerSection { Id = Guid.NewGuid(), DoerId = doer.Id,  SectionId = s.Id}));
                 doer!.DoerName = doerModel.DoerName;
                 doer.DoerDescription = doerModel.DoerDescription;
                 await doerService.UpdateAsync(doer);

@@ -18,6 +18,7 @@ namespace ServiceAggregator.Models
             Lastname = account.Lastname;
             Patronym = account.Patronym;
             Location = account.Location;
+            IsAdmin = account.IsAdmin;
             PhoneNumber = account.PhoneNumber;
         }
 

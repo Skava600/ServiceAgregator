@@ -271,7 +271,7 @@ namespace ServiceAggregator.Controllers
                 result.Errors.Add(CustomerResultConstants.ERROR_CUSTOMER_NOT_EXIST);
                 return Json(result);
             }
-            if (orderModel.CustomerId != customer.Id && !account.IsAdmin)
+            if (orderModel.CustomerId != null && !account.IsAdmin)
             {
                 result.Errors.Add(AccountResultsConstants.ERROR_PERMISSION_DENIED);
             }

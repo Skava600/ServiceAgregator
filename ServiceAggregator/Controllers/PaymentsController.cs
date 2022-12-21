@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ServiceAggregator.Entities;
 using ServiceAggregator.Services.DataServices.Interfaces;
 using Stripe;
 using Stripe.Checkout;
@@ -60,7 +61,7 @@ namespace ServiceAggregator.Controllers
 
         [Authorize]
         [HttpPost]
-        public IActionResult PaymentSuccess()
+        public async Task<IActionResult> PaymentSuccess()
         {
             Guid userId;
             if (!Guid.TryParse(User.FindFirst("Id")?.Value, out userId))
@@ -68,11 +69,20 @@ namespace ServiceAggregator.Controllers
                 return Json(Results.Text("Денежки пришли, но подписки вам не будет."));
             }
 
-            subscriberService.AddAsync(new Entities.Subscriber
+            Subscriber? subscriber = await subscriberService.FindAsync(userId);
+            if (subscriber != null)
             {
-                Id = userId,
-                SubscribeExpireDate = DateTime.Now.AddMonths(1),
-            });
+                subscriber.SubscribeExpireDate = DateTime.Now.AddMonths(1);
+                await subscriberService.UpdateAsync(subscriber);
+            }
+            else
+            {
+                await subscriberService.AddAsync(new Subscriber
+                {
+                    Id = userId,
+                    SubscribeExpireDate = DateTime.Now.AddMonths(1),
+                });
+            }
             return Json(Results.Text("Спасибо спасибо спасибо спасибо"));
         }
     }

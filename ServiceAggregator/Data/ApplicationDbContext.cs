@@ -19,6 +19,7 @@ namespace ServiceAggregator.Data
         public DbTable<BannedCustomer> BannedCustomers { get; set; }
         public DbTable<BannedDoer> BannedDoers { get; set; }
         public DbTable<DeletedOrder> DeletedOrders { get; set; }
+        public DbTable<Subscriber> Subscribers { get; set; }
         public DbTable<BannedAccount> BannedAccounts { get; set; }
         public ApplicationDbContext(string connectionString)
        : base(connectionString)

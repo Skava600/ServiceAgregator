@@ -11,6 +11,7 @@ namespace ServiceAggregator.Models
         public string Status { get; set; } = "";
         public DateTime ExpireDate { get; set; }
         public double? Price { get; set; }
+        public bool IsPromoting { get; set; }
         public int ResponseCount { get; set; }
         public CustomerData Customer { get; set; }  
         public SectionData Section { get; set; }

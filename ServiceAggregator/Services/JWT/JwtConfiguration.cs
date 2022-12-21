@@ -40,9 +40,10 @@ namespace ServiceAggregator.Services.JWT
                                       policy.WithOrigins("https://localhost:44492")
                                       .WithMethods("PUT", "DELETE", "GET", "POST", "UPDATE")
                                       .AllowAnyHeader()
-                                      .AllowAnyMethod().WithExposedHeaders();
-                                      
+                                      .AllowAnyMethod().WithExposedHeaders("Location");
+
                                   });
+               
             });
 
             services.AddSwaggerGen(

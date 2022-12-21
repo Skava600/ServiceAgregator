@@ -42,8 +42,8 @@ namespace ServiceAggregator.Controllers
                     },
                 },
                 Mode = "payment",
-                SuccessUrl = Url.Link("DefaultApi", new { controller = "Payments", action = "Post" }),
-                CancelUrl = Url.Link("DefaultApi", new { controller = "Payments", action = "Get" }),
+                SuccessUrl = Url.Link("default", new { controller = "payments", action = "Post" }),
+                CancelUrl = Url.Link("default", new { controller = "payments", action = "Get" }),
             };
 
             var service = new SessionService();

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ServiceAggregator.Entities;
 using ServiceAggregator.Models;
 using ServiceAggregator.Services.DataServices.Interfaces;
+using Stripe;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -342,6 +343,7 @@ namespace ServiceAggregator.Controllers
         public async Task<IActionResult> MarkOrderDone(Guid id)
         {
             Order? order = await orderService.FindAsync(id);
+            
             OrderResult result = new OrderResult { Success = true };
 
             if (order != null && order.Status != OrderStatus.InProgress)
@@ -418,6 +420,7 @@ namespace ServiceAggregator.Controllers
             {
                 return Json(false);
             }
+           
 
             var doer = (await doerDalDataService.FindByField("accountid", accountId.ToString())).FirstOrDefault();
             if (doer == null)
@@ -432,6 +435,12 @@ namespace ServiceAggregator.Controllers
             if (order == null)
             {
                 return Json(Results.BadRequest("Incorrent order."));
+            }
+            Entities.Customer? myCustomerProfile = (await customerService.GetByAccountId(accountId));
+
+            if (myCustomerProfile != null && myCustomerProfile.Id == order.CustomerId)
+            {
+                return Json(false);
             }
 
             if (order.Status != OrderStatus.Open)

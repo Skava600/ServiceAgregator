@@ -6,7 +6,8 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ASPNETCORE_HOSTINGSTARTUPASSEMBLIES": "Microsoft.AspNetCore.SpaProxy",
-        "STRIPE_SECRET_KEY": "sk_test_51MHDFFIB14u0TyBZrDetIw39JDFTDeVxeoGpscuJI9duMS711Fjy6oY1ySfmPIJLrv6kjisa05FPL1ecOpQXVwPC005Wf7zcnc"
+        "STRIPE_SECRET_KEY": "sk_test_51MHDFFIB14u0TyBZrDetIw39JDFTDeVxeoGpscuJI9duMS711Fjy6oY1ySfmPIJLrv6kjisa05FPL1ecOpQXVwPC005Wf7zcnc",
+        "ConnectionStrings:DataAccessPostgreSqlProviderNeon": "Server=ep-fancy-field-059547.us-east-2.aws.neon.tech;Database=neondb;user id=uskava7;Password=ju6Lbd3ICvUm;Include Error Detail=true"
       },
       "applicationUrl": "https://localhost:7280;http://localhost:5280"
     },

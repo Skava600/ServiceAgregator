@@ -73,10 +73,5 @@ namespace ServiceAggregator.Repos
 
             return orders;
         }
-
-        public override Task<int> Update(Order entity)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

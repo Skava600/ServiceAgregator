@@ -44,11 +44,6 @@ namespace ServiceAggregator.Repos
             return workSections;
         }
 
-        public override Task<int> Update(Section entity)
-        {
-            throw new NotImplementedException();
-        }
-
 
 
 

@@ -42,7 +42,7 @@ namespace ServiceAggregator.Controllers
                     },
                 },
                 Mode = "payment",
-                SuccessUrl = "https://localhost:44492",
+                SuccessUrl = "https://localhost:44492/premium-sub-thanks",
                 CancelUrl = "https://localhost:44492",
             };
 
@@ -56,7 +56,7 @@ namespace ServiceAggregator.Controllers
         [HttpGet]
         public IActionResult PaymentFail()
         {
-            return Json(Results.Text("Э слыш плати"));
+            return Json(Results.Text("Платеж не прошел."));
         }
 
         [Authorize]
@@ -83,7 +83,7 @@ namespace ServiceAggregator.Controllers
                     SubscribeExpireDate = DateTime.Now.AddMonths(1),
                 });
             }
-            return Json(Results.Text("Спасибо спасибо спасибо спасибо"));
+            return Json(Results.Text("Спасибо спасибо."));
         }
     }
  

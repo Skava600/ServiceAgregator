@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using ServiceAggregator.Entities;
 using ServiceAggregator.Models;
 using ServiceAggregator.Services.DataServices.Interfaces;
-using Stripe;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -17,6 +16,7 @@ namespace ServiceAggregator.Controllers
         private ICustomerDalDataService customerService;
         private ISectionDalDataService sectionDalDataService;
         private IAccountDalDataService accountService;
+        private ISubscriberDalDataService subscriberService;
         private IOrderResponseDalDataService orderResponseService;
         private IDoerDalDataService doerDalDataService;
         public OrdersController(
@@ -25,7 +25,8 @@ namespace ServiceAggregator.Controllers
             ISectionDalDataService sectionDalDataService,
             ICustomerDalDataService customerService, 
             IOrderResponseDalDataService orderResponseDal,
-            IDoerDalDataService doerService)
+            IDoerDalDataService doerService,
+            ISubscriberDalDataService subscriberService)
         {
             this.orderService = orderService;
             this.accountService = accountService;
@@ -33,6 +34,7 @@ namespace ServiceAggregator.Controllers
             this.sectionDalDataService = sectionDalDataService;
             this.orderResponseService = orderResponseDal;
             this.doerDalDataService = doerService;
+            this.subscriberService = subscriberService;
         }
 
         [HttpPost]
@@ -77,8 +79,10 @@ namespace ServiceAggregator.Controllers
             foreach (var order in orders)
             {
                 section = await sectionDalDataService.FindAsync(order.SectionId);
+                Subscriber? subscriber = await subscriberService.FindAsync((await accountService.GetAccountByCustomerId(order.CustomerId))!.Id);
                 if (section != null)
                 {
+                    
                     orderData = new OrderData
                     {
                         Id = order.Id,
@@ -88,6 +92,7 @@ namespace ServiceAggregator.Controllers
                         Location = order.Location,
                         ExpireDate = order.ExpireDate,
                         Status = order.Status.ToString(),
+                        IsPromoting = subscriber == null? false : subscriber.SubscribeExpireDate < DateTime.Now,
                         ResponseCount = await orderResponseService.GetCountOfResponsesInOrder(order.Id),
                         Section = new SectionData
                         {
@@ -456,7 +461,7 @@ namespace ServiceAggregator.Controllers
             var responses = await orderResponseService.FindByField("orderid", orderId.ToString());
             if (responses.Where(r => r.DoerId == doer.Id).Any())
             {
-                return Json(false);
+
             }
 
             return Json(true);

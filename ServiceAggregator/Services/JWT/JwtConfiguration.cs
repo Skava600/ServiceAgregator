@@ -43,6 +43,7 @@ namespace ServiceAggregator.Services.JWT
                                       .AllowAnyMethod().WithExposedHeaders("Location");
 
                                   });
+               
             });
 
             services.AddSwaggerGen(

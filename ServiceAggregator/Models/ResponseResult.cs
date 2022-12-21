@@ -10,5 +10,6 @@
     {
         public const string ERROR_ALREADY_APPLIED = "Вы уже откликались на данный заказ.";
         public const string ERROR_RESPONSE_NOT_EXIST = "Данный отклик не существует.";
+        public const string ERROR_ORDER_ALREADY_HAVE_ACTIVE_RESPONSE = "Данный заказ уже имеет активного исполнителя.";
     }
 }

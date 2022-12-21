@@ -378,59 +378,5 @@ namespace ServiceAggregator.Controllers
 
             return Json(result);
         }
-
-        [HttpPost]
-        [Authorize]
-        public async Task<IActionResult> ApproveOrderResponse(Guid orderId, Guid responseId)
-        {
-            Guid userId;
-            var order = await orderService.FindAsync(orderId);
-            var response = await orderResponseService.FindAsync(responseId);
-
-
-            OrderResult orderResult = new OrderResult
-            {
-                Success = true,
-            };
-
-            if (!Guid.TryParse(User.FindFirst("Id")?.Value, out userId))
-            {
-                orderResult.Errors.Add(AccountResultsConstants.ERROR_AUTHORISATION);
-            }
-            var customer = await customerService.GetByAccountId(userId);
-            if (customer == null)
-            {
-                orderResult.Errors.Add(CustomerResultConstants.ERROR_CUSTOMER_NOT_EXIST);
-            }
-
-            if (order == null)
-            {
-                orderResult.Errors.Add(OrderResultConstants.ERROR_ORDER_NOT_EXIST);
-            }
-
-            if (response == null)
-            {
-                orderResult.Errors.Add(ResponseResultConstants.ERROR_RESPONSE_NOT_EXIST);
-
-            }
-
-            if (customer != null && order != null && customer.Id != order.CustomerId)
-            {
-                orderResult.Errors.Add(AccountResultsConstants.ERROR_PERMISSION_DENIED);
-            }
-
-            if (orderResult.Errors.Count > 0)
-            {
-                orderResult.Success = false;
-            }
-            else
-            {
-                order!.DoerId = response!.DoerId;
-                order.Status = OrderStatus.InProgress;
-                await orderService.UpdateAsync(order);
-            }
-
-            return Json(orderResult);
-        }
     }
 }

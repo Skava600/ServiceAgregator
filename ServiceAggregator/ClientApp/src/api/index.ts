@@ -5,6 +5,7 @@ const accountPath = "Account";
 const profilePath = "Doer";
 const tasksPath = "Orders";
 const responsesPath = "Response";
+const paymentsPath = "Payments";
 
 const getFormData = (data: { [key: string]: any }) => {
     const formData = new FormData();
@@ -227,16 +228,22 @@ export const updateProfile = (
     });
 };
 
-export const respondToTask = (data: {
-    message: string;
-    orderId: ITask["id"];
-}) => {
+export const respondToTask = (
+    data: {
+        message: string;
+        orderId: ITask["id"];
+    },
+    token: string
+) => {
     const formData = getFormData(data);
 
     return appAxios({
         url: `${responsesPath}`,
         method: "POST",
         data: formData,
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
     });
 };
 
@@ -245,6 +252,22 @@ export const getCanRespond = (
     token: string
 ) => {
     return appAxios.get(`${tasksPath}/CanRespond/${data.orderId}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+export const createCheckoutSession = () => {
+    return appAxios.post(`${paymentsPath}/create-checkout-session`);
+};
+
+export const getPayments = () => {
+    return appAxios.get(`${paymentsPath}`);
+};
+
+export const postPayments = (token: string) => {
+    return appAxios.post(`${paymentsPath}`, {
         headers: {
             Authorization: `Bearer ${token}`,
         },

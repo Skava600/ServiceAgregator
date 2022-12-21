@@ -8,20 +8,28 @@ import {
     AccordionDetails,
     Grid,
     Card,
+    Button,
 } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { ProfileInfo, Page, TaskCard } from "../../components";
+import { ProfileInfo, Page, TaskCard, ProgressSpinner } from "../../components";
 import { useAppSelector } from "../../state/store";
 import { getToken, getUser } from "../../state/selectors/userSelectors";
-import { getTasks } from "../../api";
+import {
+    createCheckoutSession,
+    getPayments,
+    getTasks,
+    postPayments,
+} from "../../api";
 import { ITask } from "../../api/interfaces";
 import "./accountPage.less";
 
 const INITIAL_STATE = {
-    expanded: "panel1",
+    expanded: "",
     myTasks: [] as ITask[],
     myOrders: [] as ITask[],
+    myTasksLoading: true,
+    myOrdersLoading: true,
 };
 
 export const AccountPage = () => {
@@ -30,17 +38,32 @@ export const AccountPage = () => {
     );
     const [myTasks, setMyTasks] = useState(INITIAL_STATE.myTasks);
     const [myOrders, setMyOrders] = useState(INITIAL_STATE.myOrders);
+    const [myTasksLoading, setMyTasksLoading] = useState(
+        INITIAL_STATE.myTasksLoading
+    );
+    const [myOrdersLoading, setMyOrdersLoading] = useState(
+        INITIAL_STATE.myOrdersLoading
+    );
     const user = useAppSelector(getUser);
     const token = useAppSelector(getToken);
 
     useEffect(() => {
-        getTasks({ slugs: [], isMyOrders: true, token }).then(({ data }) =>
-            setMyTasks(data)
-        );
+        getTasks({ slugs: [], isMyOrders: true, token }).then(({ data }) => {
+            setMyTasks(data);
+            setMyTasksLoading(false);
+            setExpanded("panel1");
+        });
     }, [token]);
 
     const handleChange = (panel: string) => (_: any, isExpanded: boolean) => {
         setExpanded(isExpanded ? panel : false);
+    };
+
+    const handleBuyPremium = () => {
+        createCheckoutSession().then((response) => {
+            const location = response.headers.location;
+            console.log(location);
+        });
     };
 
     return (
@@ -51,10 +74,10 @@ export const AccountPage = () => {
                         <AccountCircleIcon className="account-img" />
                         <Divider />
                         <p className="info-row name">
-                            Яблонский Кирилл Дмитриевич
+                            {`${user?.lastname} ${user?.firstname} ${user?.patronym}`}
                         </p>
-                        <p className="info-row">blackshark564@gmail.com</p>
-                        <p className="info-row">+375447010025</p>
+                        <p className="info-row">{user?.login}</p>
+                        <p className="info-row">{user?.phoneNumber}</p>
                     </Paper>
                 </Grid>
                 <Grid item xs={12} md={12} lg={7}>
@@ -79,12 +102,16 @@ export const AccountPage = () => {
                             {myTasks.map((task) => (
                                 <TaskCard task={task} isMine />
                             ))}
-                            {!myTasks.length && (
-                                <Card className="no-data">
-                                    <Typography>
-                                        Вы не разместили ни одного заказа...
-                                    </Typography>
-                                </Card>
+                            {myTasksLoading ? (
+                                <ProgressSpinner />
+                            ) : (
+                                !myTasks.length && (
+                                    <Card className="no-data">
+                                        <Typography>
+                                            Вы не разместили ни одного заказа...
+                                        </Typography>
+                                    </Card>
+                                )
                             )}
                         </AccordionDetails>
                     </Accordion>
@@ -106,16 +133,37 @@ export const AccountPage = () => {
                         </AccordionSummary>
                         <Divider />
                         <AccordionDetails>
-                            <Typography>
-                                Donec placerat, lectus sed mattis semper, neque
-                                lectus feugiat lectus, varius pulvinar diam eros
-                                in elit. Pellentesque convallis laoreet laoreet.
-                            </Typography>
+                            {myOrders.map((task) => (
+                                <TaskCard task={task} isMine />
+                            ))}
+                            {myOrdersLoading ? (
+                                <ProgressSpinner />
+                            ) : (
+                                !myOrders.length && (
+                                    <Card className="no-data">
+                                        <Typography>
+                                            Вы не разместили ни одного заказа...
+                                        </Typography>
+                                    </Card>
+                                )
+                            )}
                         </AccordionDetails>
                     </Accordion>
                 </Grid>
                 <Grid item xs={12}>
                     <ProfileInfo user={user!} />
+                </Grid>
+                <Grid item xs={12} className="payment-grid-cell">
+                    <Paper className="payment-wrapper">
+                        <Typography>
+                            Премиум аккаунт поднимет все ваши заказы на первые
+                            места в поиске! Скорее же, подними себе шансы
+                            быстрее получить качественное обсулживание!
+                        </Typography>
+                        <Button onClick={handleBuyPremium}>
+                            Купить премиум
+                        </Button>
+                    </Paper>
                 </Grid>
             </Grid>
         </Page>

@@ -177,7 +177,7 @@ export const EditTaskPage = () => {
 
                         <TextField
                             sx={{ width: "100%" }}
-                            value={price}
+                            value={price || ""}
                             onChange={(e) => handlePriceChange(e.target.value)}
                             label="Цена вопроса"
                             InputProps={{
@@ -229,7 +229,7 @@ export const EditTaskPage = () => {
                                 Отмена
                             </Button>
                             <Button variant="contained" onClick={handleConfirm}>
-                                Создать
+                                Сохранить изменения
                             </Button>
                         </Stack>
                     </Stack>

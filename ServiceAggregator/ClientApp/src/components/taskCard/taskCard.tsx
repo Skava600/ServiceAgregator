@@ -83,7 +83,7 @@ export const TaskCard = ({
                 <div className="task-summary">
                     <div>
                         <WorkIcon fontSize="small" />
-                        <span className="info">{task.section.name}</span>
+                        <span className="info">{task.section?.name}</span>
                     </div>
                     <div>
                         <LocationOnIcon fontSize="small" />

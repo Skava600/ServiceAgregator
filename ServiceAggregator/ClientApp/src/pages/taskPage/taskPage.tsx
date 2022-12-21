@@ -66,26 +66,36 @@ export const TaskPage = () => {
         });
     }, [id, token]);
 
-    useEffect(() => {
+    const fetchTask = useCallback(() => {
         if (!id) return;
 
+        setIsPageLoading(true);
         getTask({ id }).then(({ data }) => {
             setIsPageLoading(false);
             setTask(data);
         });
+    }, [id]);
+
+    const fetchResponses = useCallback(() => {
+        if (!id) return;
+
+        setIsResponseDataLoading(true);
         getResponses({ id }).then(({ data }) => {
             setIsResponseDataLoading(false);
             setResponses(data);
         });
-        fetchCanRespond();
-    }, [fetchCanRespond, id]);
+    }, [id]);
 
-    useEffect(() => {}, []);
+    useEffect(() => {
+        if (!id) return;
+        fetchTask();
+        fetchResponses();
+        fetchCanRespond();
+    }, [fetchCanRespond, fetchResponses, fetchTask, id]);
 
     const handleRespond = () => {
-        respondToTask({ message: respondMessage, orderId: id! }).then(
+        respondToTask({ message: respondMessage, orderId: id! }, token!).then(
             ({ data }) => {
-                console.log(data);
                 handleCloseRespondModal();
                 fetchCanRespond();
             }
@@ -104,6 +114,7 @@ export const TaskPage = () => {
                         onChange={(e) => setRespondMessage(e.target.value)}
                         size="small"
                         label="Комментарий"
+                        multiline
                     />
                     <Button
                         className="respond-button"

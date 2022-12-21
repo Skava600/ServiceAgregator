@@ -12,6 +12,7 @@ export interface IUser {
     location: string;
     login: string;
     doerId: string | null;
+    isAdmin: boolean;
 }
 
 export interface IWorkCategory {

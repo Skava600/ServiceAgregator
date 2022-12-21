@@ -59,7 +59,7 @@ namespace ServiceAggregator.Controllers
                 return Json(result);
             }
 
-            var bannedDoer = (await bannedDoerDalDataService.FindByField("doerid", doer.Id.ToString())).FirstOrDefault();
+            var bannedDoer = (await bannedDoerDalDataService.FindByField("id", doer.Id.ToString())).FirstOrDefault();
             if (bannedDoer != null)
             {
                 result.Errors.Add(DoerResultsConstants.ERROR_DOER_BANNED + bannedDoer.BanReason);

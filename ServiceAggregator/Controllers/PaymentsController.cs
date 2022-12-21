@@ -50,7 +50,7 @@ namespace ServiceAggregator.Controllers
             Session session = service.Create(options);
 
             Response.Headers.Add("Location", session.Url);
-            return Json(new StatusCodeResult(303));
+            return Json(session.Url);
         }
 
         [HttpGet]

@@ -9,13 +9,19 @@ internal static class TableMappingHelper
         foreach (var property in properties)
         {
             var value = property.GetValue(instance);
-            if (value != null)
+
+
+            if (!property.PropertyType.IsEnum)
             {
-                if (value.GetType() == typeof(DateTime))
+
+                if (value != null)
                 {
-                    dictionary.Add(property.Name, ((DateTime)value).ToString("yyyy-MM-dd"));
+                    if (value.GetType() == typeof(DateTime))
+                    {
+                        dictionary.Add(property.Name, ((DateTime)value).ToString("yyyy-MM-dd"));
+                    }
+                    else dictionary.Add(property.Name, value.ToString());
                 }
-                else dictionary.Add(property.Name, value.ToString());    
             }
         }
 

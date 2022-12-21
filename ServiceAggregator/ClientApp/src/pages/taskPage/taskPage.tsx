@@ -1,15 +1,23 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Divider, Paper, Rating, Typography } from "@mui/material";
+import {
+    Button,
+    Divider,
+    Modal,
+    Paper,
+    Rating,
+    TextField,
+    Typography,
+} from "@mui/material";
 import FaceIcon from "@mui/icons-material/Face";
-import { getResponses, getTask } from "../../api";
-import { ITask, ITaskResponse, IWorkSection } from "../../api/interfaces";
+import { getCanRespond, getResponses, getTask, respondToTask } from "../../api";
+import { ITask, ITaskResponse } from "../../api/interfaces";
 import { Page, ProfileCard, ProgressSpinner, TaskCard } from "../../components";
+import { useAppSelector } from "../../state/store";
+import { getToken } from "../../state/selectors/userSelectors";
 import "./taskPage.less";
 
 const reviewWordForms = ["отзыв", "отзыва", "отзывов"];
-const orderWordForms = ["заказ", "заказа", "заказов"];
-
 function getWordForm(n: number, wordForms: string[]) {
     n = Math.abs(n) % 100;
     var n1 = n % 10;
@@ -36,29 +44,76 @@ const INITIAL_STATE = {
 
 export const TaskPage = () => {
     const { id } = useParams();
+    const token = useAppSelector(getToken);
     const [isPageLoading, setIsPageLoading] = useState(INITIAL_STATE.isLoading);
     const [isResponseDataLoading, setIsResponseDataLoading] = useState(
         INITIAL_STATE.isLoading
     );
     const [task, setTask] = useState(INITIAL_STATE.task);
     const [responses, setResponses] = useState(INITIAL_STATE.responses);
+    const [canRespond, setCanRespond] = useState(false);
+
+    const [isRespondModalOpened, setIsRespondModalOpened] = useState(false);
+    const handleOpenRespondModal = () => setIsRespondModalOpened(true);
+    const handleCloseRespondModal = () => setIsRespondModalOpened(false);
+    const [respondMessage, setRespondMessage] = useState("");
+
+    const fetchCanRespond = useCallback(() => {
+        if (!token || !id) return;
+
+        getCanRespond({ orderId: id }, token).then(({ data }) => {
+            setCanRespond(data.canRespond);
+        });
+    }, [id, token]);
 
     useEffect(() => {
-        if (id) {
-            getTask({ id }).then(({ data }) => {
-                setIsPageLoading(false);
-                setTask(data);
+        if (!id) return;
+
+        getTask({ id }).then(({ data }) => {
+            setIsPageLoading(false);
+            setTask(data);
+        });
+        getResponses({ id }).then(({ data }) => {
+            setIsResponseDataLoading(false);
+            setResponses(data);
+        });
+        fetchCanRespond();
+    }, [fetchCanRespond, id]);
+
+    useEffect(() => {}, []);
+
+    const handleRespond = () => {
+        respondToTask({ message: respondMessage, orderId: id! }).then(
+            ({ data }) => {
                 console.log(data);
-            });
-            getResponses({ id }).then(({ data }) => {
-                setIsResponseDataLoading(false);
-                setResponses(data);
-            });
-        }
-    }, [id]);
+                handleCloseRespondModal();
+                fetchCanRespond();
+            }
+        );
+    };
 
     const page = (
         <>
+            <Modal
+                open={isRespondModalOpened}
+                onClose={handleCloseRespondModal}
+            >
+                <Paper className="response-modal">
+                    <TextField
+                        value={respondMessage}
+                        onChange={(e) => setRespondMessage(e.target.value)}
+                        size="small"
+                        label="Комментарий"
+                    />
+                    <Button
+                        className="respond-button"
+                        variant="contained"
+                        onClick={handleRespond}
+                    >
+                        Откликнуться
+                    </Button>
+                </Paper>
+            </Modal>
             <div className="first-row">
                 <Paper className="task-rating">
                     <div className="task-summary">
@@ -75,8 +130,23 @@ export const TaskPage = () => {
                         )}`}</span>
                     </div>
                 </Paper>
-                <TaskCard task={task} variant="short" />
+                <TaskCard
+                    task={task}
+                    variant="short"
+                    respondButton={
+                        canRespond && (
+                            <Button
+                                className="respond-button"
+                                variant="contained"
+                                onClick={handleOpenRespondModal}
+                            >
+                                Откликнуться
+                            </Button>
+                        )
+                    }
+                />
             </div>
+
             <div className="rest">
                 <b className="rest-header">Отклики:</b>
                 {isResponseDataLoading ? (
@@ -97,7 +167,11 @@ export const TaskPage = () => {
                         </div>
                     ))
                 ) : (
-                    <p>У этого заказа пока нет откликов</p>
+                    <Paper className="no-responses">
+                        <Typography>
+                            У этого заказа пока нет откликов
+                        </Typography>
+                    </Paper>
                 )}
             </div>
         </>

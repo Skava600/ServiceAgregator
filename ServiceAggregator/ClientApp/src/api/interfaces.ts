@@ -11,6 +11,7 @@ export interface IUser {
     phoneNumber: string;
     location: string;
     login: string;
+    doerId: string | null;
 }
 
 export interface IWorkCategory {

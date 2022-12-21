@@ -25,7 +25,6 @@ export const AppNavbar = ({ tabIndex }: TProps) => {
     const user = useAppSelector(getUser);
     const isSignedIn = useAppSelector(getIsSignedIn);
 
-    //@ts-ignore
     const accountHasProfile = !!user?.doerId;
     return (
         <div className="app-navbar">
@@ -51,8 +50,7 @@ export const AppNavbar = ({ tabIndex }: TProps) => {
                             <Link
                                 to={
                                     isSignedIn
-                                        ? //@ts-ignore
-                                          `/edit-profile/${user.doerId}`
+                                        ? `/edit-profile/${user.doerId}`
                                         : "/login"
                                 }
                             >

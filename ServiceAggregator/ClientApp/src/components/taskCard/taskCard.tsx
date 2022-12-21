@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import moment from "moment";
 import { Link } from "react-router-dom";
-import { Card, IconButton, Rating } from "@mui/material";
+import { Button, Card, IconButton, Rating } from "@mui/material";
 import FaceIcon from "@mui/icons-material/Face";
 import Face2Icon from "@mui/icons-material/Face2";
 import Face3Icon from "@mui/icons-material/Face3";
@@ -32,6 +32,7 @@ type TProps = {
     task: ITask;
     variant?: TVariant;
     isMine?: boolean;
+    respondButton?: React.ReactNode;
 };
 
 const STATUSES = {
@@ -45,6 +46,7 @@ export const TaskCard = ({
     task,
     variant = "full",
     isMine = false,
+    respondButton,
 }: TProps) => {
     const [avatar, setAvatar] = useState<any>();
 
@@ -96,6 +98,7 @@ export const TaskCard = ({
                         </span>
                     </div>
                 </div>
+                {respondButton}
             </Card>
         </Link>
     );

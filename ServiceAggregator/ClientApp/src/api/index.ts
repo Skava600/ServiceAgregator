@@ -1,5 +1,5 @@
 import appAxios from "./axios";
-import { ITask, IUser } from "./interfaces";
+import { IProfile, ITask, IUser } from "./interfaces";
 
 const accountPath = "Account";
 const profilePath = "Doer";
@@ -186,13 +186,13 @@ export const updateTask = (
 };
 
 export const createProfile = (
-    data: Pick<ITask, "header" | "text">,
+    data: Pick<IProfile, "doerName" | "doerDescription">,
     slugs: string[],
     token: string
 ) => {
     const formData = getFormData({
-        doerName: data.header,
-        doerDescription: data.text,
+        doerName: data.doerName,
+        doerDescription: data.doerDescription,
         filters: slugs,
     });
 
@@ -203,5 +203,51 @@ export const createProfile = (
         headers: {
             Authorization: `Bearer ${token}`,
         },
+    });
+};
+
+export const updateProfile = (
+    data: Pick<IProfile, "doerName" | "doerDescription" | "id">,
+    slugs: string[],
+    token: string
+) => {
+    const formData = getFormData({
+        doerName: data.doerName,
+        doerDescription: data.doerDescription,
+        filters: slugs,
+    });
+
+    return appAxios({
+        url: `${profilePath}/Put/${data.id}`,
+        method: "PUT",
+        data: formData,
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+export const respondToTask = (data: {
+    message: string;
+    orderId: ITask["id"];
+}) => {
+    const formData = getFormData(data);
+
+    return appAxios({
+        url: `${responsesPath}`,
+        method: "POST",
+        data: formData,
+    });
+};
+
+export const getCanRespond = (
+    data: { orderId: ITask["id"] },
+    token: string
+) => {
+    return appAxios.get(`${tasksPath}/CanRespond`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        params: { orderId: data.orderId },
     });
 };

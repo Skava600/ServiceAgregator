@@ -15,21 +15,19 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider/L
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import {
     createProfile,
-    createTask,
-    getTask,
+    getProfile,
     getWorkSections,
-    updateTask,
+    updateProfile,
 } from "../../api";
 import { IWorkCategory, IWorkSection } from "../../api/interfaces";
-import { Page } from "../../components";
 import { getToken } from "../../state/selectors/userSelectors";
 import { useAppSelector } from "../../state/store";
-import { Errors } from "../../components/";
+import { Errors, SectionBadges, Page } from "../../components/";
 import "./createProfilePage.less";
 
 const INITIAL_STATE = {
-    header: "",
-    text: "",
+    doerName: "",
+    doerDescription: "",
     location: "",
     expireDate: "",
     price: null,
@@ -39,8 +37,11 @@ const INITIAL_STATE = {
 };
 
 export const CreateProfilePage = () => {
-    const [header, setHeader] = useState(INITIAL_STATE.header);
-    const [text, setText] = useState(INITIAL_STATE.text);
+    const { id } = useParams();
+    const [doerName, setDoerName] = useState(INITIAL_STATE.doerName);
+    const [doerDescription, setDoerDescription] = useState(
+        INITIAL_STATE.doerDescription
+    );
     const [sections, setSections] = useState<IWorkSection[]>(
         INITIAL_STATE.sections
     );
@@ -50,6 +51,8 @@ export const CreateProfilePage = () => {
     const [errors, setErrors] = useState(INITIAL_STATE.errors);
     const navigate = useNavigate();
     const token = useAppSelector(getToken);
+
+    const isEditMode = !!id;
 
     useEffect(() => {
         getWorkSections().then(({ data }) =>
@@ -63,14 +66,22 @@ export const CreateProfilePage = () => {
                 )
             )
         );
-    }, []);
 
-    const handleHeaderChange = (value: string) => {
-        setHeader(value);
+        if (isEditMode) {
+            getProfile({ id }).then(({ data }) => {
+                setDoerName(data.doerName);
+                setDoerDescription(data.doerDescription);
+                setSections(data.sections);
+            });
+        }
+    }, [id, isEditMode]);
+
+    const handleDoerNameChange = (value: string) => {
+        setDoerName(value);
     };
 
-    const handleTextChange = (value: string) => {
-        setText(value);
+    const handleDoerDescriptionChange = (value: string) => {
+        setDoerDescription(value);
     };
 
     const handleSlugChange = (section: IWorkSection) => {
@@ -90,7 +101,7 @@ export const CreateProfilePage = () => {
     const validateData = () => {
         let validationMsgs = [];
 
-        if (!header || !text || !sections.length) {
+        if (!doerName || !doerDescription || !sections.length) {
             validationMsgs.push("Не все поля заполнены");
         }
 
@@ -104,15 +115,33 @@ export const CreateProfilePage = () => {
 
         if (errorMsgs.length) return;
 
-        createProfile(
-            { header, text },
-            sections.map(({ slug }) => slug),
-            token!
-        ).then(({ data }) => {
-            if (!data.success) {
-                setErrors(data.errors);
-            }
-        });
+        if (isEditMode) {
+            updateProfile(
+                { doerName, doerDescription, id },
+                sections.map(({ slug }) => slug),
+                token!
+            ).then(({ data }) => {
+                if (!data.success) {
+                    setErrors(data.errors);
+                    return;
+                }
+
+                navigate("/profiles");
+            });
+        } else {
+            createProfile(
+                { doerName, doerDescription },
+                sections.map(({ slug }) => slug),
+                token!
+            ).then(({ data }) => {
+                if (!data.success) {
+                    setErrors(data.errors);
+                    return;
+                }
+
+                navigate("/profiles");
+            });
+        }
     };
 
     const handleCancel = () => {
@@ -125,22 +154,28 @@ export const CreateProfilePage = () => {
                 <Paper className="task-paper">
                     <Stack spacing={4}>
                         <Typography variant="h2">
-                            Создать профиль исполнителя
+                            {isEditMode
+                                ? "Мой профиль исполнителя"
+                                : "Создать профиль исполнителя"}
                         </Typography>
 
                         <TextField
                             sx={{ width: "100%" }}
                             multiline
-                            value={header}
-                            onChange={(e) => handleHeaderChange(e.target.value)}
+                            value={doerName}
+                            onChange={(e) =>
+                                handleDoerNameChange(e.target.value)
+                            }
                             label="Заглавие"
                         />
 
                         <TextField
                             sx={{ width: "100%" }}
                             multiline
-                            value={text}
-                            onChange={(e) => handleTextChange(e.target.value)}
+                            value={doerDescription}
+                            onChange={(e) =>
+                                handleDoerDescriptionChange(e.target.value)
+                            }
                             label="Описание"
                         />
 
@@ -160,7 +195,10 @@ export const CreateProfilePage = () => {
                             }}
                         />
 
-                        <Stack>{sections.map(({ name }) => name)}</Stack>
+                        <SectionBadges
+                            sectionsList={sections}
+                            onRemoveSection={handleSlugChange}
+                        />
 
                         <Errors errors={errors} />
 
@@ -173,7 +211,7 @@ export const CreateProfilePage = () => {
                                 Отмена
                             </Button>
                             <Button variant="contained" onClick={handleConfirm}>
-                                Создать
+                                {isEditMode ? "Сохранить изменения" : "Создать"}
                             </Button>
                         </Stack>
                     </Stack>

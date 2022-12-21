@@ -43,6 +43,10 @@ export const authorizedRoutes = [
         path: CREATE_PROFILE_ROUTE,
         element: <CreateProfilePage />,
     },
+    {
+        path: EDIT_PROFILE_ROUTE + "/:id",
+        element: <CreateProfilePage />,
+    },
 ];
 
 export const routes = [

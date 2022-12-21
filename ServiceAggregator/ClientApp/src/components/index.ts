@@ -7,3 +7,4 @@ export { CategoryTree } from "./categoryTree/categoryTree";
 export { ProgressSpinner } from "./progressSpinner/progressSpinner";
 export { TaskCard } from "./taskCard/taskCard";
 export { Errors } from "./errors/errors";
+export { SectionBadges } from "./sectionBadges/sectionBadges";

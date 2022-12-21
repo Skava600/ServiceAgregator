@@ -1,0 +1,27 @@
+.badges-wrapper{
+    width: 100%;
+    display: block;
+
+    .badges{
+        display: flex;
+        justify-content: flex-start;
+        align-items: start;
+        flex-wrap: wrap;
+        
+
+        .section-badge{
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: fit-content;
+            padding: 5px 0px 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .section-badge + .section-badge{
+            margin-left: 10px;
+        }
+    }
+}

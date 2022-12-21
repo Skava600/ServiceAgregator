@@ -81,36 +81,38 @@ export const AccountPage = () => {
                             ))}
                             {!myTasks.length && (
                                 <Card className="no-data">
-                                    <b>Вы не разместили ни одного заказа...</b>
+                                    <Typography>
+                                        Вы не разместили ни одного заказа...
+                                    </Typography>
                                 </Card>
                             )}
                         </AccordionDetails>
                     </Accordion>
-                    {/* <Accordion
-                            expanded={expanded === "panel2"}
-                            onChange={handleChange("panel2")}
+                    <Accordion
+                        expanded={expanded === "panel2"}
+                        onChange={handleChange("panel2")}
+                    >
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="panel2bh-content"
+                            id="panel2bh-header"
                         >
-                            <AccordionSummary
-                                expandIcon={<ExpandMoreIcon />}
-                                aria-controls="panel2bh-content"
-                                id="panel2bh-header"
-                            >
-                                <Typography sx={{ width: "33%", flexShrink: 0 }}>
-                                    Запросы работ
-                                </Typography>
-                                <Typography sx={{ color: "text.secondary" }}>
-                                    Отклики на ваши заявки
-                                </Typography>
-                            </AccordionSummary>
-                            <Divider />
-                            <AccordionDetails>
-                                <Typography>
-                                    Donec placerat, lectus sed mattis semper, neque
-                                    lectus feugiat lectus, varius pulvinar diam eros
-                                    in elit. Pellentesque convallis laoreet laoreet.
-                                </Typography>
-                            </AccordionDetails>
-                        </Accordion> */}
+                            <Typography sx={{ width: "33%", flexShrink: 0 }}>
+                                Запросы работ
+                            </Typography>
+                            <Typography sx={{ color: "text.secondary" }}>
+                                Отклики на ваши заявки
+                            </Typography>
+                        </AccordionSummary>
+                        <Divider />
+                        <AccordionDetails>
+                            <Typography>
+                                Donec placerat, lectus sed mattis semper, neque
+                                lectus feugiat lectus, varius pulvinar diam eros
+                                in elit. Pellentesque convallis laoreet laoreet.
+                            </Typography>
+                        </AccordionDetails>
+                    </Accordion>
                 </Grid>
                 <Grid item xs={12}>
                     <ProfileInfo user={user!} />

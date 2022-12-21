@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ServiceAggregator.Entities;
 using ServiceAggregator.Models;
 using ServiceAggregator.Repos.Interfaces;
+using ServiceAggregator.Services.DataServices.Dal;
 using ServiceAggregator.Services.DataServices.Interfaces;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -15,14 +16,14 @@ namespace ServiceAggregator.Controllers
     {
         IOrderDalDataService orderService;
         private ICustomerDalDataService customerService;
-        private ISectionRepo sectionRepo;
+        private ISectionDalDataService sectionDalDataService;
         private IAccountDalDataService accountService;
         private IOrderResponseDalDataService orderResponseService;
         private IDoerDalDataService doerDalDataService;
         public OrdersController(
             IOrderDalDataService orderService,
             IAccountDalDataService accountService,
-            ISectionRepo sectionRepo, 
+            ISectionDalDataService sectionDalDataService,
             ICustomerDalDataService customerService, 
             IOrderResponseDalDataService orderResponseDal,
             IDoerDalDataService doerService)
@@ -30,7 +31,7 @@ namespace ServiceAggregator.Controllers
             this.orderService = orderService;
             this.accountService = accountService;
             this.customerService = customerService;
-            this.sectionRepo = sectionRepo;
+            this.sectionDalDataService = sectionDalDataService;
             this.orderResponseService = orderResponseDal;
             this.doerDalDataService = doerService;
         }
@@ -67,7 +68,7 @@ namespace ServiceAggregator.Controllers
             {
                 for(int i = 0; i < orders.Count;  i++)
                 {
-                    var currentSection = await sectionRepo.Find(orders[i].SectionId);
+                    var currentSection = await sectionDalDataService.FindAsync(orders[i].SectionId);
                     if (currentSection != null) 
                         orders.RemoveAll(o => Array.IndexOf(filters, currentSection.Slug) == -1);
                 }
@@ -76,7 +77,7 @@ namespace ServiceAggregator.Controllers
             Section? section;
             foreach (var order in orders)
             {
-                section = await sectionRepo.Find(order.SectionId);
+                section = await sectionDalDataService.FindAsync(order.SectionId);
                 if (section != null)
                 {
                     orderData = new OrderData
@@ -116,7 +117,7 @@ namespace ServiceAggregator.Controllers
                 return Json(orderData);
             }
             Account? customersAccount = await accountService.GetAccountByCustomerId(order.CustomerId);
-            Section? section = await sectionRepo.Find(order.SectionId);
+            Section? section = await sectionDalDataService.FindAsync(order.SectionId);
             if (customersAccount == null)
             {
                 orderData.OrderResult.Errors.Add(CustomerResultConstants.ERROR_CUSTOMER_NOT_EXIST);
@@ -185,7 +186,7 @@ namespace ServiceAggregator.Controllers
             {
                 result.Errors.Add(AccountResultsConstants.ERROR_PERMISSION_DENIED);
             }
-            var section = await sectionRepo.FindByField("Slug", orderModel.Slug);
+            var section = await sectionDalDataService.FindByField("Slug", orderModel.Slug);
             if (!section.Any())
             {
                 result.Errors.Add(SectionResultConstants.ERROR_SECTION_NOT_EXIST);
@@ -276,7 +277,7 @@ namespace ServiceAggregator.Controllers
                 result.Errors.Add(AccountResultsConstants.ERROR_PERMISSION_DENIED);
             }
 
-            var section = await sectionRepo.FindByField("Slug", orderModel.Slug);
+            var section = await sectionDalDataService.FindByField("Slug", orderModel.Slug);
             if (!section.Any())
             {
                 result.Errors.Add(SectionResultConstants.ERROR_SECTION_NOT_EXIST);
@@ -377,6 +378,39 @@ namespace ServiceAggregator.Controllers
             }
 
             return Json(result);
+        }
+
+        [HttpPost("{id:Guid}")]
+        [Authorize]
+        public async Task<IActionResult> CanRespond(Guid orderId)
+        {
+            Guid accountId = Guid.Parse(User.FindFirst("Id")?.Value);
+            var doer = (await doerDalDataService.FindByField("accountid", accountId.ToString())).FirstOrDefault();
+            if (doer == null)
+            {
+                return Json(false);
+            }
+
+            var sections = await sectionDalDataService.GetSectionsByDoerIdAsync(doer.Id);
+
+            var order = await orderService.FindAsync(orderId);
+
+            if (order == null)
+            {
+                return Json(Results.BadRequest("Incorrent order."));
+            }
+
+            if (order.Status != OrderStatus.Open)
+            {
+                return Json(false);
+            }
+
+            if (!sections.Where(s => s.Id == order.SectionId).Any())
+            {
+                return Json(false);
+            }
+
+            return Json(true);
         }
     }
 }

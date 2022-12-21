@@ -85,7 +85,7 @@ namespace ServiceAggregator.Controllers
                     OrderCount = 0,
                 };
                 Section? section;
-                model.Filters = model.Filters[0].Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
+                model.Filters = model.Filters[0].Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).Distinct().ToList();
                 int sectionCount = 0;
                 for(int i = 0; i < model.Filters.Count; i++)
                 {
@@ -281,7 +281,7 @@ namespace ServiceAggregator.Controllers
                 doerResult.Errors.Add(DoerResultsConstants.ERROR_DOER_DESCRIPTION_NULL_OR_EMPTY);
             }
 
-            doerModel.Filters = doerModel.Filters[0].Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
+            doerModel.Filters = doerModel.Filters[0].Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).Distinct().ToList();
             Section? section;
             List<Section> sections = new List<Section>();
             for (int i = 0; i < doerModel.Filters.Count; i++)

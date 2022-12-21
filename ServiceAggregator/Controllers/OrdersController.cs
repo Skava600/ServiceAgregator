@@ -380,7 +380,7 @@ namespace ServiceAggregator.Controllers
             return Json(result);
         }
 
-        [HttpPost("{id:Guid}")]
+        [HttpPost("{orderId:Guid}")]
         [Authorize]
         public async Task<IActionResult> CanRespond(Guid orderId)
         {

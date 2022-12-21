@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ServiceAggregator.Entities;
 using ServiceAggregator.Models;
-using ServiceAggregator.Repos.Interfaces;
-using ServiceAggregator.Services.DataServices.Dal;
 using ServiceAggregator.Services.DataServices.Interfaces;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -103,7 +101,6 @@ namespace ServiceAggregator.Controllers
              
         } 
 
-        // GET api/<ValuesController>/5
         [HttpGet("{id:Guid}")]
         public async Task<IActionResult> Get(Guid id)
         {
@@ -156,6 +153,53 @@ namespace ServiceAggregator.Controllers
             }
 
             return Json(orderData);
+
+        }
+
+        // GET api/<ValuesController>/5
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> GetMyExecutingOrders()
+        {
+            List<OrderData> ordersData = new List<OrderData>();
+
+            Guid accountId = Guid.Parse(User.FindFirst("Id")?.Value);
+            var doer = (await doerDalDataService.FindByField("accountid", accountId.ToString())).FirstOrDefault();
+            if (doer == null)
+            {
+                return Json(Array.Empty<OrderData>());
+            }
+
+            var myOrders = await orderService.FindByField("doerid", doer.Id.ToString());
+
+            OrderData orderData;
+            Section? section;
+            foreach (var order in myOrders)
+            {
+                section = await sectionDalDataService.FindAsync(order.SectionId);
+                if (section != null)
+                {
+                    orderData = new OrderData
+                    {
+                        Id = order.Id,
+                        Header = order.Header,
+                        Text = order.Text,
+                        Price = order.Price,
+                        Location = order.Location,
+                        ExpireDate = order.ExpireDate,
+                        Status = order.Status.ToString(),
+                        ResponseCount = await orderResponseService.GetCountOfResponsesInOrder(order.Id),
+                        Section = new SectionData
+                        {
+                            Name = section.Name,
+                            Slug = section.Slug,
+                        }
+                    };
+                    ordersData.Add(orderData);
+                };
+            }
+
+            return Json(ordersData);
 
         }
 
@@ -216,23 +260,7 @@ namespace ServiceAggregator.Controllers
 
             }
             return Json(result);
-        }
-
-
-        [HttpDelete]
-        [Authorize]
-        public async Task<IActionResult> DeleteOrder(Guid id)
-        {
-            Guid userId;
-            OrderResult result = new OrderResult{  Success = true };
-            if (!Guid.TryParse(User.FindFirst("Id")?.Value, out userId))
-            {
-                result.Errors.Add(AccountResultsConstants.ERROR_AUTHORISATION);
-            }
-
-
-            return Json(result);
-        }
+        } 
 
         [HttpPut]
         [Authorize]

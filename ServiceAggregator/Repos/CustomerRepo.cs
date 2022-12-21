@@ -40,10 +40,5 @@ namespace ServiceAggregator.Repos
 
             return customer;
         }
-
-        public override Task<int> Update(Customer entity)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

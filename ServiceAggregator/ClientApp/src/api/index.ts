@@ -267,7 +267,50 @@ export const getPayments = () => {
 };
 
 export const postPayments = (token: string) => {
-    return appAxios.post(`${paymentsPath}`, {
+    return appAxios({
+        url: `${paymentsPath}`,
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+export const cancelOrder = (id: string, token: string) => {
+    return appAxios({
+        url: `${tasksPath}/MarkOrderCanceled`,
+        method: "POST",
+        params: { id },
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+export const getDoersOrders = (token: string) => {
+    return appAxios({
+        url: `${profilePath}/GetDoersOrders`,
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+export const confirmResponse = (token: string) => {
+    return appAxios({
+        url: `${tasksPath}/MarkOrderCanceled`,
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+export const getIsMyTask = (orderId: string, token: string) => {
+    return appAxios({
+        url: `${tasksPath}/GetIsMyOrder/${orderId}`,
+        method: "GET",
         headers: {
             Authorization: `Bearer ${token}`,
         },

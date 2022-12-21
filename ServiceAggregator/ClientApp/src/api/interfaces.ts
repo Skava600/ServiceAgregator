@@ -13,6 +13,7 @@ export interface IUser {
     login: string;
     doerId: string | null;
     isAdmin: boolean;
+    hasPremium: boolean;
 }
 
 export interface IWorkCategory {

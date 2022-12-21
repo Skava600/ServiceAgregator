@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
     Button,
     Divider,
+    IconButton,
     Modal,
     Paper,
     Rating,
@@ -10,12 +11,14 @@ import {
     Typography,
 } from "@mui/material";
 import FaceIcon from "@mui/icons-material/Face";
+import DoneOutlineIcon from "@mui/icons-material/DoneOutline";
 import { getCanRespond, getResponses, getTask, respondToTask } from "../../api";
 import { ITask, ITaskResponse } from "../../api/interfaces";
 import { Page, ProfileCard, ProgressSpinner, TaskCard } from "../../components";
 import { useAppSelector } from "../../state/store";
 import { getToken } from "../../state/selectors/userSelectors";
 import "./taskPage.less";
+import classNames from "classnames";
 
 const reviewWordForms = ["отзыв", "отзыва", "отзывов"];
 function getWordForm(n: number, wordForms: string[]) {
@@ -103,6 +106,8 @@ export const TaskPage = () => {
         );
     };
 
+    const handleConfirmResponse = (id: string) => {};
+
     const page = (
         <>
             <Modal
@@ -145,7 +150,7 @@ export const TaskPage = () => {
                 <TaskCard
                     task={task}
                     variant="short"
-                    respondButton={
+                    extraButtons={
                         canRespond && (
                             <Button
                                 className="respond-button"
@@ -168,15 +173,38 @@ export const TaskPage = () => {
                         ...responses.filter(({ isChosen }) => isChosen),
                         ...responses.filter(({ isChosen }) => !isChosen),
                     ].map((r) => (
-                        <div className="review">
-                            <ProfileCard
-                                profile={r.doer}
-                                variant="short"
-                                message={r.message}
-                                isChosen={r.isChosen}
-                            />
-                            <Divider />
-                        </div>
+                        <>
+                            {true ? (
+                                <div className="aplicable-review">
+                                    <ProfileCard
+                                        profile={r.doer}
+                                        variant="short"
+                                        message={r.message}
+                                        isChosen={r.isChosen}
+                                    />
+                                    <div className="reacion-btn-wrapper">
+                                        <IconButton
+                                            onClick={() =>
+                                                handleConfirmResponse(r.doer.id)
+                                            }
+                                        >
+                                            <DoneOutlineIcon />
+                                        </IconButton>
+                                    </div>
+                                    <Divider />
+                                </div>
+                            ) : (
+                                <div className="review">
+                                    <ProfileCard
+                                        profile={r.doer}
+                                        variant="short"
+                                        message={r.message}
+                                        isChosen={r.isChosen}
+                                    />
+                                    <Divider />
+                                </div>
+                            )}
+                        </>
                     ))
                 ) : (
                     <Paper className="no-responses">

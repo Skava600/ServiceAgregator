@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
     Typography,
     Paper,
@@ -9,20 +9,27 @@ import {
     Grid,
     Card,
     Button,
+    IconButton,
 } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { ProfileInfo, Page, TaskCard, ProgressSpinner } from "../../components";
 import { useAppSelector } from "../../state/store";
 import { getToken, getUser } from "../../state/selectors/userSelectors";
 import {
+    cancelOrder,
     createCheckoutSession,
+    getDoersOrders,
     getPayments,
     getTasks,
     postPayments,
 } from "../../api";
 import { ITask } from "../../api/interfaces";
 import "./accountPage.less";
+import { Link } from "react-router-dom";
+import { Box } from "@mui/system";
 
 const INITIAL_STATE = {
     expanded: "",
@@ -45,15 +52,30 @@ export const AccountPage = () => {
         INITIAL_STATE.myOrdersLoading
     );
     const user = useAppSelector(getUser);
-    const token = useAppSelector(getToken);
+    const token = useAppSelector(getToken)!;
 
-    useEffect(() => {
+    const fetchTasks = useCallback(() => {
+        setMyTasksLoading(true);
+
         getTasks({ slugs: [], isMyOrders: true, token }).then(({ data }) => {
             setMyTasks(data);
             setMyTasksLoading(false);
-            setExpanded("panel1");
         });
     }, [token]);
+
+    const fetchOrders = useCallback(() => {
+        setMyOrdersLoading(true);
+
+        getDoersOrders(token).then(({ data }) => {
+            setMyOrders(data);
+            setMyOrdersLoading(false);
+        });
+    }, [token]);
+
+    useEffect(() => {
+        fetchTasks();
+        fetchOrders();
+    }, [fetchOrders, fetchTasks]);
 
     const handleChange = (panel: string) => (_: any, isExpanded: boolean) => {
         setExpanded(isExpanded ? panel : false);
@@ -64,6 +86,10 @@ export const AccountPage = () => {
             console.log(data);
             window.open(data, "_blank", "noopener,noreferrer");
         });
+    };
+
+    const handleDeleteTask = (id: string) => {
+        cancelOrder(id, token!).then(fetchTasks);
     };
 
     return (
@@ -99,19 +125,34 @@ export const AccountPage = () => {
                         </AccordionSummary>
                         <Divider />
                         <AccordionDetails>
-                            {myTasks.map((task) => (
-                                <TaskCard task={task} isMine />
-                            ))}
                             {myTasksLoading ? (
                                 <ProgressSpinner />
+                            ) : !myTasks.length ? (
+                                <Card className="no-data">
+                                    <Typography>
+                                        Вы не разместили ни одного заказа...
+                                    </Typography>
+                                </Card>
                             ) : (
-                                !myTasks.length && (
-                                    <Card className="no-data">
-                                        <Typography>
-                                            Вы не разместили ни одного заказа...
-                                        </Typography>
-                                    </Card>
-                                )
+                                myTasks.map((task) => (
+                                    <div className="task-row">
+                                        <TaskCard task={task} />
+                                        <div className="task-edit-btns">
+                                            <Link to={`/edit-task/${task.id}`}>
+                                                <IconButton>
+                                                    <EditIcon />
+                                                </IconButton>
+                                            </Link>
+                                            <IconButton
+                                                onClick={(e) => {
+                                                    handleDeleteTask(task.id);
+                                                }}
+                                            >
+                                                <DeleteIcon />
+                                            </IconButton>
+                                        </div>
+                                    </div>
+                                ))
                             )}
                         </AccordionDetails>
                     </Accordion>
@@ -134,7 +175,7 @@ export const AccountPage = () => {
                         <Divider />
                         <AccordionDetails>
                             {myOrders.map((task) => (
-                                <TaskCard task={task} isMine />
+                                <TaskCard task={task} />
                             ))}
                             {myOrdersLoading ? (
                                 <ProgressSpinner />
@@ -142,7 +183,8 @@ export const AccountPage = () => {
                                 !myOrders.length && (
                                     <Card className="no-data">
                                         <Typography>
-                                            Вы не разместили ни одного заказа...
+                                            У вас нет ни одного активного заказа
+                                            на исполнение...
                                         </Typography>
                                     </Card>
                                 )
@@ -153,18 +195,21 @@ export const AccountPage = () => {
                 <Grid item xs={12}>
                     <ProfileInfo user={user!} />
                 </Grid>
-                <Grid item xs={12} className="payment-grid-cell">
-                    <Paper className="payment-wrapper">
-                        <Typography>
-                            Премиум аккаунт поднимет все ваши заказы на первые
-                            места в поиске! Скорее же, подними себе шансы
-                            быстрее получить качественное обсулживание!
-                        </Typography>
-                        <Button onClick={handleBuyPremium}>
-                            Купить премиум
-                        </Button>
-                    </Paper>
-                </Grid>
+                {!user?.hasPremium && (
+                    <Grid item xs={12} className="payment-grid-cell">
+                        <Paper className="payment-wrapper">
+                            <Typography>
+                                Премиум аккаунт поднимет все ваши заказы на
+                                первые места в поиске! Скорее же, подними себе
+                                шансы быстрее получить качественное
+                                обсулживание!
+                            </Typography>
+                            <Button onClick={handleBuyPremium}>
+                                Купить премиум
+                            </Button>
+                        </Paper>
+                    </Grid>
+                )}
             </Grid>
         </Page>
     );

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import moment from "moment";
 import { Link } from "react-router-dom";
 import { Button, Card, IconButton, Rating } from "@mui/material";
@@ -10,7 +10,6 @@ import Face5Icon from "@mui/icons-material/Face5";
 import Face6Icon from "@mui/icons-material/Face6";
 import WorkIcon from "@mui/icons-material/Work";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
-import EditIcon from "@mui/icons-material/Edit";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import { ITask } from "../../api/interfaces";
 import "./taskCard.less";
@@ -31,8 +30,7 @@ type TVariant = "short" | "full";
 type TProps = {
     task: ITask;
     variant?: TVariant;
-    isMine?: boolean;
-    respondButton?: React.ReactNode;
+    extraButtons?: React.ReactNode;
 };
 
 const STATUSES = {
@@ -42,12 +40,7 @@ const STATUSES = {
     InProgress: "Подтверждён",
 };
 
-export const TaskCard = ({
-    task,
-    variant = "full",
-    isMine = false,
-    respondButton,
-}: TProps) => {
+export const TaskCard = ({ task, variant = "full", extraButtons }: TProps) => {
     const [avatar, setAvatar] = useState<any>();
 
     useEffect(() => {
@@ -57,13 +50,6 @@ export const TaskCard = ({
     return (
         <Link to={`/task/${task.id}`} className="task-link">
             <Card className="task-card">
-                {isMine && (
-                    <Link to={`/edit-task/${task.id}`}>
-                        <IconButton>
-                            <EditIcon />
-                        </IconButton>
-                    </Link>
-                )}
                 <div className="task-card-row">
                     {variant === "full" && avatar}
                     <div className="task-card-content">
@@ -98,7 +84,7 @@ export const TaskCard = ({
                         </span>
                     </div>
                 </div>
-                {respondButton}
+                {extraButtons}
             </Card>
         </Link>
     );

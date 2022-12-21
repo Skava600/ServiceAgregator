@@ -121,7 +121,7 @@ export const CreateTaskPage = () => {
                 text,
                 location,
                 expireDate: moment(expireDate).add(4, "hours").utc().format(),
-                price,
+                price: price || "",
                 slug: slug?.slug!,
             },
             token!

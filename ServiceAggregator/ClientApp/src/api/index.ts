@@ -144,7 +144,7 @@ export const createTask = (
         text: string;
         location: string;
         expireDate: string;
-        price: number | null;
+        price: number | string;
         slug: string;
     },
     token: string
@@ -207,7 +207,7 @@ export const createProfile = (
 };
 
 export const updateProfile = (
-    data: Pick<IProfile, "doerName" | "doerDescription" | "id">,
+    data: Pick<IProfile, "doerName" | "doerDescription">,
     slugs: string[],
     token: string
 ) => {
@@ -218,7 +218,7 @@ export const updateProfile = (
     });
 
     return appAxios({
-        url: `${profilePath}/Put/${data.id}`,
+        url: `${profilePath}/Put`,
         method: "PUT",
         data: formData,
         headers: {
@@ -244,10 +244,9 @@ export const getCanRespond = (
     data: { orderId: ITask["id"] },
     token: string
 ) => {
-    return appAxios.get(`${tasksPath}/CanRespond`, {
+    return appAxios.get(`${tasksPath}/CanRespond/${data.orderId}`, {
         headers: {
             Authorization: `Bearer ${token}`,
         },
-        params: { orderId: data.orderId },
     });
 };

@@ -62,7 +62,7 @@ export const TaskPage = () => {
         if (!token || !id) return;
 
         getCanRespond({ orderId: id }, token).then(({ data }) => {
-            setCanRespond(data.canRespond);
+            setCanRespond(data);
         });
     }, [id, token]);
 

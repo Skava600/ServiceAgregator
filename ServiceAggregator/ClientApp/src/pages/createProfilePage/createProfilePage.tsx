@@ -117,7 +117,7 @@ export const CreateProfilePage = () => {
 
         if (isEditMode) {
             updateProfile(
-                { doerName, doerDescription, id },
+                { doerName, doerDescription },
                 sections.map(({ slug }) => slug),
                 token!
             ).then(({ data }) => {

@@ -85,6 +85,7 @@ namespace ServiceAggregator.Controllers
                     OrderCount = 0,
                 };
                 Section? section;
+                model.Filters = model.Filters[0].Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).Distinct().ToList();
                 int sectionCount = 0;
                 for(int i = 0; i < model.Filters.Count; i++)
                 {
@@ -250,12 +251,14 @@ namespace ServiceAggregator.Controllers
         }
 
         // PUT api/<ValuesController>/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(Guid id, [FromForm] DoerModel doerModel)
+        [HttpPut]
+        [Authorize]
+        public async Task<IActionResult> Put([FromForm] DoerModel doerModel)
         {
             DoerResult doerResult = new DoerResult { Success = false };
 
-            Doer? doer = await doerService.FindAsync(id);
+
+            Doer? doer = (await doerService.FindByField("accountid", User.FindFirst("Id")?.Value)).FirstOrDefault();
 
             if (doer == null)
             {
@@ -267,11 +270,18 @@ namespace ServiceAggregator.Controllers
                 doerResult.Errors.Add(DoerResultsConstants.ERROR_DOER_NAME_NULL_OR_EMPTY);
             }
 
+            if (!doerModel.Filters.Any())
+            {
+                doerResult.Errors.Add(DoerResultsConstants.ERROR_SECTION_ARRAY_EMPTY);
+                return Json(doerResult);
+            }
+
             if (string.IsNullOrEmpty(doerModel.DoerDescription) || string.IsNullOrWhiteSpace(doerModel.DoerDescription))
             {
                 doerResult.Errors.Add(DoerResultsConstants.ERROR_DOER_DESCRIPTION_NULL_OR_EMPTY);
             }
 
+            doerModel.Filters = doerModel.Filters[0].Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).Distinct().ToList();
             Section? section;
             List<Section> sections = new List<Section>();
             for (int i = 0; i < doerModel.Filters.Count; i++)
@@ -291,8 +301,8 @@ namespace ServiceAggregator.Controllers
 
             if (doerResult.Errors.Count == 0)
             {
-                await doerSectionService.DeleteDoerSectionsByDoerId(id);
-                sections.ForEach(async s => await doerSectionService.AddAsync(new DoerSection { Id = Guid.NewGuid(), DoerId = id,  SectionId = s.Id}));
+                await doerSectionService.DeleteDoerSectionsByDoerId(doer.Id);
+                sections.ForEach(async s => await doerSectionService.AddAsync(new DoerSection { Id = Guid.NewGuid(), DoerId = doer.Id,  SectionId = s.Id}));
                 doer!.DoerName = doerModel.DoerName;
                 doer.DoerDescription = doerModel.DoerDescription;
                 await doerService.UpdateAsync(doer);

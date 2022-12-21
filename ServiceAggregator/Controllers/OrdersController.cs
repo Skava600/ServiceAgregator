@@ -461,10 +461,37 @@ namespace ServiceAggregator.Controllers
             var responses = await orderResponseService.FindByField("orderid", orderId.ToString());
             if (responses.Where(r => r.DoerId == doer.Id).Any())
             {
-
+                return Json(false);
             }
 
             return Json(true);
+        }
+
+        [HttpGet("{orderId:Guid}")]
+        public async Task<IActionResult> IsMyOrder(Guid orderId)
+        {
+
+            Guid accountId;
+            if (!Guid.TryParse(User.FindFirst("Id")?.Value, out accountId))
+            {
+                return Json(false);
+            }
+
+
+            var order = await orderService.FindAsync(orderId);
+
+            if (order == null)
+            {
+                return Json(false);
+            }
+            Customer? myCustomerProfile = (await customerService.GetByAccountId(accountId));
+
+            if (myCustomerProfile == null)
+            {
+                return Json(false);
+            }
+
+            return Json(myCustomerProfile.Id == order.CustomerId);
         }
     }
 }

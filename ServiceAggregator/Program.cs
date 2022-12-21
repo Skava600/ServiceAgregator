@@ -12,7 +12,6 @@ using TrialBalanceWebApp.Services.Logging.Configuration;
 using ServiceAggregator.Services.JWT;
 
 var builder = WebApplication.CreateBuilder(args);
-
 builder.Services.AddControllers();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
@@ -29,6 +28,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     };
 });
 builder.Services.AddAuthorization();
+
 
 //builder.ConfigureSerilog();
 builder.Services.RegisterLoggingInterfaces();

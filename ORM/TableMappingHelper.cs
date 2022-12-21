@@ -11,7 +11,11 @@ internal static class TableMappingHelper
             var value = property.GetValue(instance);
             if (value != null)
             {
-                dictionary.Add(property.Name, value.ToString());    
+                if (value.GetType() == typeof(DateTime))
+                {
+                    dictionary.Add(property.Name, ((DateTime)value).ToString("yyyy-MM-dd"));
+                }
+                else dictionary.Add(property.Name, value.ToString());    
             }
         }
 

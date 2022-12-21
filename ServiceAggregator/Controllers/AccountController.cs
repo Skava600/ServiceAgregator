@@ -22,15 +22,17 @@ namespace ServiceAggregator.Controllers
     public class AccountController : Controller
     {
         private readonly IAccountDalDataService accountService;
+        private readonly ISubscriberDalDataService subscriberService;
         private readonly IBannedAccountDalDataService bannedAccountService;
         private readonly IDoerDalDataService doerDalService;
         MyOptions options;
-        public AccountController(IOptions<MyOptions> optionsAccessor, IAccountDalDataService accountDalDataService, IBannedAccountDalDataService bannedAccountService, IDoerDalDataService doerDalDataService)
+        public AccountController(IOptions<MyOptions> optionsAccessor, IAccountDalDataService accountDalDataService, IBannedAccountDalDataService bannedAccountService, IDoerDalDataService doerDalDataService, ISubscriberDalDataService subscriberDalDataService)
         {
             this.accountService = accountDalDataService;
             options = optionsAccessor.Value;
             this.bannedAccountService = bannedAccountService;
             this.doerDalService = doerDalDataService;
+            this.subscriberService = subscriberDalDataService;
         }
 
         [Authorize]
@@ -51,6 +53,8 @@ namespace ServiceAggregator.Controllers
             AccountData accountData = new AccountData(account);
             var doer = (await doerDalService.FindByField("accountid", userId.ToString())).FirstOrDefault();
             accountData.DoerId = doer == null ? null : doer.Id;
+            Subscriber? subscriber = await subscriberService.FindAsync(userId);
+            accountData.HasPremium = subscriber == null ? false : subscriber.SubscribeExpireDate < DateTime.UtcNow;
             return Json(accountData);
         }
 

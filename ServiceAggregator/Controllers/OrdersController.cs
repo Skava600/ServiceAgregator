@@ -380,11 +380,17 @@ namespace ServiceAggregator.Controllers
             return Json(result);
         }
 
-        [HttpPost("{orderId:Guid}")]
+        [HttpGet("{orderId:Guid}")]
         [Authorize]
         public async Task<IActionResult> CanRespond(Guid orderId)
         {
-            Guid accountId = Guid.Parse(User.FindFirst("Id")?.Value);
+
+            Guid accountId;
+            if (!Guid.TryParse(User.FindFirst("Id")?.Value, out accountId))
+            {
+                return Json(false);
+            }
+
             var doer = (await doerDalDataService.FindByField("accountid", accountId.ToString())).FirstOrDefault();
             if (doer == null)
             {

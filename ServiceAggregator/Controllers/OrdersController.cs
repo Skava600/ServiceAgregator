@@ -453,6 +453,12 @@ namespace ServiceAggregator.Controllers
                 return Json(false);
             }
 
+            var responses = await orderResponseService.FindByField("orderid", orderId.ToString());
+            if (responses.Where(r => r.DoerId == doer.Id).Any())
+            {
+                return Json(false);
+            }
+
             return Json(true);
         }
     }

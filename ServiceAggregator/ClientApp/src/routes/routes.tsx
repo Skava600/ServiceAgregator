@@ -11,9 +11,9 @@ import {
     EDIT_TASK_ROUTE,
     TASKS_ROUTE,
     TASK_ROUTE,
+    PREMIUM_ROUTE,
 } from "./pathes";
 import {
-    MainPage,
     LoginPage,
     RegisterPage,
     AccountPage,
@@ -24,6 +24,7 @@ import {
     CreateTaskPage,
     TasksPage,
     TaskPage,
+    PremiumPage,
 } from "../pages";
 
 export const authorizedRoutes = [
@@ -46,6 +47,10 @@ export const authorizedRoutes = [
     {
         path: EDIT_PROFILE_ROUTE + "/:id",
         element: <CreateProfilePage />,
+    },
+    {
+        path: PREMIUM_ROUTE,
+        element: <PremiumPage />,
     },
 ];
 

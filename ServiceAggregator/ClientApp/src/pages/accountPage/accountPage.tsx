@@ -60,9 +60,9 @@ export const AccountPage = () => {
     };
 
     const handleBuyPremium = () => {
-        createCheckoutSession().then((response) => {
-            const location = response.headers.location;
-            console.log(location);
+        createCheckoutSession().then(({ data }) => {
+            console.log(data);
+            window.open(data, "_blank", "noopener,noreferrer");
         });
     };
 

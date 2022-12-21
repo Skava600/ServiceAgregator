@@ -10,3 +10,5 @@ export const CREATE_TASK_ROUTE = "/create-task";
 export const EDIT_TASK_ROUTE = "/edit-task";
 export const TASKS_ROUTE = "/tasks";
 export const TASK_ROUTE = "/task";
+
+export const PREMIUM_ROUTE = "/premium-sub-thanks";

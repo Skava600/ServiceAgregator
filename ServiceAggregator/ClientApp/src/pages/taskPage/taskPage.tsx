@@ -95,9 +95,10 @@ export const TaskPage = () => {
 
     const handleRespond = () => {
         respondToTask({ message: respondMessage, orderId: id! }, token!).then(
-            ({ data }) => {
+            () => {
                 handleCloseRespondModal();
                 fetchCanRespond();
+                fetchResponses();
             }
         );
     };

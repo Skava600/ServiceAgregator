@@ -64,15 +64,24 @@ namespace ServiceAggregator.Controllers
                 return Json(new List<OrderData> { orderData });
             }
 
+            
             var ordersData = new List<OrderData>();
+
             if (filters != null && filters.Any())
             {
-                for(int i = 0; i < orders.Count;  i++)
+                filters = filters[0].Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                for (int i = 0; i < filters.Length; i++)
+                {
+                    var filterSection = (await sectionDalDataService.FindByField("slug", filters[i])).FirstOrDefault();
+                    if (filterSection != null)
+                    orders.RemoveAll(o => o.SectionId != filterSection.Id);
+                }
+                /*for (int i = 0; i < orders.Count;  i++)
                 {
                     var currentSection = await sectionDalDataService.FindAsync(orders[i].SectionId);
                     if (currentSection != null) 
                         orders.RemoveAll(o => Array.IndexOf(filters, currentSection.Slug) == -1);
-                }
+                }*/
             }      
          
             Section? section;

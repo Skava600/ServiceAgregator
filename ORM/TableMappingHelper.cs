@@ -23,7 +23,7 @@ internal static class TableMappingHelper
                     else dictionary.Add(property.Name, value.ToString());
                 }
             }
-        }
+        }   
 
         return dictionary;
     }

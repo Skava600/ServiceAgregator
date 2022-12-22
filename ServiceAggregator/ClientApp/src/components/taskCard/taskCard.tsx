@@ -13,6 +13,7 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import { ITask } from "../../api/interfaces";
 import "./taskCard.less";
+import classNames from "classnames";
 
 const AVATARS = [
     () => <FaceIcon className="avatar" />,
@@ -31,6 +32,7 @@ type TProps = {
     task: ITask;
     variant?: TVariant;
     extraButtons?: React.ReactNode;
+    isPromoting?: boolean;
 };
 
 const STATUSES = {
@@ -40,7 +42,12 @@ const STATUSES = {
     InProgress: "Подтверждён",
 };
 
-export const TaskCard = ({ task, variant = "full", extraButtons }: TProps) => {
+export const TaskCard = ({
+    task,
+    variant = "full",
+    extraButtons,
+    isPromoting,
+}: TProps) => {
     const [avatar, setAvatar] = useState<any>();
 
     useEffect(() => {
@@ -49,7 +56,7 @@ export const TaskCard = ({ task, variant = "full", extraButtons }: TProps) => {
 
     return (
         <Link to={`/task/${task.id}`} className="task-link">
-            <Card className="task-card">
+            <Card className={classNames("task-card", isPromoting && "is-prom")}>
                 <div className="task-card-row">
                     {variant === "full" && avatar}
                     <div className="task-card-content">

@@ -15,6 +15,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import DoneOutlineIcon from "@mui/icons-material/DoneOutline";
 import { ProfileInfo, Page, TaskCard, ProgressSpinner } from "../../components";
 import { useAppSelector } from "../../state/store";
 import { getToken, getUser } from "../../state/selectors/userSelectors";
@@ -138,11 +139,23 @@ export const AccountPage = () => {
                                     <div className="task-row">
                                         <TaskCard task={task} />
                                         <div className="task-edit-btns">
-                                            <Link to={`/edit-task/${task.id}`}>
-                                                <IconButton>
-                                                    <EditIcon />
-                                                </IconButton>
-                                            </Link>
+                                            {task.status === "Open" ? (
+                                                <Link
+                                                    to={`/edit-task/${task.id}`}
+                                                >
+                                                    <IconButton>
+                                                        <EditIcon />
+                                                    </IconButton>
+                                                </Link>
+                                            ) : (
+                                                <Link
+                                                    to={`/edit-task/${task.id}`}
+                                                >
+                                                    <IconButton>
+                                                        <DoneOutlineIcon />
+                                                    </IconButton>
+                                                </Link>
+                                            )}
                                             <IconButton
                                                 onClick={(e) => {
                                                     handleDeleteTask(task.id);

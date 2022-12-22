@@ -309,7 +309,7 @@ export const confirmResponse = (token: string) => {
 
 export const getIsMyTask = (orderId: string, token: string) => {
     return appAxios({
-        url: `${tasksPath}/GetIsMyOrder/${orderId}`,
+        url: `${tasksPath}/IsMyOrder/${orderId}`,
         method: "GET",
         headers: {
             Authorization: `Bearer ${token}`,

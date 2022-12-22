@@ -12,7 +12,13 @@ import {
 } from "@mui/material";
 import FaceIcon from "@mui/icons-material/Face";
 import DoneOutlineIcon from "@mui/icons-material/DoneOutline";
-import { getCanRespond, getResponses, getTask, respondToTask } from "../../api";
+import {
+    getCanRespond,
+    getIsMyTask,
+    getResponses,
+    getTask,
+    respondToTask,
+} from "../../api";
 import { ITask, ITaskResponse } from "../../api/interfaces";
 import { Page, ProfileCard, ProgressSpinner, TaskCard } from "../../components";
 import { useAppSelector } from "../../state/store";
@@ -59,6 +65,7 @@ export const TaskPage = () => {
     const [isRespondModalOpened, setIsRespondModalOpened] = useState(false);
     const handleOpenRespondModal = () => setIsRespondModalOpened(true);
     const handleCloseRespondModal = () => setIsRespondModalOpened(false);
+    const [isMyTask, setIsMyTask] = useState(false);
     const [respondMessage, setRespondMessage] = useState("");
 
     const fetchCanRespond = useCallback(() => {
@@ -70,14 +77,16 @@ export const TaskPage = () => {
     }, [id, token]);
 
     const fetchTask = useCallback(() => {
-        if (!id) return;
+        if (!id || !token) return;
 
         setIsPageLoading(true);
         getTask({ id }).then(({ data }) => {
             setIsPageLoading(false);
             setTask(data);
         });
-    }, [id]);
+
+        getIsMyTask(id, token).then(({ data }) => setIsMyTask(data));
+    }, [id, token]);
 
     const fetchResponses = useCallback(() => {
         if (!id) return;
@@ -136,15 +145,6 @@ export const TaskPage = () => {
                     <div className="task-summary">
                         <FaceIcon className="task-avatar" />
                         <span className="item">{`${task.customer?.account.lastname} ${task.customer?.account.firstname} ${task.customer?.account.patronym}`}</span>
-                        <Rating
-                            size="large"
-                            value={task.customer?.rating}
-                            readOnly
-                        />
-                        <span className="item">{`${styleSummaryItem(
-                            task.customer?.reviews?.length,
-                            reviewWordForms
-                        )}`}</span>
                     </div>
                 </Paper>
                 <TaskCard
@@ -174,7 +174,7 @@ export const TaskPage = () => {
                         ...responses.filter(({ isChosen }) => !isChosen),
                     ].map((r) => (
                         <>
-                            {true ? (
+                            {isMyTask ? (
                                 <div className="aplicable-review">
                                     <ProfileCard
                                         profile={r.doer}

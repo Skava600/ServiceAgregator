@@ -155,6 +155,7 @@ namespace ServiceAggregator.Repos
                             Patronym = reader.GetString(2),
                             PhoneNumber = reader.GetString(3),
                             Location = reader.GetString(4),
+                            Id = reader.GetGuid(5)
                         };
                     }
                 }

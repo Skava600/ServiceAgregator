@@ -70,25 +70,28 @@ namespace ServiceAggregator.Controllers
             if (filters != null && filters.Any())
             {
                 filters = filters[0].Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-                for (int i = 0; i < filters.Length; i++)
-                {
-                    var filterSection = (await sectionDalDataService.FindByField("slug", filters[i])).FirstOrDefault();
-                    if (filterSection != null)
-                    orders.RemoveAll(o => o.SectionId != filterSection.Id);
-                }
-                /*for (int i = 0; i < orders.Count;  i++)
+                List<Order> ordersToRemove = new List<Order>();
+                for (int i = 0; i < orders.Count; i++)
                 {
                     var currentSection = await sectionDalDataService.FindAsync(orders[i].SectionId);
-                    if (currentSection != null) 
-                        orders.RemoveAll(o => Array.IndexOf(filters, currentSection.Slug) == -1);
-                }*/
+                    if (currentSection != null && Array.IndexOf(filters, currentSection.Slug) == -1)
+                    {
+                        ordersToRemove.Add(orders[i]);                      
+                    }
+                }
+                orders.RemoveAll(o => ordersToRemove.Contains(o));
             }      
          
             Section? section;
             foreach (var order in orders)
             {
                 section = await sectionDalDataService.FindAsync(order.SectionId);
-                Subscriber? subscriber = await subscriberService.FindAsync((await accountService.GetAccountByCustomerId(order.CustomerId))!.Id);
+                var currentAccount = (await accountService.GetAccountByCustomerId(order.CustomerId));
+                Subscriber? subscriber = null;
+                if (currentAccount != null) 
+                {
+                    subscriber = (await subscriberService.FindAsync(currentAccount.Id));
+                };
                 if (section != null)
                 {
                     

@@ -42,8 +42,8 @@ namespace ServiceAggregator.Controllers
                     },
                 },
                 Mode = "payment",
-                SuccessUrl = Url.Link("default", new { controller = "payments", action = "Post" }),
-                CancelUrl = Url.Link("default", new { controller = "payments", action = "Get" }),
+                SuccessUrl = "https://localhost:44492/premium-sub-thanks",
+                CancelUrl = "https://localhost:44492",
             };
 
             var service = new SessionService();

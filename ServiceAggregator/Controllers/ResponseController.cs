@@ -37,6 +37,7 @@ namespace ServiceAggregator.Controllers
                 if (doer != null && (await bannedDoerDalDataService.FindAsync(doer.Id)) == null)
                     responseDatas.Add(new ResponseData
                     {
+                        Id = response.Id,
                         Message = response.Message,
                         IsChosen = response.IsChosen,
                         Doer = new DoerData { Id = doer.Id, DoerName = doer.DoerName, OrderCount = doer.OrderCount },
